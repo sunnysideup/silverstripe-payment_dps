@@ -21,7 +21,7 @@ class DpsPxPayPayment extends Payment {
 
 	// URLs
 
-	protected static $url = 'https://www.paymentexpress.com/pxpost.aspx';
+	protected static $url = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';
 
 	protected static $credit_cards = array(
 		'Visa' => 'payment/images/payments/methods/visa.jpg',
