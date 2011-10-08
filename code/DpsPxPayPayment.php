@@ -13,6 +13,9 @@ class DpsPxPayPayment extends Payment {
 		'TxnRef' => 'Text'
 	);
 
+	protected $Currency = "";
+		function setCurrency($s) {$this->Currency = $s;}
+
 	// DPS Information
 
 	protected static $privacy_link = 'http://www.paymentexpress.com/privacypolicy.htm';
@@ -72,7 +75,7 @@ class DpsPxPayPayment extends Payment {
 			$commsObject->setCurrencyInput($this->Currency);
 		}
 		else {
-			$commsObject->setCurrencyInput(self::site_currency());
+			$commsObject->setCurrencyInput(Payment::site_currency());
 		}
 
 		/**

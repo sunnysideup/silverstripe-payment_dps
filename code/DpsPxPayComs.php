@@ -133,28 +133,28 @@ class DpsPxPayComs {
 	/*
 	 * This function receives information back from the payments page as a response object
 	 * --------------------- RESPONSE DATA ---------------------
-	 * $Success           = $resonseObject->getSuccess();   # =1 when request succeeds
-	 * $AmountSettlement  = $resonseObject->getAmountSettlement();
-	 * $AuthCode          = $resonseObject->getAuthCode();  # from bank
-	 * $CardName          = $resonseObject->getCardName();  # e.g. "Visa"
-	 * $CardNumber        = $resonseObject->getCardNumber(); # Truncated card number
-	 * $DateExpiry        = $resonseObject->getDateExpiry(); # in mmyy format
-	 * $DpsBillingId      = $resonseObject->getDpsBillingId();
-	 * $BillingId         = $resonseObject->getBillingId();
-	 * $CardHolderName    = $resonseObject->getCardHolderName();
-	 * $DpsTxnRef	        = $resonseObject->getDpsTxnRef();
-	 * $TxnType           = $resonseObject->getTxnType();
-	 * $TxnData1          = $resonseObject->getTxnData1();
-	 * $TxnData2          = $resonseObject->getTxnData2();
-	 * $TxnData3          = $resonseObject->getTxnData3();
-	 * $CurrencySettlement= $resonseObject->getCurrencySettlement();
-	 * $ClientInfo        = $resonseObject->getClientInfo(); # The IP address of the user who submitted the transaction
-	 * $TxnId             = $resonseObject->getTxnId();
-	 * $CurrencyInput     = $resonseObject->getCurrencyInput();
-	 * $EmailAddress      = $resonseObject->getEmailAddress();
-	 * $MerchantReference = $resonseObject->getMerchantReference();
-	 * $ResponseText      = $resonseObject->getResponseText();
-	 * $TxnMac            = $resonseObject->getTxnMac(); # An indication as to the uniqueness of a card used in relation to others
+	 * $Success           = $responseObject->getSuccess();   # =1 when request succeeds
+	 * $AmountSettlement  = $responseObject->getAmountSettlement();
+	 * $AuthCode          = $responseObject->getAuthCode();  # from bank
+	 * $CardName          = $responseObject->getCardName();  # e.g. "Visa"
+	 * $CardNumber        = $responseObject->getCardNumber(); # Truncated card number
+	 * $DateExpiry        = $responseObject->getDateExpiry(); # in mmyy format
+	 * $DpsBillingId      = $responseObject->getDpsBillingId();
+	 * $BillingId         = $responseObject->getBillingId();
+	 * $CardHolderName    = $responseObject->getCardHolderName();
+	 * $DpsTxnRef	        = $responseObject->getDpsTxnRef();
+	 * $TxnType           = $responseObject->getTxnType();
+	 * $TxnData1          = $responseObject->getTxnData1();
+	 * $TxnData2          = $responseObject->getTxnData2();
+	 * $TxnData3          = $responseObject->getTxnData3();
+	 * $CurrencySettlement= $responseObject->getCurrencySettlement();
+	 * $ClientInfo        = $responseObject->getClientInfo(); # The IP address of the user who submitted the transaction
+	 * $TxnId             = $responseObject->getTxnId();
+	 * $CurrencyInput     = $responseObject->getCurrencyInput();
+	 * $EmailAddress      = $responseObject->getEmailAddress();
+	 * $MerchantReference = $responseObject->getMerchantReference();
+	 * $ResponseText      = $responseObject->getResponseText();
+	 * $TxnMac            = $responseObject->getTxnMac(); # An indication as to the uniqueness of a card used in relation to others
 	 *
 	 * also see: https://www.paymentexpress.com/technical_resources/ecommerce_hosted/error_codes.html
 	 **/
