@@ -3,17 +3,6 @@ Ecommerce DPS PXPayment Solution
 Pre 0.1 proof of concept
 ###############################################
 
-Developer
------------------------------------------------
-Nicolaas [at] sunnysideup.co.nz
-
-Requirements
------------------------------------------------
-SilverStripe 2.3.0 or greater.
-Silverstripe Payments
-
-Documentation
------------------------------------------------
 This module add the DPS PxPay Post Payment method.
 See
 http://www.paymentexpress.com/technical_resources/ecommerce_hosted/pxpay.html
@@ -23,6 +12,22 @@ CUSTOMISATION
 http://www.paymentexpress.com/technical_resources/ecommerce_hosted/pxaccesscustom.html
 
 
+Developers
+-----------------------------------------------
+Nicolaas Francken [at] sunnysideup.co.nz
+
+Requirements
+-----------------------------------------------
+Ecommerce 1.0+ / SSU Branch
+SilverStripe 2.4+
+
+Project Home
+-----------------------------------------------
+See http://code.google.com/p/silverstripe-ecommerce
+
+Demo
+-----------------------------------------------
+See http://www.silverstripe-ecommerce.com
 
 Installation Instructions
 -----------------------------------------------
@@ -32,31 +37,6 @@ into mysite/_config.php file and edit settings as required.
 NB. the idea is not to edit the module at all, but instead customise
 it from your mysite folder, so that you can upgrade the module without redoing the settings.
 
-
-
-
-Payment type to support credit-card payments through DPS.
-Supported currencies:
-	CAD  	Canadian Dollar
-	CHF 	Swiss Franc
-	EUR 	Euro
-	FRF 	French Franc
-	GBP 	United Kingdom Pound
-	HKD 	Hong Kong Dollar
-	JPY 	Japanese Yen
-	NZD 	New Zealand Dollar
-	SGD 	Singapore Dollar
-	USD 	United States Dollar
-	ZAR 	Rand
-	AUD 	Australian Dollar
-	WST 	Samoan Tala
-	VUV 	Vanuatu Vatu
-	TOP 	Tongan Pa'anga
-	SBD 	Solomon Islands Dollar
-	PGK 	Papua New Guinea Kina
-	MYR 	Malaysian Ringgit
-	KWD 	Kuwaiti Dinar
-	FJD 	Fiji Dollar
-
-http://www.paymentexpress.com/technical_resources/ecommerce_hosted/error_codes.html
- */
+If you just want one or two things from this module
+then of course you are free to copy them to your
+mysite folder and delete the rest of this module.
