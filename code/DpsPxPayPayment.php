@@ -114,7 +114,7 @@ class DpsPxPayPayment extends Payment {
 	function executeURL($url) {
 		$url = str_replace("&", "&amp;", $url);
 		$url = str_replace("&amp;&amp;", "&amp;", $url);
-		$url = str_replace("==", "", $url);
+		//$url = str_replace("==", "", $url);
 		if($url) {
 			/**
 			* build redirection page
@@ -141,11 +141,11 @@ class DpsPxPayPayment extends Payment {
 
 	function DPSForm($url) {
 		return <<<HTML
-			window.location = "$url";
+			//window.location = "$url";
 			<form id="PaymentForm" method="get" action="$url"></form>
 			<script type="text/javascript">
 				jQuery(document).ready(function() {
-					jQuery("#PaymentForm").submit();
+					//jQuery("#PaymentForm").submit();
 				});
 			</script>
 HTML;
