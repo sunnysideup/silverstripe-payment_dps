@@ -140,7 +140,7 @@ class DpsPxPayPayment extends Payment {
 	}
 
 	function DPSForm($url) {
-		$urlWithoutAmpersand = str_replace('&amp;', '&', $url);
+		$urlWithoutAmpersand = Convert::raw2js(str_replace('&amp;', '&', $url));
 		return <<<HTML
 			<form id="PaymentForm" method="post" action="$url">
 				<input type="submit" value="pay now" />
