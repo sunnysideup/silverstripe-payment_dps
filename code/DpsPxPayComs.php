@@ -9,7 +9,7 @@ class DpsPxPayComs {
 	* seller details - are always the same
 	* can be set like this DpsPxPayComs::set_pxpay_userid("blabla"); in _config file.
 	**/
-  protected static $pxpay_url    = "https://www.paymentexpress.com/pxpay/pxaccess.aspx";
+  protected static $pxpay_url =                            "https://sec.paymentexpress.com/pxpost.aspx";
 		static function set_pxpay_url($v)                       {self::$pxpay_url = $v;}
 	protected static $pxpay_userid = "";
 		static function set_pxpay_userid($v)                    {self::$pxpay_userid = $v;}
