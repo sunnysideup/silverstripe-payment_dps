@@ -37,7 +37,6 @@ class DpsPxPayPayment extends Payment {
 
 	static function remove_credit_card($creditCard) {unset(self::$credit_cards[$creditCard]);}
 
-	protected $debugMessage = "";
 
 	function getPaymentFormFields() {
 		$logo = '<img src="' . self::$logo . '" alt="Credit card payments powered by DPS"/>';
@@ -99,11 +98,13 @@ class DpsPxPayPayment extends Payment {
 		**/
 		$url = $commsObject->startPaymentProcess();
 		if(Director::isDev()) {
+			$debugMessage = $commsObject->getDebugMessage();
+			$this->DebugMessage = $debugMessage;
 			$this->write();
 			$from = Email::getAdminEmail();
 			$to = Email::getAdminEmail();
 			$subject = "DPS Debug Information";
-			$body = $commsObject->getDebugMessage();
+			$body = $debugMessage;
 			$email = new Email($from , $to , $subject , $body);
 			$email->send();
 		}
@@ -140,7 +141,8 @@ class DpsPxPayPayment extends Payment {
 
 	function DPSForm($url) {
 		return <<<HTML
-			<form id="PaymentForm" method="post" action="$url"></form>
+			window.location = "$url";
+			<form id="PaymentForm" method="get" action="$url"></form>
 			<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#PaymentForm").submit();
