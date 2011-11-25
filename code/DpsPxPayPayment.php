@@ -66,7 +66,7 @@ class DpsPxPayPayment extends Payment {
 		else {
 			$amount = floatval($data["Amount"]);
 		}
-		$url = $this->buildURL();
+		$url = $this->buildURL($amount);
 		return $this->executeURL($url);
 	}
 
