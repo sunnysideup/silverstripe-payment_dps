@@ -34,16 +34,18 @@ class DpsPxPayPayment extends Payment {
 		'JCB' => 'payment/images/payments/methods/jcb.jpg'
 	);
 
-	static function remove_credit_card($creditCard) {
-		unset(self::$credit_cards[$creditCard]);
-	}
+	static function remove_credit_card($creditCard) {unset(self::$credit_cards[$creditCard]);}
+
+	protected $debugMessage = "";
 
 	function getPaymentFormFields() {
 		$logo = '<img src="' . self::$logo . '" alt="Credit card payments powered by DPS"/>';
 		$privacyLink = '<a href="' . self::$privacy_link . '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
 		$paymentsList = '';
-		foreach(self::$credit_cards as $name => $image) {
-			$paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
+		if(self::$credit_cards) {
+			foreach(self::$credit_cards as $name => $image) {
+				$paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
+			}
 		}
 		$fields = new FieldSet(
 			new LiteralField('DPSInfo', $privacyLink),
@@ -57,7 +59,14 @@ class DpsPxPayPayment extends Payment {
 	}
 
 	function processPayment($data, $form) {
-		$url = $this->buildURL($data["Amount"]);
+		$order = $this->Order();
+		if($order) {
+			$amount = $order->TotalOutstanding();
+		}
+		else {
+			$amount = floatval($data["Amount"]);
+		}
+		$url = $this->buildURL();
 		return $this->executeURL($url);
 	}
 
@@ -88,6 +97,9 @@ class DpsPxPayPayment extends Payment {
 		* process payment data (check if it is OK and go forward if it is...
 		**/
 		$url = $commsObject->startPaymentProcess();
+		if(Director::isDev()) {
+			$this->debugMessage = $commsObject->getDebugMessage();
+		}
 		return $url;
 	}
 
@@ -98,14 +110,20 @@ class DpsPxPayPayment extends Payment {
 			/**
 			* build redirection page
 			**/
-			$page = new Page();
-			$page->Title = 'Redirection to DPS...';
-			$page->Logo = '<img src="' . self::$logo . '" alt="Payments powered by DPS"/>';
-			$page->Form = $this->DPSForm($url);
-			$controller = new ContentController($page);
-			Requirements::clear();
-			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-			return new Payment_Processing($controller->renderWith('PaymentProcessingPage'));
+			if(Director::isDev()){
+				$page = new Page();
+				$page->Title = 'Redirection to DPS...';
+				$page->Logo = '<img src="' . self::$logo . '" alt="Payments powered by DPS"/>';
+				$page->Logo .= $this->debugMessage;
+				$page->Form = $this->DPSForm($url);
+				$controller = new ContentController($page);
+				Requirements::clear();
+				Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+				return new Payment_Processing($controller->renderWith('PaymentProcessingPage'));
+			}
+			else {
+				Director::redirect($url);
+			}
 		}
 		else {
 			$page = new Page();

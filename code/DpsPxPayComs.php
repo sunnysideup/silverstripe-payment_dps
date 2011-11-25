@@ -16,9 +16,9 @@ class DpsPxPayComs {
 	protected static $pxpay_encryption_key =  "";
 		static function set_pxpay_encryption_key($v)            {self::$pxpay_encryption_key = $v;}
 	protected static $alternative_thirdparty_folder =  "";
-		static function set_alternative_thirdparty_folder($v)    {self::$alternative_thirdparty_folder = $v;}
+		static function set_alternative_thirdparty_folder($v)   {self::$alternative_thirdparty_folder = $v;}
 	protected static $overriding_txn_type =  ""; //e.g. AUTH
-		static function set_overriding_txn_type($v)    {self::$overriding_txn_type = $v;}
+		static function set_overriding_txn_type($v)             {self::$overriding_txn_type = $v;}
 
 	/**
 	* customer details
@@ -59,14 +59,15 @@ class DpsPxPayComs {
 	 * Details to use stored cards
 	 */
 	protected $EnableAddBillCard = 0;
-		public function setEnableAddBillCard($v)             {$this->EnableAddBillCard = $v;}
+		public function setEnableAddBillCard($v) { $this->EnableAddBillCard = $v;}
 	protected $BillingId = 0;
-		public function setBillingId($v)             {$this->BillingId = $v;}
+		public function setBillingId($v)         { $this->BillingId = $v;}
 
 	/**
 	* external object
 	**/
 	protected $PxPayObject = null;
+	protected $response = null;
 
 	function __construct() {
 		if(!self::$alternative_thirdparty_folder) {
@@ -106,8 +107,8 @@ class DpsPxPayComs {
 		if($this->UrlFail)           {$request->setUrlFail($this->UrlFail);	}                     else { user_error("error in DpsPxPayComs::startPaymentProcess, UrlFail not set. ", E_USER_WARNING);}
 		if($this->UrlSuccess)        {$request->setUrlSuccess($this->UrlSuccess);}                else { user_error("error in DpsPxPayComs::startPaymentProcess, UrlSuccess not set. ", E_USER_WARNING);}
 		if($this->TxnId)             {$request->setTxnId($this->TxnId);}
-		if($this->EnableAddBillCard)             {$request->setEnableAddBillCard($this->EnableAddBillCard);}
-		if($this->BillingId)             {$request->setBillingId($this->BillingId);}
+		if($this->EnableAddBillCard) {$request->setEnableAddBillCard($this->EnableAddBillCard);}
+		if($this->BillingId)         {$request->setBillingId($this->BillingId);}
 
 		/* TODO:
 		$request->setEnableAddBillCard($EnableAddBillCard);
@@ -119,11 +120,16 @@ class DpsPxPayComs {
 		$request_string = $this->PxPayObject->makeRequest($request);
 
 		#Obtain output XML
-		$response = new MifMessage($request_string);
+		$this->response = new MifMessage($request_string);
 
 		#Parse output XML
-		$url = $response->get_element_text("URI");
-		$valid = $response->get_attribute("valid");
+		$url = $this->response->get_element_text("URI");
+		$valid = $this->response->get_attribute("valid");
+
+		if(!$valid) {
+			user_error("The response from DPS was not valid", E_USER_NOTICE);
+			$url = "";
+		}
 
 		#Redirect to payment page
 		return $url;
@@ -165,11 +171,17 @@ class DpsPxPayComs {
 		return $this->PxPayObject->getResponse($_REQUEST["result"]);
 	}
 
-
+	function getDebugMessage(){
+		$string = "<pre>";
+		$string .= print_r($this, true);
+		$string .= print_r($this->PxPayObject, true);
+		$string .= print_r($this->response, true);
+		$string .= "</pre>";
+		return $string;
+	}
 
 	function debug() {
 		debug::show("debugging DpsPxPayComs");
-		print_r($this);
-		print_r($this->PxPayObject);
+		echo $this->getDebugMessage();
 	}
 }

@@ -246,6 +246,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 		* process payment data (check if it is OK and go forward if it is...
 		**/
 		$url = $commsObject->startPaymentProcess();
+
 		return $url;
 
 	}
