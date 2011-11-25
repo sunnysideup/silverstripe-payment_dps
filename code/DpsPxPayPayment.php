@@ -10,7 +10,8 @@
 class DpsPxPayPayment extends Payment {
 
 	static $db = array(
-		'TxnRef' => 'Text'
+		'TxnRef' => 'Text',
+		'DebugMessage' => 'HTMLText'
 	);
 
 	protected $Currency = "";
@@ -98,7 +99,13 @@ class DpsPxPayPayment extends Payment {
 		**/
 		$url = $commsObject->startPaymentProcess();
 		if(Director::isDev()) {
-			$this->debugMessage = $commsObject->getDebugMessage();
+			$this->write();
+			$from = Email::getAdminEmail();
+			$to = Email::getAdminEmail();
+			$subject = "DPS Debug Information";
+			$body = $commsObject->getDebugMessage();
+			$email = new Email($from , $to , $subject , $body);
+			$email->send();
 		}
 		return $url;
 	}
@@ -106,24 +113,19 @@ class DpsPxPayPayment extends Payment {
 	function executeURL($url) {
 		$url = str_replace("&", "&amp;", $url);
 		$url = str_replace("&amp;&amp;", "&amp;", $url);
+		$url = str_replace("==", "", $url);
 		if($url) {
 			/**
 			* build redirection page
 			**/
-			if(Director::isDev()){
-				$page = new Page();
-				$page->Title = 'Redirection to DPS...';
-				$page->Logo = '<img src="' . self::$logo . '" alt="Payments powered by DPS"/>';
-				$page->DebuggingMessage = $this->debugMessage;
-				$page->Form = $this->DPSForm($url);
-				$controller = new ContentController($page);
-				Requirements::clear();
-				Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-				return new Payment_Processing($controller->renderWith('PaymentProcessingPage'));
-			}
-			else {
-				Director::redirect($url);
-			}
+			$page = new Page();
+			$page->Title = 'Redirection to DPS...';
+			$page->Logo = '<img src="' . self::$logo . '" alt="Payments powered by DPS"/>';
+			$page->Form = $this->DPSForm($url);
+			$controller = new ContentController($page);
+			Requirements::clear();
+			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+			return new Payment_Processing($controller->renderWith('PaymentProcessingPage'));
 		}
 		else {
 			$page = new Page();
@@ -140,9 +142,9 @@ class DpsPxPayPayment extends Payment {
 		return <<<HTML
 			<form id="PaymentForm" method="post" action="$url"></form>
 			<script type="text/javascript">
-				//jQuery(document).ready(function() {
-					//jQuery("#PaymentForm").submit();
-				//});
+				jQuery(document).ready(function() {
+					jQuery("#PaymentForm").submit();
+				});
 			</script>
 HTML;
 	}
