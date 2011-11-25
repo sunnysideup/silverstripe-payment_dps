@@ -114,7 +114,7 @@ class DpsPxPayPayment extends Payment {
 				$page = new Page();
 				$page->Title = 'Redirection to DPS...';
 				$page->Logo = '<img src="' . self::$logo . '" alt="Payments powered by DPS"/>';
-				$page->Logo .= $this->debugMessage;
+				$page->DebuggingMessage = $this->debugMessage;
 				$page->Form = $this->DPSForm($url);
 				$controller = new ContentController($page);
 				Requirements::clear();
@@ -140,9 +140,9 @@ class DpsPxPayPayment extends Payment {
 		return <<<HTML
 			<form id="PaymentForm" method="post" action="$url"></form>
 			<script type="text/javascript">
-				jQuery(document).ready(function() {
-					jQuery("#PaymentForm").submit();
-				});
+				//jQuery(document).ready(function() {
+					//jQuery("#PaymentForm").submit();
+				//});
 			</script>
 HTML;
 	}
