@@ -141,9 +141,9 @@ class DpsPxPayPayment extends Payment {
 
 	function DPSForm($url) {
 		return <<<HTML
-			//window.location = "$url";
-			<form id="PaymentForm" method="get" action="$url"></form>
+			<form id="PaymentForm" method="post" action="$url"></form>
 			<script type="text/javascript">
+				window.location = "$url";
 				jQuery(document).ready(function() {
 					//jQuery("#PaymentForm").submit();
 				});
