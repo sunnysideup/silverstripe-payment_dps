@@ -121,15 +121,11 @@ class DpsPxPayComs {
 
 		#Obtain output XML
 		$this->response = new MifMessage($request_string);
-
+		echo $this->debugMessage();
 		#Parse output XML
 		$url = $this->response->get_element_text("URI");
-		$valid = $this->response->get_attribute("valid");
-
-		if(!$valid) {
-			user_error("The response from DPS was not valid", E_USER_NOTICE);
-			$url = "";
-		}
+		//$valid = $this->response->get_attribute("valid");
+		echo $this->debugMessage();
 
 		#Redirect to payment page
 		return $url;
