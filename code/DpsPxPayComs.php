@@ -50,9 +50,9 @@ class DpsPxPayComs {
 	/**
 	* details of the redirection
 	**/
-	protected $setUrlFail = "";
+	protected $UrlFail = "";
 		public function setUrlFail($v)           { $this->UrlFail = $v;}
-	protected $setUrlSuccess = "";
+	protected $UrlSuccess = "";
 		public function setUrlSuccess($v)        { $this->UrlSuccess = $v;}
 
 	/**
@@ -167,7 +167,6 @@ class DpsPxPayComs {
 
 	function getDebugMessage(){
 		$string = "<pre>";
-		$string .= print_r($this, true);
 		$string .= print_r($this->PxPayObject, true);
 		$string .= print_r($this->response, true);
 		$string .= "</pre>";

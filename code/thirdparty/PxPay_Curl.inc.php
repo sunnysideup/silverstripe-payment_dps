@@ -395,7 +395,7 @@ class PxPayResponse extends PxPayMessage
 		$this->CardNumber = $msg->get_element_text("CardNumber");
 		$this->DateExpiry = $msg->get_element_text("DateExpiry");
 		$this->ClientInfo = $msg->get_element_text("ClientInfo");
-		$this->MerchantTxnId = $msg->get_element_text("TxnId");
+		$this->TxnId = $msg->get_element_text("TxnId");
 		$this->setEmailAddress($msg->get_element_text("EmailAddress"));
 		$this->DpsTxnRef = $msg->get_element_text("DpsTxnRef");
 		$this->BillingId = $msg->get_element_text("BillingId");
@@ -404,6 +404,7 @@ class PxPayResponse extends PxPayMessage
 		$this->CurrencySettlement = $msg->get_element_text("CurrencySettlement");
 		$this->TxnMac = $msg->get_element_text("TxnMac");
 		$this->ResponseText = $msg->get_element_text("ResponseText");
+
 	}
 
 
