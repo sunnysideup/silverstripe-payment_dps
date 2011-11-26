@@ -103,10 +103,10 @@ class DpsPxPayPayment extends Payment {
 		* process payment data (check if it is OK and go forward if it is...
 		**/
 		$url = $commsObject->startPaymentProcess();
+		$debugMessage = $commsObject->getDebugMessage();
+		$this->DebugMessage = $debugMessage;
+		$this->write();
 		if(Director::isDev()) {
-			$debugMessage = $commsObject->getDebugMessage();
-			$this->DebugMessage = $debugMessage;
-			$this->write();
 			$from = Email::getAdminEmail();
 			$to = Email::getAdminEmail();
 			$subject = "DPS Debug Information";
