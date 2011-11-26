@@ -121,11 +121,9 @@ class DpsPxPayComs {
 
 		#Obtain output XML
 		$this->response = new MifMessage($request_string);
-		echo $this->getDebugMessage();
 		#Parse output XML
 		$url = $this->response->get_element_text("URI");
 		//$valid = $this->response->get_attribute("valid");
-		echo $this->getDebugMessage();
 
 		#Redirect to payment page
 		return $url;
