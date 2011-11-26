@@ -146,7 +146,7 @@ class DpsPxPayPayment extends Payment {
 				<input type="submit" value="pay now" />
 			</form>
 			<script type="text/javascript">
-				window.location = "$urlWithoutAmpersand";
+				//window.location = "$urlWithoutAmpersand";
 				jQuery(document).ready(function() {
 					//jQuery("#PaymentForm").submit();
 				});
