@@ -40,7 +40,7 @@ class DpsPxPayPayment extends Payment {
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->replaceField("DebugMessage" new ReadonlyField("DebugMessage", "Debug info"));
+		$fields->replaceField("DebugMessage", new ReadonlyField("DebugMessage", "Debug info"));
 		return $fields;
 	}
 
