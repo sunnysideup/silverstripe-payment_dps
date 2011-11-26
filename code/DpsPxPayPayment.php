@@ -14,6 +14,7 @@ class DpsPxPayPayment extends Payment {
 		'DebugMessage' => 'HTMLText'
 	);
 
+
 	protected $Currency = "";
 		function setCurrency($s) {$this->Currency = $s;}
 
@@ -37,6 +38,11 @@ class DpsPxPayPayment extends Payment {
 
 	static function remove_credit_card($creditCard) {unset(self::$credit_cards[$creditCard]);}
 
+	function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->replaceField("DebugMessage" new ReadonlyField("DebugMessage", "Debug info"));
+		return $fields;
+	}
 
 	function getPaymentFormFields() {
 		$logo = '<img src="' . self::$logo . '" alt="Credit card payments powered by DPS"/>';
