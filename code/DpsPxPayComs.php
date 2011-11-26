@@ -125,7 +125,7 @@ class DpsPxPayComs {
 		#Parse output XML
 		$url = $this->response->get_element_text("URI");
 		//$valid = $this->response->get_attribute("valid");
-		echo $this->debugMessage();
+		echo $this->getDebugMessage();
 
 		#Redirect to payment page
 		return $url;
