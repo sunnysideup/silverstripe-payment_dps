@@ -120,8 +120,8 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 
 		// 2) Payment Informations
 
-		$inputs['Amount'] = $this->Amount;
-		$inputs['InputCurrency'] = $this->Currency;
+		$inputs['Amount'] = $this->Amount->Amount;
+		$inputs['InputCurrency'] = $this->Amount->Currency;
 		$inputs['TxnId'] = $this->ID;
 		$inputs['TxnType'] = 'Purchase';
 		$inputs["MerchantReference"] = $this->ID;
@@ -144,11 +144,20 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 			$this->Status = 'Failure';
 			$result = new Payment_Failure();
 		}
+		if(isset($responseFields['DPSTXNREF'])) {
+			if($transactionRef = $responseFields['DPSTXNREF']) $this->TxnRef = $transactionRef;
+		}
 
-		if($transactionRef = $responseFields['DPSTXNREF']) $this->TxnRef = $transactionRef;
-
-		if($helpText = $responseFields['HELPTEXT']) $this->Message = $helpText;
-		else if($responseText = $responseFields['RESPONSETEXT']) $this->Message = $responseText;
+		if(isset($responseFields['HELPTEXT'])) {
+			if($helpText = $responseFields['HELPTEXT']) {
+				$this->Message = $helpText;
+			}
+		}
+		if(isset($responseFields['RESPONSETEXT'])) {
+			if($responseText = $responseFields['RESPONSETEXT']) {
+				$this->Message .= $responseText;
+			}
+		}
 
 		$this->write();
 		return $result;
