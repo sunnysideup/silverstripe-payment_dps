@@ -151,7 +151,9 @@ class DpsPxPayPayment extends Payment {
 			</form>
 			<script type="text/javascript">
 				jQuery(document).ready(function() {
-					jQuery("#PaymentForm").submit();
+					if(!jQuery.browser.msie) {
+						jQuery("#PaymentForm").submit();
+					}
 				});
 			</script>
 HTML;
