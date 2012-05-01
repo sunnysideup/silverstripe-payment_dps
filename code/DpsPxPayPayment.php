@@ -129,7 +129,9 @@ class DpsPxPayPayment extends Payment {
 			$page->Form = $this->DPSForm($url);
 			$controller = new ContentController($page);
 			Requirements::clear();
-			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+			Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
+			//Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
+			//Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
 			return new Payment_Processing($controller->renderWith('PaymentProcessingPage'));
 		}
 		else {
@@ -138,7 +140,9 @@ class DpsPxPayPayment extends Payment {
 			$page->Logo = 'Sorry, an error has occured in contacting the Payment Processing Provider, please try again in a few minutes...';
 			$page->Form = $this->DPSForm($url);
 			$controller = new ContentController($page);
-			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+			Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
+			//Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
+			//Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
 			return new Payment_Failure($controller->renderWith('PaymentProcessingPage'));
 		}
 	}
