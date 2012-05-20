@@ -40,10 +40,6 @@ class DpsPxPayStoredCard extends DataObject {
 
 	public static $defaults = array();//use fieldName => Default Value
 
-	public function populateDefaults() {
-		parent::populateDefaults();
-	}
-
 	static $can_create = false;
 	public function canCreate() {return false;}
 	public function canView($member = null) {if(!$member) {$member = Member::CurrentMember();} if($member) {return $member->IsAdmin();}}
