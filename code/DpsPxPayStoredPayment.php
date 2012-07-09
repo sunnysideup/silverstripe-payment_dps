@@ -9,7 +9,7 @@
 
 class DpsPxPayStoredPayment extends DpsPxPayPayment {
 
-	protected static $pxpost_url = 'http://www.paymentexpress.com/pxpost.aspx';
+	protected static $pxpost_url = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';
 
 	protected static $username = '';
 		static function set_username($v) {self::$username = $v;}
@@ -208,8 +208,13 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 		$level = array();
 		foreach($values as $xmlElement) {
 			if($xmlElement['type'] == 'open') {
-				if(array_key_exists('attributes', $xmlElement)) list($level[$xmlElement['level']], $extra) = array_values($xmlElement['attributes']);
-				else $level[$xmlElement['level']] = $xmlElement['tag'];
+				if(array_key_exists('attributes', $xmlElement)) {
+					$arrayValues = array_values($xmlElement['attributes']);
+					list($level[$xmlElement['level']], $extra) = $arrayValues;
+				}
+				else {
+					$level[$xmlElement['level']] = $xmlElement['tag'];
+				}
 			}
 			else if ($xmlElement['type'] == 'complete') {
 				$startLevel = 1;
