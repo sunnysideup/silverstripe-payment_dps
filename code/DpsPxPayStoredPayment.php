@@ -9,7 +9,9 @@
 
 class DpsPxPayStoredPayment extends DpsPxPayPayment {
 
-	protected static $pxpost_url = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';
+	protected static $pxaccess_url = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';
+
+	protected static $pxpost_url = 'https://sec.paymentexpress.com/pxpost.aspx';
 
 	protected static $username = '';
 		static function set_username($v) {self::$username = $v;}
@@ -135,7 +137,6 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 		// 4) DPS Transaction Sending
 
 		$responseFields = $this->doPayment($inputs);
-
 		// 5) DPS Response Management
 
 		if(isset($responseFields['SUCCESS']) && $responseFields['SUCCESS']) {
@@ -178,7 +179,6 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 		$transaction .= "</Txn>";
 
 		// 2) CURL Creation
-
 		$clientURL = curl_init();
 		curl_setopt($clientURL, CURLOPT_URL, self::$pxpost_url);
 		curl_setopt($clientURL, CURLOPT_POST, 1);
