@@ -32,6 +32,10 @@ else{
 //DpsPxPayStoredPayment::set_username("xxx");
 //DpsPxPayStoredPayment::set_password("xxx");
 
+/******** Testing Credit Card ********/
+//Number : 4111 1111 1111 1111
+//Expiry Date : Any future date
+//CVC : ***
 
 //*** must have!
 Director::addRules(50, array(
