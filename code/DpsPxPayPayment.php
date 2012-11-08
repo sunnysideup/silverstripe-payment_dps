@@ -14,7 +14,6 @@ class DpsPxPayPayment extends Payment {
 		'DebugMessage' => 'HTMLText'
 	);
 
-
 	protected $Currency = "";
 		function setCurrency($s) {$this->Currency = $s;}
 
@@ -35,6 +34,8 @@ class DpsPxPayPayment extends Payment {
 	);
 
 	static function remove_credit_card($creditCard) {unset(self::$credit_cards[$creditCard]);}
+
+	static $email_debug = false;
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
@@ -104,7 +105,7 @@ class DpsPxPayPayment extends Payment {
 		$debugMessage = $commsObject->getDebugMessage();
 		$this->DebugMessage = $debugMessage;
 		$this->write();
-		if(Director::isDev()) {
+		if(self::$email_debug) {
 			$from = Email::getAdminEmail();
 			$to = Email::getAdminEmail();
 			$subject = "DPS Debug Information";
