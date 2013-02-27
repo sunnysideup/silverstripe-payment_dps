@@ -1,5 +1,5 @@
 {
-	"name": "silverstripe/payment_dps",
+	"name": "sunnysideup/payment_dps",
 	"type": "silverstripe-module",
 	"description": "Add DPS payment, including 'store credit card' to your silverstripe e-commerce and payment modules.",
 	"homepage": "http://www.silverstripe-ecommerce.com",
