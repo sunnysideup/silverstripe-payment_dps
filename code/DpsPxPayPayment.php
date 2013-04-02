@@ -35,7 +35,7 @@ class DpsPxPayPayment extends Payment {
 
 	static function remove_credit_card($creditCard) {unset(self::$credit_cards[$creditCard]);}
 
-	static $email_debug = false;
+	protected static $email_debug = false;
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
