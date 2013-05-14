@@ -65,17 +65,48 @@ class DpsPxPayPayment extends Payment {
 
 	function processPayment($data, $form) {
 		$order = $this->Order();
+		//if currency has been pre-set use this
+		$currency = $this->Amount->Currency;
+		//if amout has been pre-set, use this
+		$amount = $this->Amount->Amount;
 		if($order) {
+			//amount may need to be adjusted to total outstanding
+			//or amount may not have been set yet
 			$amount = $order->TotalOutstanding();
+			//get currency from Order
+			//this is better than the pre-set currency one
+			//which may have been set to the default
+			$currencyObject = $order->CurrencyUsed();
+			if($currencyObject) {
+				$currency = $$currencyObject->Code;
+			}
 		}
-		else {
+		if(!$amount && !empty($data["Amount"])) {
 			$amount = floatval($data["Amount"]);
 		}
-		$url = $this->buildURL($amount);
+		if(!$currency && !empty($data["Currency"])) {
+			$currency = floatval($data["Currency"]);
+		}
+		//final backup for currency
+		if(!$currency) {
+			$currency = Payment::site_currency()
+		}
+		$this->Currency->Currency = $currency;
+		$this->Amount->Amount = $amount;
+		//no need to write here, as it will be done by BuildURL
+		//$this->write();
+		$url = $this->buildURL($amount, $currency);
 		return $this->executeURL($url);
 	}
 
-	protected function buildURL($amount) {
+	/**
+	 *
+	 * @param Float $amount
+	 * @param String $currency - e.g. NZD
+	 * @return String
+	 *
+	 */
+	protected function buildURL($amount, $currency) {
 		$commsObject = new DpsPxPayComs();
 
 		/**
@@ -85,12 +116,7 @@ class DpsPxPayPayment extends Payment {
 		$commsObject->setMerchantReference($this->ID);
 		//replace any character that is NOT [0-9] or dot (.)
 		$commsObject->setAmountInput(floatval(preg_replace("/[^0-9\.]/", "", $amount)));
-		if($this->Currency) {
-			$commsObject->setCurrencyInput($this->Currency);
-		}
-		else {
-			$commsObject->setCurrencyInput(Payment::site_currency());
-		}
+		$commsObject->setCurrencyInput($currency);
 
 		/**
 		* details of the redirection
