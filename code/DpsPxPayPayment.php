@@ -78,7 +78,7 @@ class DpsPxPayPayment extends Payment {
 			//which may have been set to the default
 			$currencyObject = $order->CurrencyUsed();
 			if($currencyObject) {
-				$currency = $$currencyObject->Code;
+				$currency = $currencyObject->Code;
 			}
 		}
 		if(!$amount && !empty($data["Amount"])) {
