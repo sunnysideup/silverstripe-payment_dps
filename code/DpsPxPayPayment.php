@@ -89,7 +89,7 @@ class DpsPxPayPayment extends Payment {
 		}
 		//final backup for currency
 		if(!$currency) {
-			$currency = Payment::site_currency()
+			$currency = Payment::site_currency();
 		}
 		$this->Currency->Currency = $currency;
 		$this->Amount->Amount = $amount;
