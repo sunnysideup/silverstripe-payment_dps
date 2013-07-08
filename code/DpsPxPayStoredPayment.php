@@ -31,15 +31,15 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 			$paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
 		}
 
-		$fields = new FieldSet();
+		$fields = new FieldList();
 		$storedCards = null;
-		if($m = Member::currentMember()) {
-			$storedCards = DataObject::get('DpsPxPayStoredCard', 'MemberID = '.$m->ID);
+		if($m = Member::currentUser()) {
+			$storedCards = DpsPxPayStoredCard::get()->filter(array("MemberID" => $m->ID));
 		}
 
 		$cardsDropdown = array('' => ' --- Select Stored Card ---');
 
-		if($storedCards) {
+		if($storedCards->count()) {
 			foreach($storedCards as $card) {
 				$cardsDropdown[$card->BillingID] = $card->CardHolder.' - '.$card->CardNumber.' ('.$card->CardName.')';
 			}
@@ -93,13 +93,13 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 		if($data["DPSUseStoredCard"] == "deletecards") {
 			//important!!!
 			$data["DPSUseStoredCard"] = null;
-			if($m = Member::currentMember()) {
-				$storedCards = DataObject::get('DpsPxPayStoredCard', 'MemberID = '.$m->ID);
-				if($storedCards) {
+			if($m = Member::currentUser()) {
+				$storedCards = DpsPxPayStoredCard::get()->filter(array("MemberID" => $m->ID));
+				if($storedCards->count()) {
 					foreach($storedCards as $card) {
 						$card->delete();
 					}
-					if($storedCards = DataObject::get('DpsPxPayStoredCard', 'MemberID = '.$m->ID)) {
+					if($storedCards = DpsPxPayStoredCard::get()->filter(array("MemberID" => $m->ID))) {
 						DB::query("DELETE FROM DpsPxPayStoredCard WHERE MemberID = ".$m->ID);
 					}
 				}
@@ -287,13 +287,13 @@ class DpsPxPayStoredPayment_Handler extends DpsPxPayPayment_Handler {
 	function paid() {
 		$commsObject = new DpsPxPayComs();
 		$response = $commsObject->processRequestAndReturnResultsAsObject();
-		if($payment = DataObject::get_by_id('DpsPxPayStoredPayment', $response->getMerchantReference())) {
+		if($payment = DpsPxPayStoredPayment::get()->byID($response->getMerchantReference())) {
 			if($payment->Status != 'Success') {
 				if(1 == $response->getSuccess()) {
 					$payment->Status = 'Success';
 
 					if($response->DpsBillingId) {
-						$existingCard = DataObject::get_one('DpsPxPayStoredCard', 'BillingID = '.$response->DpsBillingId);
+						$existingCard = DpsPxPayStoredCard::get()->filter(array("BillingID" => $response->DpsBillingId))->First();
 
 						if($existingCard == false) {
 							$storedCard = new DpsPxPayStoredCard();

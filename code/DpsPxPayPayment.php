@@ -52,7 +52,7 @@ class DpsPxPayPayment extends Payment {
 				$paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
 			}
 		}
-		$fields = new FieldSet(
+		$fields = new FieldList(
 			new LiteralField('DPSInfo', $privacyLink),
 			new LiteralField('DPSPaymentsList', $paymentsList)
 		);
@@ -209,7 +209,7 @@ class DpsPxPayPayment_Handler extends Controller {
 	function paid() {
 		$commsObject = new DpsPxPayComs();
 		$response = $commsObject->processRequestAndReturnResultsAsObject();
-		if($payment = DataObject::get_by_id('DpsPxPayPayment', $response->getMerchantReference())) {
+		if($payment = DpsPxPayPayment::get()->byID($response->getMerchantReference())) {
 			if(1 == $response->getSuccess()) {
 				$payment->Status = 'Success';
 			}
