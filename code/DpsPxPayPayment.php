@@ -7,7 +7,7 @@
  *
  **/
 
-class DpsPxPayPayment extends Payment {
+class DpsPxPayPayment extends EcommercePayment {
 
 	static $db = array(
 		'TxnRef' => 'Text',
@@ -89,7 +89,7 @@ class DpsPxPayPayment extends Payment {
 		}
 		//final backup for currency
 		if(!$currency) {
-			$currency = Payment::site_currency();
+			$currency = EcommercePayment::site_currency();
 		}
 		$this->Currency->Currency = $currency;
 		$this->Amount->Amount = $amount;
