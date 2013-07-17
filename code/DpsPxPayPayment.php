@@ -9,7 +9,7 @@
 
 class DpsPxPayPayment extends EcommercePayment {
 
-	static $db = array(
+	private static $db = array(
 		'TxnRef' => 'Text',
 		'DebugMessage' => 'HTMLText'
 	);
@@ -19,23 +19,24 @@ class DpsPxPayPayment extends EcommercePayment {
 
 	// DPS Information
 
-	protected static $privacy_link = 'http://www.paymentexpress.com/privacypolicy.htm';
+	private static $privacy_link = 'http://www.paymentexpress.com/privacypolicy.htm';
 
-	protected static $logo = 'payment_dps/images/dps_paymentexpress_small.png';
+	private static $logo = 'payment_dps/images/dps_paymentexpress_small.png';
 
 	// URLs
 
-	protected static $credit_cards = array(
-		'Visa' => 'payment/images/payments/methods/visa.jpg',
+	// Please set from YAML. See _config/payment_dps.yml.example
+	private static $credit_cards = array(
+		/*'Visa' => 'payment/images/payments/methods/visa.jpg',
 		'MasterCard' => 'payment/images/payments/methods/mastercard.jpg',
 		'American Express' => 'payment/images/payments/methods/american-express.gif',
 		'Dinners Club' => 'payment/images/payments/methods/dinners-club.jpg',
-		'JCB' => 'payment/images/payments/methods/jcb.jpg'
+		'JCB' => 'payment/images/payments/methods/jcb.jpg'*/
 	);
 
 	static function remove_credit_card($creditCard) {unset(self::$credit_cards[$creditCard]);}
 
-	protected static $email_debug = false;
+	private static $email_debug = false;
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
@@ -194,12 +195,16 @@ HTML;
 
 class DpsPxPayPayment_Handler extends Controller {
 
-	protected static $url_segment = 'dpspxpaypayment';
-		static function set_url_segment($v) { self::$url_segment = $v;}
-		static function get_url_segment() { return self::$url_segment;}
+	private static $allowed_actions = array(
+		"complete_link",
+		"absolute_complete_link",
+		"paid"
+	);
+
+	private static $url_segment = 'dpspxpaypayment';
 
 	static function complete_link() {
-		return self::$url_segment . '/paid/';
+		return Config::inst()->get('DpsPxPayPayment_Handler', 'url_segment') . '/paid/';
 	}
 
 	static function absolute_complete_link() {

@@ -38,10 +38,10 @@ else{
 //CVC : ***
 
 //*** must have!
-Director::addRules(100, array(
+/*Director::addRules(100, array(
 	DpsPxPayPayment_Handler::get_url_segment() . '/$Action/$ID' => 'DpsPxPayPayment_Handler',
 	DpsPxPayStoredPayment_Handler::get_url_segment() . '/$Action/$ID' => 'DpsPxPayStoredPayment_Handler',
-));
+));*/
 
 
 //===================---------------- END dpspxpaypayment MODULE ----------------===================

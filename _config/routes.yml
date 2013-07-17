@@ -1,0 +1,8 @@
+---
+Name: paymentdpsroutes
+After: framework/routes#coreroutes
+---
+Director:
+  rules:
+    'dpspxpaypayment//$Action/$ID' : 'DpsPxPayPayment_Handler'
+    'dpspxpaystoredpayment//$Action/$ID' : 'DpsPxPayStoredPayment_Handler'

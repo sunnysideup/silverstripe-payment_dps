@@ -9,19 +9,17 @@
 
 class DpsPxPayStoredPayment extends DpsPxPayPayment {
 
-	protected static $pxaccess_url = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';
+	private static $pxaccess_url = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';
 
-	protected static $pxpost_url = 'https://sec.paymentexpress.com/pxpost.aspx';
+	private static $pxpost_url = 'https://sec.paymentexpress.com/pxpost.aspx';
 
-	protected static $username = '';
+	private static $username = '';
 		static function set_username($v) {self::$username = $v;}
 
-	protected static $password = '';
+	private static $password = '';
 		static function set_password($v) {self::$password = $v;}
 
-	protected static $add_card_explanation = "Storing a Card means your Credit Card will be kept on file for your next purchase. ";
-		function set_add_card_explanation($v) {self::$add_card_explanation = $v;}
-		function get_add_card_explanation() {return self::$add_card_explanation;}
+	private static $add_card_explanation = "Storing a Card means your Credit Card will be kept on file for your next purchase. ";
 
 	function getPaymentFormFields() {
 		$logo = '<img src="' . self::$logo . '" alt="Credit Card Payments Powered by DPS"/>';
@@ -52,7 +50,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 		}
 		else {
 			$fields->push(new DropdownField('DPSStoreCard', '', array(1 => 'Store Credit Card', 0 => 'Do NOT Store Credit Card')));
-			$fields->push(new LiteralField("AddCardExplanation", "<p>".self::get_add_card_explanation()."</p>"));
+			$fields->push(new LiteralField("AddCardExplanation", "<p>".Config::inst()->get('DpsPxPayStoredPayment', 'add_card_explanation')."</p>"));
 		}
 		$fields->push(new LiteralField('DPSInfo', $privacyLink));
 		$fields->push(new LiteralField('DPSPaymentsList', $paymentsList));
@@ -272,12 +270,11 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 
 class DpsPxPayStoredPayment_Handler extends DpsPxPayPayment_Handler {
 
-	protected static $url_segment = 'dpspxpaystoredpayment';
-		static function set_url_segment($v) { self::$url_segment = $v;}
-		static function get_url_segment() { return self::$url_segment;}
+	private static $url_segment = 'dpspxpaystoredpayment';
+
 
 	static function complete_link() {
-		return self::$url_segment . '/paid/';
+		return Config::inst()->get('DpsPxPayStoredPayment_Handler', 'url_segment') . '/paid/';
 	}
 
 	static function absolute_complete_link() {

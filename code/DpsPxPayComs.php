@@ -9,15 +9,15 @@ class DpsPxPayComs {
 	* seller details - are always the same
 	* can be set like this DpsPxPayComs::set_pxpay_userid("blabla"); in _config file.
 	**/
-  protected static $pxpay_url =                            "https://sec.paymentexpress.com/pxpay/pxaccess.aspx";
+  private static $pxpay_url =                            "https://sec.paymentexpress.com/pxpay/pxaccess.aspx";
 		static function set_pxpay_url($v)                       {self::$pxpay_url = $v;}
-	protected static $pxpay_userid = "";
+	private static $pxpay_userid = "";
 		static function set_pxpay_userid($v)                    {self::$pxpay_userid = $v;}
-	protected static $pxpay_encryption_key =  "";
+	private static $pxpay_encryption_key =  "";
 		static function set_pxpay_encryption_key($v)            {self::$pxpay_encryption_key = $v;}
-	protected static $alternative_thirdparty_folder =  "";
+	private static $alternative_thirdparty_folder =  "";
 		static function set_alternative_thirdparty_folder($v)   {self::$alternative_thirdparty_folder = $v;}
-	protected static $overriding_txn_type =  ""; //e.g. AUTH
+	private static $overriding_txn_type =  ""; //e.g. AUTH
 		static function set_overriding_txn_type($v)             {self::$overriding_txn_type = $v;}
 
 	/**
