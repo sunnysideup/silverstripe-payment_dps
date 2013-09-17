@@ -1,20 +1,11 @@
 ##############################
 # START PAYMENT DPS
 ##############################
-
-# --- LIVE WEBSITES
-DpsPxPayComs:
-  pxpay_userid: "Code"
-  pxpay_encryption_key: "A"  # ADD MAC KEY!
-  overriding_txn_type: "AUTH" # AUTH = Authorisation ONLY, Default is Purchase
-
-# --- DEV/TESTING WEBSITES
-
-DpsPxPayComs:
-  pxpay_userid: "Code_Dev"
-  pxpay_encryption_key: "B"
-
-# --- ########################
+---
+Name: payment_dps
+Before: 'mysite/*'
+After: 'framework/*','cms/*','ecommerce/*'
+---
 
 DpsPxPayPayment:
   # Comment out credit cards to exclude them.
@@ -25,13 +16,35 @@ DpsPxPayPayment:
     - 'Dinners Club' : 'payment/images/payments/methods/dinners-club.jpg'
     - 'JCB' : 'payment/images/payments/methods/jcb.jpg'
 
-  add_card_explanation: "Storing a Card means your Credit Card will be kept on file for your next purchase. "
-  username: "xxx"
-  password: "xxx"
+  #add_card_explanation: "Storing a Card means your Credit Card will be kept on file for your next purchase. "
+  #username: "xxx"
+  #password: "xxx"
+
+---
+only:
+  environment: 'live'
+---
+
+DpsPxPayComs:
+  pxpay_userid: "Code"
+  pxpay_encryption_key: "A"  # ADD MAC KEY!
+  #overriding_txn_type: "AUTH" # AUTH = Authorisation ONLY, Default is Purchase
+
+---
+only:
+  environment: 'dev'
+---
+
+DpsPxPayComs:
+  pxpay_userid: "Code_Dev"
+  pxpay_encryption_key: "B"
+
+
 
 # --- ########################
 # Testing Credit Card:
 # Number: 4111 1111 1111 1111
 # Expiry Date: Any future date
 # CVC: ***
-# --- ########################  
+# --- ########################
+

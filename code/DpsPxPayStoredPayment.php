@@ -14,10 +14,8 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 	private static $pxpost_url = 'https://sec.paymentexpress.com/pxpost.aspx';
 
 	private static $username = '';
-		static function set_username($v) {self::$username = $v;}
 
 	private static $password = '';
-		static function set_password($v) {self::$password = $v;}
 
 	private static $add_card_explanation = "Storing a Card means your Credit Card will be kept on file for your next purchase. ";
 
