@@ -34,7 +34,7 @@ class DpsPxPayPayment extends EcommercePayment {
 		'JCB' => 'payment/images/payments/methods/jcb.jpg'*/
 	);
 
-	static function remove_credit_card($creditCard) {unset(self::$credit_cards[$creditCard]);}
+	public static function remove_credit_card($creditCard) {unset(self::$credit_cards[$creditCard]);}
 
 	private static $email_debug = false;
 
