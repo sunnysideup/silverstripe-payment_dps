@@ -1,7 +1,6 @@
-###############################################
+
 Ecommerce DPS PXPayment Solution
-Pre 0.1 proof of concept
-###############################################
+================================================================================
 
 This module add the DPS PxPay Post Payment method.
 See
