@@ -115,8 +115,8 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 
 		// 1) Main Settings
 
-		$inputs['PostUsername'] = self::$username;
-		$inputs['PostPassword'] = self::$password;
+		$inputs['PostUsername'] = $this->config->get("username");
+		$inputs['PostPassword'] = $this->config->get("password");
 
 		// 2) Payment Informations
 
@@ -176,7 +176,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 
 		// 2) CURL Creation
 		$clientURL = curl_init();
-		curl_setopt($clientURL, CURLOPT_URL, self::$pxpost_url);
+		curl_setopt($clientURL, CURLOPT_URL, $this->config()-get("pxpost_url"));
 		curl_setopt($clientURL, CURLOPT_POST, 1);
 		curl_setopt($clientURL, CURLOPT_POSTFIELDS, $transaction);
 		curl_setopt($clientURL, CURLOPT_RETURNTRANSFER, 1);

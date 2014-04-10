@@ -45,11 +45,11 @@ class DpsPxPayPayment extends EcommercePayment {
 	}
 
 	function getPaymentFormFields() {
-		$logo = '<img src="' . self::$logo . '" alt="Credit card payments powered by DPS"/>';
-		$privacyLink = '<a href="' . self::$privacy_link . '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
+		$logo = '<img src="' . $this->config()->get("logo"). '" alt="Credit card payments powered by DPS"/>';
+		$privacyLink = '<a href="' . $this->config()->get("privacy_link"). '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
 		$paymentsList = '';
-		if(self::$credit_cards) {
-			foreach(self::$credit_cards as $name => $image) {
+		if($this->config()->get("credit_cards")) {
+			foreach($this->config()->get("credit_cards") as $name => $image) {
 				$paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
 			}
 		}
@@ -132,7 +132,7 @@ class DpsPxPayPayment extends EcommercePayment {
 		$debugMessage = $commsObject->getDebugMessage();
 		$this->DebugMessage = $debugMessage;
 		$this->write();
-		if(self::$email_debug) {
+		if($this->congig()->get("email_debug")) {
 			$from = Email::getAdminEmail();
 			$to = Email::getAdminEmail();
 			$subject = "DPS Debug Information";
@@ -153,7 +153,7 @@ class DpsPxPayPayment extends EcommercePayment {
 			**/
 			$page = new Page();
 			$page->Title = 'Redirection to DPS...';
-			$page->Logo = '<img src="' . self::$logo . '" alt="Payments powered by DPS"/>';
+			$page->Logo = '<img src="' . $this->config()->get("logo") . '" alt="Payments powered by DPS"/>';
 			$page->Form = $this->DPSForm($url);
 			$controller = new ContentController($page);
 			Requirements::clear();
