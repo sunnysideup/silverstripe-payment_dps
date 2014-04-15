@@ -133,8 +133,8 @@ class DpsPxPayPayment extends EcommercePayment {
 		$this->DebugMessage = $debugMessage;
 		$this->write();
 		if($this->congig()->get("email_debug")) {
-			$from = Email::getAdminEmail();
-			$to = Email::getAdminEmail();
+			$from = Email::config()->admin_email;
+			$to = Email::config()->admin_email;
 			$subject = "DPS Debug Information";
 			$body = $debugMessage;
 			$email = new Email($from , $to , $subject , $body);
