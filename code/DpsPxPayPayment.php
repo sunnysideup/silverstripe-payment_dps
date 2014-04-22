@@ -23,7 +23,6 @@ class DpsPxPayPayment extends EcommercePayment {
 
 	private static $logo = 'payment_dps/images/dps_paymentexpress_small.png';
 
-	private static $description = "Page allows users to pay using the DPS payment gateway";
 
 	// URLs
 
