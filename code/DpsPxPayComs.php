@@ -69,9 +69,9 @@ class DpsPxPayComs {
 			self::$alternative_thirdparty_folder = Director::baseFolder().'/payment_dps/code/thirdparty';
 		}
 		require_once(self::$alternative_thirdparty_folder."/PxPay_Curl.inc.php");
-		if(!$this->confg()->get("pxpay_url"))            {user_error("error in DpsPxPayComs::__construct, self::$pxpay_url not set. ", E_USER_WARNING);}
+		if(!$this->confg()->get("pxpay_url"))             {user_error("error in DpsPxPayComs::__construct, self::$pxpay_url not set. ", E_USER_WARNING);}
 		if(!$this->config()->get("pxpay_userid"))         {user_error("error in DpsPxPayComs::__construct, self::$pxpay_userid not set. ", E_USER_WARNING);}
-		if(!) {user_error("error in DpsPxPayComs::__construct, self::$pxpay_encryption_key not set. ", E_USER_WARNING);}
+		if(!$this->config()->get("pxpay_encryption_key")) {user_error("error in DpsPxPayComs::__construct, self::$pxpay_encryption_key not set. ", E_USER_WARNING);}
 
 	  $this->PxPayObject = new PxPay_Curl(
 			$this->confg()->get("pxpay_url"),

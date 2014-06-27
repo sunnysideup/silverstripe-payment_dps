@@ -1,4 +1,4 @@
-DpsPxPayment_Handler:
+DpsPxPayPayment_Handler:
   url_segment: 'dpspxpaypayment'
 
 DpsPxPayStoredPayment_Handler:
