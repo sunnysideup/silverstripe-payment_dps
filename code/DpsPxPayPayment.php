@@ -93,7 +93,7 @@ class DpsPxPayPayment extends EcommercePayment {
 		if(!$currency) {
 			$currency = EcommercePayment::site_currency();
 		}
-		$this->Currency->Currency = $currency;
+		$this->Amount->Currency = $currency;
 		$this->Amount->Amount = $amount;
 		//no need to write here, as it will be done by BuildURL
 		//$this->write();
@@ -133,7 +133,7 @@ class DpsPxPayPayment extends EcommercePayment {
 		$debugMessage = $commsObject->getDebugMessage();
 		$this->DebugMessage = $debugMessage;
 		$this->write();
-		if($this->congig()->get("email_debug")) {
+		if($this->config()->get("email_debug")) {
 			$from = Email::config()->admin_email;
 			$to = Email::config()->admin_email;
 			$subject = "DPS Debug Information";

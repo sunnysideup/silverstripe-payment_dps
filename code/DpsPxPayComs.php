@@ -3,7 +3,7 @@
  *@author nicolaas [at] sunnysideup.co.nz
  **/
 
-class DpsPxPayComs {
+class DpsPxPayComs extends Object {
 
 	/**
 	* seller details - are always the same
@@ -38,7 +38,7 @@ class DpsPxPayComs {
 	protected $CurrencyInput = "NZD";
 		public function setCurrencyInput($v)     {$this->CurrencyInput = $v;}
 	protected $TxnType = "Purchase";
-		public function setTxnType($v)           {$this->TxnType = $v; if($this->config()->get("overriding_txn_type")) {$this->TxnType = $this->config()->get("overriding_txn_type");}}
+		public function setTxnType($v)           {$this->TxnType = $v; if(Config::inst()->get("DpsPxPayComs", "overriding_txn_type")) {$this->TxnType = Config::inst()->get("DpsPxPayComs", "overriding_txn_type");}}
 	protected $TxnId = "";
 		public function setTxnId($v)             {$this->TxnId = $v; }
 
@@ -69,14 +69,14 @@ class DpsPxPayComs {
 			self::$alternative_thirdparty_folder = Director::baseFolder().'/payment_dps/code/thirdparty';
 		}
 		require_once(self::$alternative_thirdparty_folder."/PxPay_Curl.inc.php");
-		if(!$this->confg()->get("pxpay_url"))             {user_error("error in DpsPxPayComs::__construct, self::$pxpay_url not set. ", E_USER_WARNING);}
-		if(!$this->config()->get("pxpay_userid"))         {user_error("error in DpsPxPayComs::__construct, self::$pxpay_userid not set. ", E_USER_WARNING);}
-		if(!$this->config()->get("pxpay_encryption_key")) {user_error("error in DpsPxPayComs::__construct, self::$pxpay_encryption_key not set. ", E_USER_WARNING);}
+		if(!Config::inst()->get("DpsPxPayComs", "pxpay_url"))             {user_error("error in DpsPxPayComs::__construct, self::$pxpay_url not set. ", E_USER_WARNING);}
+		if(!Config::inst()->get("DpsPxPayComs","pxpay_userid"))         {user_error("error in DpsPxPayComs::__construct, self::$pxpay_userid not set. ", E_USER_WARNING);}
+		if(!Config::inst()->get("DpsPxPayComs","pxpay_encryption_key")) {user_error("error in DpsPxPayComs::__construct, self::$pxpay_encryption_key not set. ", E_USER_WARNING);}
 
 	  $this->PxPayObject = new PxPay_Curl(
-			$this->confg()->get("pxpay_url"),
-			$this->config()->get("pxpay_userid"),
-			$this->config()->get("pxpay_encryption_key")
+			Config::inst()->get("DpsPxPayComs","pxpay_url"),
+			Config::inst()->get("DpsPxPayComs","pxpay_userid"),
+			Config::inst()->get("DpsPxPayComs","pxpay_encryption_key")
 		);
 	}
 
