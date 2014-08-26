@@ -114,7 +114,7 @@ class DpsPxPayPayment extends EcommercePayment {
 		/**
 		* order details
 		**/
-		$commsObject->setTxnType('Purchase');
+		$commsObject->setTxnType(DpsPxPayComs::get_txn_type());
 		$commsObject->setMerchantReference($this->ID);
 		//replace any character that is NOT [0-9] or dot (.)
 		$commsObject->setAmountInput(floatval(preg_replace("/[^0-9\.]/", "", $amount)));

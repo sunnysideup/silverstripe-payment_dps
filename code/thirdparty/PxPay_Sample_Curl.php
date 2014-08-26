@@ -9,14 +9,14 @@
 #* Author 			: Thomas Treadwell
 #******************************************************************************
 
-# This file is a sample demonstrating integration with the PxPay interface using PHP with the cURL extension installed.  
+# This file is a sample demonstrating integration with the PxPay interface using PHP with the cURL extension installed.
 #Inlcude PxPay objects
 include "PxPay_Curl.inc.php";
 
   $PxPay_Url    = "https://www.paymentexpress.com/pxpay/pxaccess.aspx";
   $PxPay_Userid = "UserId"; #Important! Update with your UserId
   $PxPay_Key    =  "Encryptionkey"; #Important! Update with your Key
-  
+
   #
   # MAIN
   #
@@ -155,7 +155,7 @@ shipping details.
   <tr>
     <td>Reference:</td>
     <td><input name="Reference" type="text"/></td>
-  </tr>  
+  </tr>
   <tr>
     <td>Ship to</td>
     <td></td>
@@ -201,17 +201,17 @@ function redirect_form()
 
   # the following variables are read from the form
   $Quantity = $_REQUEST["Quantity"];
-  $MerchantReference = $_REQUEST["Reference"];  
+  $MerchantReference = $_REQUEST["Reference"];
   $Address1 = $_REQUEST["Address1"];
   $Address2 = $_REQUEST["Address2"];
   $Address3 = $_REQUEST["Address3"];
-  
+
   #Calculate AmountInput
   $AmountInput = 19.95 * $Quantity;
-  
+
   #Generate a unique identifier for the transaction
   $TxnId = uniqid("ID");
-  
+
   #Set PxPay properties
   $request->setMerchantReference($MerchantReference);
   $request->setAmountInput($AmountInput);
@@ -223,25 +223,25 @@ function redirect_form()
   $request->setEmailAddress("your_email@paymentexpress.com");
   $request->setUrlFail($script_url);			# can be a dedicated failure page
   $request->setUrlSuccess($script_url);			# can be a dedicated success page
-  $request->setTxnId($TxnId);  
-  
+  $request->setTxnId($TxnId);
+
   #The following properties are not used in this case
-  # $request->setEnableAddBillCard($EnableAddBillCard);    
+  # $request->setEnableAddBillCard($EnableAddBillCard);
   # $request->setBillingId($BillingId);
   # $request->setOpt($Opt);
-  
 
-  
+
+
   #Call makeRequest function to obtain input XML
   $request_string = $pxpay->makeRequest($request);
-   
+
   #Obtain output XML
   $response = new MifMessage($request_string);
-  
+
   #Parse output XML
   $url = $response->get_element_text("URI");
   $valid = $response->get_attribute("valid");
-   
+
    #Redirect to payment page
    header("Location: ".$url);
 }

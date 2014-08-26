@@ -15,6 +15,12 @@ class DpsPxPayComs extends Object {
 	private static $alternative_thirdparty_folder =  "";
 	private static $overriding_txn_type =  ""; //e.g. AUTH
 
+	public static function get_txn_type(){
+		$overridingTxnType = Config::inst()->get("DpsPxPayComs", "overriding_txn_type");
+		return $overridingTxnType  ? $overridingTxnType : "Purchase";
+	}
+
+
 	/**
 	* customer details
 	**/
@@ -33,12 +39,16 @@ class DpsPxPayComs extends Object {
 	**/
 	protected $AmountInput = 0;
 		public function setAmountInput($v)       { $this->AmountInput = $v;}
+
 	protected $MerchantReference = "";
 		public function setMerchantReference($v) {$this->MerchantReference = $v;}
+
 	protected $CurrencyInput = "NZD";
 		public function setCurrencyInput($v)     {$this->CurrencyInput = $v;}
+
 	protected $TxnType = "Purchase";
-		public function setTxnType($v)           {$this->TxnType = $v; if(Config::inst()->get("DpsPxPayComs", "overriding_txn_type")) {$this->TxnType = Config::inst()->get("DpsPxPayComs", "overriding_txn_type");}}
+		public function setTxnType($v)           {$this->TxnType = $v; }
+
 	protected $TxnId = "";
 		public function setTxnId($v)             {$this->TxnId = $v; }
 
