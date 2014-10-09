@@ -10,11 +10,11 @@ After: 'framework/*','cms/*','ecommerce/*'
 DpsPxPayPayment:
   # Comment out credit cards to exclude them.
   credit_cards:
-    - 'Visa' : 'payment/images/payments/methods/visa.jpg'
-    - 'MasterCard' : 'payment/images/payments/methods/mastercard.jpg'
-    - 'American Express' : 'payment/images/payments/methods/american-express.gif'
-    - 'Dinners Club' : 'payment/images/payments/methods/dinners-club.jpg'
-    - 'JCB' : 'payment/images/payments/methods/jcb.jpg'
+    'Visa' : 'payment/images/payments/methods/visa.jpg'
+    'MasterCard' : 'payment/images/payments/methods/mastercard.jpg'
+    'American Express' : 'payment/images/payments/methods/american-express.gif'
+    'Dinners Club' : 'payment/images/payments/methods/dinners-club.jpg'
+    'JCB' : 'payment/images/payments/methods/jcb.jpg'
 
   #add_card_explanation: "Storing a Card means your Credit Card will be kept on file for your next purchase. "
   #username: "xxx"
