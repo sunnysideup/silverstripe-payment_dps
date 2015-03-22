@@ -49,8 +49,8 @@ class DpsPxPayPayment extends EcommercePayment {
 		$logo = '<img src="' . $this->config()->get("logo"). '" alt="Credit card payments powered by DPS"/>';
 		$privacyLink = '<a href="' . $this->config()->get("privacy_link"). '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
 		$paymentsList = '';
-		if($this->config()->get("credit_cards")) {
-			foreach($this->config()->get("credit_cards") as $name => $image) {
+		if($cards = $this->config()->get("credit_cards")) {
+			foreach($cards as $name => $image) {
 				$paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
 			}
 		}
