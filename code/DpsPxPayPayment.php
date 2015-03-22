@@ -213,6 +213,7 @@ class DpsPxPayPayment_Handler extends Controller {
 	}
 
 	function paid() {
+		$this->extend("DpsPxPayPayment_Handler_completion_start");
 		$commsObject = new DpsPxPayComs();
 		$response = $commsObject->processRequestAndReturnResultsAsObject();
 		if($payment = DpsPxPayPayment::get()->byID($response->getMerchantReference())) {
