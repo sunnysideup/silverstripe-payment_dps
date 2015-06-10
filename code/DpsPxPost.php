@@ -78,7 +78,7 @@ class DpsPxPost extends EcommercePayment {
 		$fieldList = new FieldList(
 			array(
 				new LiteralField("DPSPXPost_Logo", '<a href="https://www.paymentexpress.com"><img src="https://www.paymentexpress.com/DPS/media/Logo/logos_transparent/pxlogoclearstack_gif.gif" alt="Payment Processor" width="155" height="54" /></a>'),
-				$creditCardField = new TextField(
+				$creditCardField = new EcommerceCreditCardField(
 					"DPSPXPost_CreditCard",
 					_t("DpsPxPost.DPSPXPOST_CREDITCARD", "Card Number"),
 					$this->CardNumber
@@ -100,12 +100,10 @@ class DpsPxPost extends EcommercePayment {
 				)
 			)
 		);
-		//$creditCardField->setAttribute("placeholder", "0000000000000000");
-		$creditCardField->setAttribute("pattern", "[0-9]{13,16}");
-		$creditCardField->setAttribute("maxlength", "16");
 		$nameOnCardField->setAttribute("maxlength", "40");
 		$cvvNumberField->setAttribute("maxlength", "4");
 		$cvvNumberField->setAttribute("size", "4");
+		$cvvNumberField->setAttribute("autocomplete", "off");
 		return $fieldList;
 	}
 
@@ -128,6 +126,55 @@ class DpsPxPost extends EcommercePayment {
 	}
 
 	/**
+	 * returns true if all the data is correct.
+	 *
+	 * @param array $data The form request data - see OrderForm
+	 * @param OrderForm $form The form object submitted on
+	 * @return Boolean
+	 */
+	function validatePayment($data, $form){
+		$this->getDataFromForm($data);
+
+		if(!$this->validCreditCard($this->CreditCard)) {
+			$form->addErrorMessage(
+				'DPSPXPost_CreditCard',
+				_t('DPSPXPost.INVALID_CREDIT_CARD','Invalid credit card number.'),
+				'bad'
+			);
+			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE_CREDIT_CARD','Please check your card number.'),'bad');
+			return false;
+		}
+		if(strlen($this->NameOnCard) < 3) {
+			$form->addErrorMessage(
+				'DPSPXPost_NameOnCard',
+				_t('DPSPXPost.INVALID_NAME_ON_CARD','No card name provided.'),
+				'bad'
+			);
+			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE__NAME_ON_CARD','Please enter a valid card name.'),'bad');
+			return false;
+		}
+		if(!$this->validExpiryDate($this->ExpiryDate)) {
+			$form->addErrorMessage(
+				'DPSPXPost_ExpiryDate',
+				_t('DPSPXPost.INVALID_EXPIRY_DATE','Expiry date not valid.'),
+				'bad'
+			);
+			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE_EXPIRY_DATE','Please enter a valid expiry date.'),'bad');
+			return false;
+		}
+		if($this->validCVV($this->CardNumber, $this->CVVNumber)) {
+			$form->addErrorMessage(
+				'DPSPXPost_CVVNumber',
+				_t('DPSPXPost.INVALID_CVV_NUMBER','Invalid security number.'),
+				'bad'
+			);
+			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE_CVV_NUMBER','Please enter a valid security number as printed on the back of your card.'),'bad');
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Perform payment processing for the type of
 	 * payment. For example, if this was a credit card
 	 * payment type, you would perform the data send
@@ -141,54 +188,8 @@ class DpsPxPost extends EcommercePayment {
 	 * @param OrderForm $form The form object submitted on
 	 */
 	function processPayment($data, $form){
-		//save to payment
-		$this->CreditCard = $data["DPSPXPost_CreditCard"];
-		$this->NameOnCard = $data["DPSPXPost_NameOnCard"];
-		$this->ExpiryDate = $data["DPSPXPost_ExpiryDate"]["month"].$data["DPSPXPost_ExpiryDate"]["year"];
-		$this->CVVNumber = $data["DPSPXPost_CVVNumber"];
-		$this->write();
-		if(!$this->validCreditCard($this->CreditCard)) {
-			$form->addErrorMessage(
-				'DPSPXPost_CreditCard',
-				_t('DPSPXPost.INVALID_CREDIT_CARD','Invalid credit card number.'),
-				'bad'
-			);
-			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE_CREDIT_CARD','Please check your card number.'),'bad');
-			return Controller::curr()->redirectBack();
-		}
-		if(strlen($this->NameOnCard) < 3) {
-			$form->addErrorMessage(
-				'DPSPXPost_NameOnCard',
-				_t('DPSPXPost.INVALID_NAME_ON_CARD','No card name provided.'),
-				'bad'
-			);
-			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE__NAME_ON_CARD','Please enter a valid card name.'),'bad');
-			return Controller::curr()->redirectBack();
-		}
-		if(!$this->validExpiryDate($this->ExpiryDate)) {
-			$form->addErrorMessage(
-				'DPSPXPost_ExpiryDate',
-				_t('DPSPXPost.INVALID_EXPIRY_DATE','Expiry date not valid.'),
-				'bad'
-			);
-			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE_EXPIRY_DATE','Please enter a valid expiry date.'),'bad');
-			return Controller::curr()->redirectBack();
-		}
-		if($this->validCVV($this->CardNumber, $this->CVVNumber)) {
-			$form->addErrorMessage(
-				'DPSPXPost_CVVNumber',
-				_t('DPSPXPost.INVALID_CVV_NUMBER','Invalid security number.'),
-				'bad'
-			);
-			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE_CVV_NUMBER','Please enter a valid security number as printed on the back of your card.'),'bad');
-			return Controller::curr()->redirectBack();
-		}
-
-		//validate fields
-		$this->CreditCard = $data["DPSPXPost_CreditCard"];
-		$this->NameOnCard = $data["DPSPXPost_NameOnCard"];
-		$this->ExpiryDate = $data["DPSPXPost_ExpiryDate"]["month"].$data["DPSPXPost_ExpiryDate"]["year"];
-		$this->CVVNumber = $data["DPSPXPost_CVVNumber"];
+		//save data
+		$this->getDataFromForm($data);
 		$this->write();
 
 		//get variables
@@ -207,11 +208,11 @@ class DpsPxPost extends EcommercePayment {
 		$xml  = "<Txn>";
 		$xml .= "<PostUsername>".$username."</PostUsername>";
 		$xml .= "<PostPassword>".$password."</PostPassword>";
-		$xml .= "<CardHolderName>".Convert::raw2xml($data["DPSPXPost_NameOnCard"])."</CardHolderName>";
-		$xml .= "<CardNumber>".$data["DPSPXPost_CreditCard"]."</CardNumber>";
+		$xml .= "<CardHolderName>".Convert::raw2xml($this->NameOnCard)."</CardHolderName>";
+		$xml .= "<CardNumber>".$this->CreditCard."</CardNumber>";
 		$xml .= "<Amount>".round($amount, 2)."</Amount>";
 		$xml .= "<DateExpiry>".$this->ExpiryDate."</DateExpiry>";
-		$xml .= "<Cvc2>".Convert::raw2sql($data["DPSPXPost_CVVNumber"])."</Cvc2>";
+		$xml .= "<Cvc2>".$this->CVVNumber."</Cvc2>";
 		$xml .= "<Cvc2Presence>1</Cvc2Presence>";
 		$xml .= "<InputCurrency>".Convert::raw2xml(strtoupper($currency))."</InputCurrency>";
 		$xml .= "<TxnType>".Convert::raw2xml($this->Config()->get("type"))."</TxnType>";
@@ -235,8 +236,9 @@ class DpsPxPost extends EcommercePayment {
 		$txn = $params->Transaction;
 
 		//save basic info
-		$this->Response = print_r($params, 1);
-		$this->Message = $txn->CardHolderResponseText." ".$txn->CardHolderResponseDescription;
+		$this->Response = Convert::raw2sql(print_r($params, 1));
+		$this->Message = Convert::raw2sql($txn->CardHolderResponseText." ".$txn->CardHolderResponseDescription);
+		$this->CardNumber = Convert::raw2sql($txn->CardNumber);
 		if(
 			$params->Success &&
 			$amount == $txn->Amount &&
@@ -254,6 +256,23 @@ class DpsPxPost extends EcommercePayment {
 		return $returnObject;
 	}
 
+	/**
+	 * @param Array $data
+	 */
+	protected function getDataFromForm($data) {
+		$this->CreditCard = trim(
+			$data["DPSPXPost_CreditCard"][0].
+			$data["DPSPXPost_CreditCard"][1].
+			$data["DPSPXPost_CreditCard"][2].
+			$data["DPSPXPost_CreditCard"][3]
+		);
+
+		$this->NameOnCard = trim($data["DPSPXPost_NameOnCard"]);
+		$this->ExpiryDate =
+			$data["DPSPXPost_ExpiryDate"]["month"].
+			$data["DPSPXPost_ExpiryDate"]["year"];
+		$this->CVVNumber = $data["DPSPXPost_CVVNumber"];
+	}
 
 	/**
 	 * are you running in test mode?
