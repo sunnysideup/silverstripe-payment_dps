@@ -52,6 +52,7 @@ class DpsPxPost extends EcommercePayment {
 		"CardNumber" => "Varchar(255)",
 		"ExpiryDate" => "Varchar(4)",
 		"CVVNumber" => "Varchar(3)",
+		"Request" => "Text",
 		"Response" => "Text"
 	);
 
@@ -61,7 +62,7 @@ class DpsPxPost extends EcommercePayment {
 
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab("Root.Details", new LiteralField("ResponseDetails", "Response Details"));
+		$fields->addFieldToTab("Root.Details", new LiteralField("ResponseDetails", "Response Details", $this->getResponseDetails()));
 		return $fields;
 	}
 
@@ -134,15 +135,14 @@ class DpsPxPost extends EcommercePayment {
 	 */
 	function validatePayment($data, $form){
 		$this->getDataFromForm($data);
-
+		$errors = false;
 		if(!$this->validCreditCard($this->CreditCard)) {
 			$form->addErrorMessage(
 				'DPSPXPost_CreditCard',
 				_t('DPSPXPost.INVALID_CREDIT_CARD','Invalid credit card number.'),
 				'bad'
 			);
-			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE_CREDIT_CARD','Please check your card number.'),'bad');
-			return false;
+			$errors = true;
 		}
 		if(strlen($this->NameOnCard) < 3) {
 			$form->addErrorMessage(
@@ -150,8 +150,7 @@ class DpsPxPost extends EcommercePayment {
 				_t('DPSPXPost.INVALID_NAME_ON_CARD','No card name provided.'),
 				'bad'
 			);
-			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE__NAME_ON_CARD','Please enter a valid card name.'),'bad');
-			return false;
+			$errors = true;
 		}
 		if(!$this->validExpiryDate($this->ExpiryDate)) {
 			$form->addErrorMessage(
@@ -159,16 +158,18 @@ class DpsPxPost extends EcommercePayment {
 				_t('DPSPXPost.INVALID_EXPIRY_DATE','Expiry date not valid.'),
 				'bad'
 			);
-			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE_EXPIRY_DATE','Please enter a valid expiry date.'),'bad');
-			return false;
+			$errors = true;
 		}
-		if($this->validCVV($this->CardNumber, $this->CVVNumber)) {
+		if(!$this->validCVV($this->CreditCard, $this->CVVNumber)) {
 			$form->addErrorMessage(
 				'DPSPXPost_CVVNumber',
 				_t('DPSPXPost.INVALID_CVV_NUMBER','Invalid security number.'),
 				'bad'
 			);
-			$form->sessionMessage(_t('DPSPXPost.MUST_HAVE_CVV_NUMBER','Please enter a valid security number as printed on the back of your card.'),'bad');
+			$errors = true;
+		}
+		if($errors) {
+			$form->sessionMessage(_t('DPSPXPost.PLEASE_REVIEW_CARD_DETAILS','Please review your card details.'),'bad');
 			return false;
 		}
 		return true;
