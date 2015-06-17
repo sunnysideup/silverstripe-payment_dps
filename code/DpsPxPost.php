@@ -10,6 +10,14 @@
 class DpsPxPost extends EcommercePayment {
 
 	/**
+	 * set the required privacy link as you see fit...
+	 * also see: https://www.paymentexpress.com/About/Artwork_Downloads
+	 * also see: https://www.paymentexpress.com/About/About_DPS/Privacy_Policy
+	 * @var String
+	 */
+	private static $dps_logo_and_link = '<a href="https://www.paymentexpress.com/About/About_DPS/Privacy_Policy" id="PXPostPrivacy"><img src="https://www.paymentexpress.com/DPS/media/Logo/logos_transparent/pxlogoclearstack_gif.gif" alt="Payment Processor" width="155" height="54" /></a>';
+
+	/**
 	 * we use yes / no as this is more reliable than a boolean value
 	 * for configs
 	 * @var String
@@ -78,7 +86,7 @@ class DpsPxPost extends EcommercePayment {
 	function getPaymentFormFields(){
 		$fieldList = new FieldList(
 			array(
-				new LiteralField("DPSPXPost_Logo", '<a href="https://www.paymentexpress.com"><img src="https://www.paymentexpress.com/DPS/media/Logo/logos_transparent/pxlogoclearstack_gif.gif" alt="Payment Processor" width="155" height="54" /></a>'),
+				new LiteralField("DPSPXPost_Logo", $this->Config()->get("dps_logo_and_link")),
 				$creditCardField = new EcommerceCreditCardField(
 					"DPSPXPost_CreditCard",
 					_t("DpsPxPost.DPSPXPOST_CREDITCARD", "Card Number"),
