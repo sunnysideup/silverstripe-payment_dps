@@ -260,7 +260,7 @@ class DpsPxPost extends EcommercePayment {
 		$this->Message = Convert::raw2sql($txn->CardHolderResponseText." ".$txn->CardHolderResponseDescription);
 		$this->CardNumber = Convert::raw2sql($txn->CardNumber);
 		if(
-			$params->Success &&
+			$params->Success == 1 &&
 			$amount == $txn->Amount &&
 			$currency == $txn->CurrencyName &&
 			trim($this->OrderID) == trim($txn->MerchantReference)
