@@ -76,12 +76,14 @@ class DpsPxPost extends EcommercePayment {
 	);
 
 	private static $casting = array(
+		"RequestDetails" => "HTMLText",
 		"ResponseDetails" => "HTMLText"
 	);
 
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab("Root.Details", new LiteralField("ResponseDetails", "Response Details", $this->getResponseDetails()));
+		$fields->addFieldToTab("Root.Details", new LiteralField("Request", $this->getRequestDetails()));
+		$fields->addFieldToTab("Root.Details", new LiteralField("Response", $this->getResponseDetails()));
 		return $fields;
 	}
 
@@ -256,7 +258,8 @@ class DpsPxPost extends EcommercePayment {
 		$txn = $params->Transaction;
 
 		//save basic info
-		$this->Response = Convert::raw2sql(print_r($params, 1));
+		//$this->Request = Convert::raw2sql($xml);
+		$this->Response = str_replace('\n', "\n", Convert::raw2sql(print_r($params, 1)));
 		$this->Message = Convert::raw2sql($txn->CardHolderResponseText." ".$txn->CardHolderResponseDescription);
 		$this->CardNumber = Convert::raw2sql($txn->CardNumber);
 		if(
@@ -309,6 +312,10 @@ class DpsPxPost extends EcommercePayment {
 		else {
 			user_error("Class not set to live or test correctly.");
 		}
+	}
+
+	function getRequestDetails(){
+		return "<pre>".$this->Request."</pre>";
 	}
 
 	function getResponseDetails(){
