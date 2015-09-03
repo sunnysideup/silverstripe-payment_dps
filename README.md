@@ -1,14 +1,8 @@
 
-Ecommerce DPS PXPayment Solution
+Ecommerce DPS Payment Solution
 ================================================================================
 
-This module add the DPS PxPay Post Payment method.
-See
-http://www.paymentexpress.com/technical_resources/ecommerce_hosted/pxpay.html
-for more information.
-
-CUSTOMISATION
-http://www.paymentexpress.com/technical_resources/ecommerce_hosted/pxaccesscustom.html
+Set up payment through DPS (hosted or non-hosted)
 
 
 Developers
