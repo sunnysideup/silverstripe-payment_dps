@@ -28,11 +28,11 @@ class DpsPxPayPayment extends EcommercePayment {
 
 	// Please set from YAML. See _config/payment_dps.yml.example
 	private static $credit_cards = array(
-		/*'Visa' => 'payment/images/payments/methods/visa.jpg',
-		'MasterCard' => 'payment/images/payments/methods/mastercard.jpg',
-		'American Express' => 'payment/images/payments/methods/american-express.gif',
-		'Dinners Club' => 'payment/images/payments/methods/dinners-club.jpg',
-		'JCB' => 'payment/images/payments/methods/jcb.jpg'*/
+		/*'Visa' => 'ecommerce/images/paymentmethods/visa.jpg',
+		'MasterCard' => 'ecommerce/images/paymentmethods/mastercard.jpg',
+		'American Express' => 'ecommerce/images/paymentmethods/american-express.gif',
+		'Dinners Club' => 'ecommerce/images/paymentmethods/dinners-club.jpg',
+		'JCB' => 'ecommerce/images/paymentmethods/jcb.jpg'*/
 	);
 
 	public static function remove_credit_card($creditCard) {unset(self::$credit_cards[$creditCard]);}
