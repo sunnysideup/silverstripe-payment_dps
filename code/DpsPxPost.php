@@ -68,7 +68,7 @@ class DpsPxPost extends EcommercePayment {
 	 */
 	private static $db = array(
 		"NameOnCard" => "Varchar(40)",
-		"CardNumber" => "Varchar(255)",
+		"CardNumber" => "Varchar(64)",
 		"ExpiryDate" => "Varchar(4)",
 		"CVVNumber" => "Varchar(3)",
 		"Request" => "Text",
@@ -155,45 +155,6 @@ class DpsPxPost extends EcommercePayment {
 	 * @return Boolean
 	 */
 	function validatePayment($data, $form){
-		$this->getDataFromForm($data);
-		$errors = false;
-		if(!$this->validCreditCard($this->CreditCard)) {
-			$form->addErrorMessage(
-				'DPSPXPost_CreditCard',
-				_t('DPSPXPost.INVALID_CREDIT_CARD','Invalid credit card number.'),
-				'bad'
-			);
-			$errors = true;
-		}
-		if(strlen($this->NameOnCard) < 3) {
-			$form->addErrorMessage(
-				'DPSPXPost_NameOnCard',
-				_t('DPSPXPost.INVALID_NAME_ON_CARD','No card name provided.'),
-				'bad'
-			);
-			$errors = true;
-		}
-		if(!$this->validExpiryDate($this->ExpiryDate)) {
-			$form->addErrorMessage(
-				'DPSPXPost_ExpiryDate',
-				_t('DPSPXPost.INVALID_EXPIRY_DATE','Expiry date not valid.'),
-				'bad'
-			);
-			$errors = true;
-		}
-		if(!$this->validCVV($this->CreditCard, $this->CVVNumber)) {
-			$form->addErrorMessage(
-				'DPSPXPost_CVVNumber',
-				_t('DPSPXPost.INVALID_CVV_NUMBER','Invalid security number.'),
-				'bad'
-			);
-			$errors = true;
-		}
-		if($errors) {
-			$form->sessionMessage(_t('DPSPXPost.PLEASE_REVIEW_CARD_DETAILS','Please review your card details.'),'bad');
-			return false;
-		}
-		return true;
 	}
 
 	/**
