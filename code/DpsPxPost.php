@@ -67,8 +67,8 @@ class DpsPxPost extends EcommercePayment {
 	 * Pending: Payment awaiting receipt/bank transfer etc
 	 */
 	private static $db = array(
-		"NameOnCard" => "Varchar(40)",
 		"CardNumber" => "Varchar(64)",
+		"NameOnCard" => "Varchar(40)",
 		"ExpiryDate" => "Varchar(4)",
 		"CVVNumber" => "Varchar(3)",
 		"Request" => "Text",
@@ -97,35 +97,11 @@ class DpsPxPost extends EcommercePayment {
 	 * @return FieldList
 	 */
 	function getPaymentFormFields(){
-		$fieldList = new FieldList(
-			array(
-				new LiteralField("DPSPXPost_Logo", $this->Config()->get("dps_logo_and_link")),
-				$creditCardField = new EcommerceCreditCardField(
-					"DPSPXPost_CreditCard",
-					_t("DpsPxPost.DPSPXPOST_CREDITCARD", "Card Number"),
-					$this->CardNumber
-				),
-				$nameOnCardField = new TextField(
-					"DPSPXPost_NameOnCard",
-					_t("DpsPxPost.DPSPXPOST_NAMEONCARD", "Name on Card"),
-					$this->NameOnCard
-				),
-				$expiryDateField = new ExpiryDateField(
-					"DPSPXPost_ExpiryDate",
-					_t("DpsPxPost.DPSPXPOST_EXPIRYDATE", "Expiry Date"),
-					$this->ExpiryDate
-				),
-				$cvvNumberField = new TextField(
-					"DPSPXPost_CVVNumber",
-					_t("DpsPxPost.DPSPXPOST_CVVNumber", "Security Number"),
-					$this->CVVNumber
-				)
-			)
+		$fieldList = EcommercePaymentFormSetupAndValidation::get_credit_card_payment_form_fields($this);
+		$fieldList->insertBefore(
+			new LiteralField("DpsPxPost_Logo", $this->Config()->get("dps_logo_and_link")),
+			"DpsPxPost_CreditCard"
 		);
-		$nameOnCardField->setAttribute("maxlength", "40");
-		$cvvNumberField->setAttribute("maxlength", "4");
-		$cvvNumberField->setAttribute("size", "4");
-		$cvvNumberField->setAttribute("autocomplete", "off");
 		return $fieldList;
 	}
 
@@ -139,12 +115,7 @@ class DpsPxPost extends EcommercePayment {
 	 * @return array
 	 */
 	function getPaymentFormRequirements(){
-		return array(
-			"DPSPXPost_CreditCard",
-			"DPSPXPost_NameOnCard",
-			"DPSPXPost_ExpiryDate",
-			"DPSPXPost_CVVNumber"
-		);
+		return EcommercePaymentFormSetupAndValidation::get_credit_card_payment_form_fields_required($this);
 	}
 
 	/**
@@ -152,9 +123,11 @@ class DpsPxPost extends EcommercePayment {
 	 *
 	 * @param array $data The form request data - see OrderForm
 	 * @param OrderForm $form The form object submitted on
+	 * 
 	 * @return Boolean
 	 */
 	function validatePayment($data, $form){
+		return EcommercePaymentFormSetupAndValidation::validate_and_save_credit_card_information($data, $form, $this)
 	}
 
 	/**
@@ -192,7 +165,7 @@ class DpsPxPost extends EcommercePayment {
 		$xml .= "<PostUsername>".$username."</PostUsername>";
 		$xml .= "<PostPassword>".$password."</PostPassword>";
 		$xml .= "<CardHolderName>".Convert::raw2xml($this->NameOnCard)."</CardHolderName>";
-		$xml .= "<CardNumber>".$this->CreditCard."</CardNumber>";
+		$xml .= "<CardNumber>".$this->CardNumber."</CardNumber>";
 		$xml .= "<Amount>".round($amount, 2)."</Amount>";
 		$xml .= "<DateExpiry>".$this->ExpiryDate."</DateExpiry>";
 		$xml .= "<Cvc2>".$this->CVVNumber."</Cvc2>";
@@ -240,23 +213,6 @@ class DpsPxPost extends EcommercePayment {
 		return $returnObject;
 	}
 
-	/**
-	 * @param Array $data
-	 */
-	protected function getDataFromForm($data) {
-		$this->CreditCard = trim(
-			$data["DPSPXPost_CreditCard"][0].
-			$data["DPSPXPost_CreditCard"][1].
-			$data["DPSPXPost_CreditCard"][2].
-			$data["DPSPXPost_CreditCard"][3]
-		);
-
-		$this->NameOnCard = trim($data["DPSPXPost_NameOnCard"]);
-		$this->ExpiryDate =
-			$data["DPSPXPost_ExpiryDate"]["month"].
-			$data["DPSPXPost_ExpiryDate"]["year"];
-		$this->CVVNumber = $data["DPSPXPost_CVVNumber"];
-	}
 
 	/**
 	 * are you running in test mode?
