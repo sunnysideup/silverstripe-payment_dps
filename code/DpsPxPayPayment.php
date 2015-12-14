@@ -161,7 +161,7 @@ class DpsPxPayPayment extends EcommercePayment {
 			Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
 			//Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
 			//Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
-			return new Payment_Processing($controller->renderWith('PaymentProcessingPage'));
+			return EcommercePayment_Processing::create($controller->renderWith('PaymentProcessingPage'));
 		}
 		else {
 			$page = new Page();
@@ -172,7 +172,7 @@ class DpsPxPayPayment extends EcommercePayment {
 			Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
 			//Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
 			//Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
-			return new Payment_Failure($controller->renderWith('PaymentProcessingPage'));
+			return EcommercePayment_Failure::create($controller->renderWith('PaymentProcessingPage'));
 		}
 	}
 
