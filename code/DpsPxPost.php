@@ -127,7 +127,7 @@ class DpsPxPost extends EcommercePayment {
 	 * @return Boolean
 	 */
 	function validatePayment($data, $form){
-		return EcommercePaymentFormSetupAndValidation::validate_and_save_credit_card_information($data, $form, $this)
+		return EcommercePaymentFormSetupAndValidation::validate_and_save_credit_card_information($data, $form, $this);
 	}
 
 	/**
