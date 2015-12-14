@@ -145,7 +145,6 @@ class DpsPxPost extends EcommercePayment {
 	 */
 	function processPayment($data, $form){
 		//save data
-		$this->getDataFromForm($data);
 		$this->write();
 
 		//get variables
@@ -203,11 +202,11 @@ class DpsPxPost extends EcommercePayment {
 			trim($this->OrderID) == trim($txn->MerchantReference)
 		) {
 			$this->Status = "Success";
-			$returnObject = new Payment_Success();
+			$returnObject = new EcommercePayment_Success();
 		}
 		else {
 			$this->Status = "Failure";
-			$returnObject = new Payment_Failure();
+			$returnObject = new EcommercePayment_Failure();
 		}
 		$this->write();
 		return $returnObject;
