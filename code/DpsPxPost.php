@@ -97,7 +97,8 @@ class DpsPxPost extends EcommercePayment {
 	 * @return FieldList
 	 */
 	function getPaymentFormFields(){
-		$fieldList = EcommercePaymentFormSetupAndValidation::get_credit_card_payment_form_fields($this);
+		$formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
+		$fieldList = $formHelper->getCreditCardPaymentFormFields($this);
 		$fieldList->insertBefore(
 			new LiteralField("DpsPxPost_Logo", $this->Config()->get("dps_logo_and_link")),
 			"DpsPxPost_CreditCard"
@@ -115,7 +116,8 @@ class DpsPxPost extends EcommercePayment {
 	 * @return array
 	 */
 	function getPaymentFormRequirements(){
-		return EcommercePaymentFormSetupAndValidation::get_credit_card_payment_form_fields_required($this);
+		$formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
+		return $formHelper->getCreditCardPaymentFormFields($this);
 	}
 
 	/**
@@ -127,7 +129,8 @@ class DpsPxPost extends EcommercePayment {
 	 * @return Boolean
 	 */
 	function validatePayment($data, $form){
-		return EcommercePaymentFormSetupAndValidation::validate_and_save_credit_card_information($data, $form, $this);
+		$formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
+		return $formHelper->validateAndSaveCreditCardInformation($data, $form, $this);
 	}
 
 	/**
