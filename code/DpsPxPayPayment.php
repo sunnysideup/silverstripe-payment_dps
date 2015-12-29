@@ -65,6 +65,12 @@ class DpsPxPayPayment extends EcommercePayment {
 		return array();
 	}
 
+	/**
+	 * @param array $data The form request data - see OrderForm
+	 * @param OrderForm $form The form object submitted on
+	 *
+	 * @return EcommercePayment_Result
+	 */
 	function processPayment($data, $form) {
 		$order = $this->Order();
 		//if currency has been pre-set use this

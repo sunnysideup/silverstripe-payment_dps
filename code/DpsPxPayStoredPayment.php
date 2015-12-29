@@ -82,6 +82,12 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 
 	}
 
+	/**
+	 * @param array $data The form request data - see OrderForm
+	 * @param OrderForm $form The form object submitted on
+	 *
+	 * @return EcommercePayment_Result
+	 */
 	function processPayment($data, $form) {
 		if(!isset($data["DPSUseStoredCard"])) {$data["DPSUseStoredCard"] = null;}
 		if(!isset($data["DPSStoreCard"])) {$data["DPSStoreCard"] = null;}

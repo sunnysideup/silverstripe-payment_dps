@@ -125,7 +125,7 @@ class DpsPxPost extends EcommercePayment {
 	 *
 	 * @param array $data The form request data - see OrderForm
 	 * @param OrderForm $form The form object submitted on
-	 * 
+	 *
 	 * @return Boolean
 	 */
 	function validatePayment($data, $form){
@@ -145,6 +145,8 @@ class DpsPxPost extends EcommercePayment {
 	 *
 	 * @param array $data The form request data - see OrderForm
 	 * @param OrderForm $form The form object submitted on
+	 *
+	 * @return EcommercePayment_Result
 	 */
 	function processPayment($data, $form){
 		//save data
