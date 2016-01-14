@@ -207,7 +207,7 @@ class DpsPxPost extends EcommercePayment {
 			trim($this->OrderID) == trim($txn->MerchantReference)
 		) {
 			$this->Status = "Success";
-			$returnObject = new EcommercePayment_Success::create();
+			$returnObject = EcommercePayment_Success::create();
 		}
 		else {
 			$this->Status = "Failure";
