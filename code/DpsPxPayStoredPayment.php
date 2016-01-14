@@ -143,11 +143,11 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment {
 
 		if(isset($responseFields['SUCCESS']) && $responseFields['SUCCESS']) {
 			$this->Status = 'Success';
-			$result = new EcommercePayment_Success();
+			$result = EcommercePayment_Success::create();
 		}
 		else {
 			$this->Status = 'Failure';
-			$result = new EcommercePayment_Failure();
+			$result = EcommercePayment_Failure::create();
 		}
 		if(isset($responseFields['DPSTXNREF'])) {
 			if($transactionRef = $responseFields['DPSTXNREF']) $this->TxnRef = $transactionRef;
