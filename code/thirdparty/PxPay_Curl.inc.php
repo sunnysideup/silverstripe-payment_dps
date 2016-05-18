@@ -449,4 +449,3 @@ class PxPayResponse extends PxPayMessage
 	}
 }
 
-?>

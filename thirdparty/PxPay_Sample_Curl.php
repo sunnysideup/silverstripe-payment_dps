@@ -263,4 +263,3 @@ function redirect_form()
    #Redirect to payment page
    header("Location: ".$url);
 }
-?>
