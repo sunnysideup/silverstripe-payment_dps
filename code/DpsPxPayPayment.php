@@ -158,7 +158,7 @@ class DpsPxPayPayment extends EcommercePayment {
             /**
             * build redirection page
             **/
-            $page = new Page();
+            $page = new SiteTree();
             $page->Title = 'Redirection to DPS...';
             $page->Logo = '<img src="' . $this->config()->get("logo") . '" alt="Payments powered by DPS"/>';
             $page->Form = $this->DPSForm($url);
@@ -170,11 +170,12 @@ class DpsPxPayPayment extends EcommercePayment {
             return EcommercePayment_Processing::create($controller->renderWith('PaymentProcessingPage'));
         }
         else {
-            $page = new Page();
+            $page = new SiteTree();
             $page->Title = 'Sorry, DPS can not be contacted at the moment ...';
             $page->Logo = 'Sorry, an error has occured in contacting the Payment Processing Provider, please try again in a few minutes...';
             $page->Form = $this->DPSForm($url);
             $controller = new ContentController($page);
+            Requirements::clear();
             Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
             //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
             //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
@@ -191,7 +192,7 @@ class DpsPxPayPayment extends EcommercePayment {
             <script type="text/javascript">
                 jQuery(document).ready(function() {
                     if(!jQuery.browser.msie) {
-                        jQuery("#PaymentFormDPS").submit();
+                        //jQuery("#PaymentFormDPS").submit();
                     }
                 });
             </script>
