@@ -192,7 +192,7 @@ class DpsPxPayPayment extends EcommercePayment {
             <script type="text/javascript">
                 jQuery(document).ready(function() {
                     if(!jQuery.browser.msie) {
-                        //jQuery("#PaymentFormDPS").submit();
+                        jQuery("#PaymentFormDPS").submit();
                     }
                 });
             </script>
