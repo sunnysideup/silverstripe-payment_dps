@@ -5,7 +5,7 @@
 
 class DpsPxPayComs extends Object {
 
-    private static $pxpay_url = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';
+    private static $pxpay_url = 'https://sec.paymentexpress.com/pxaccess/pxpay.aspx';
 
     private static $pxpay_userid = "";
 
