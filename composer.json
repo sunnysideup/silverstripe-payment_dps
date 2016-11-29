@@ -3,11 +3,13 @@
     "type": "silverstripe-module",
     "description": "Add DPS payment, including 'store credit card' to your silverstripe e-commerce and payment modules.",
     "keywords": [
+        "Silverstripe-CMS",
+        "CMS",
+        "Silverstripe",
         "ecommerce",
         "e-commerce",
         "shop",
         "dps",
-        "silverstripe",
         "dps payment",
         "payment with dps",
         "pxpay"
@@ -21,7 +23,9 @@
         }
     ],
     "require": {
-        "sunnysideup/ecommerce": "dev-master"
+        "sunnysideup/ecommerce": "*",
+        "silverstripe/framework": "~3.1",
+        "silverstripe/cms": "~3.1"
     },
     "extra": {
         "installer-name": "payment_dps"

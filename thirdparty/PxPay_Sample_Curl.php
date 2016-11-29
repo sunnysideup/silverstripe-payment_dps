@@ -9,33 +9,28 @@
 #* Author 			: Thomas Treadwell
 #******************************************************************************
 
-# This file is a sample demonstrating integration with the PxPay interface using PHP with the cURL extension installed.  
+# This file is a sample demonstrating integration with the PxPay interface using PHP with the cURL extension installed.
 #Inlcude PxPay objects
 include "PxPay_Curl.inc.php";
 
   $PxPay_Url    = "https://sec.paymentexpress.com/pxpay/pxaccess.aspx";
   $PxPay_Userid = "UserId"; #Important! Update with your UserId
   $PxPay_Key    =  "Key"; #Important! Update with your Key
-  
+
   #
   # MAIN
   #
 
-  $pxpay = new PxPay_Curl( $PxPay_Url, $PxPay_Userid, $PxPay_Key );
+  $pxpay = new PxPay_Curl($PxPay_Url, $PxPay_Userid, $PxPay_Key);
 
-  if (isset($_REQUEST["result"]))
-  {
-    # this is a redirection from the payments page.
+  if (isset($_REQUEST["result"])) {
+      # this is a redirection from the payments page.
     print_result();
-  }
-  elseif (isset($_REQUEST["Submit"]))
-  {
-    # this is a post back -- redirect to payments page.
+  } elseif (isset($_REQUEST["Submit"])) {
+      # this is a post back -- redirect to payments page.
     redirect_form();
-  }
-  else
-  {
-    # this is a fresh request -- display the purchase form.
+  } else {
+      # this is a fresh request -- display the purchase form.
     print_form();
   }
 
@@ -46,9 +41,9 @@ include "PxPay_Curl.inc.php";
 #******************************************************************************
 function print_result()
 {
-  global $pxpay;
+    global $pxpay;
 
-  $enc_hex = $_REQUEST["result"];
+    $enc_hex = $_REQUEST["result"];
   #getResponse method in PxPay object returns PxPayResponse object
   #which encapsulates all the response data
   $rsp = $pxpay->getResponse($enc_hex);
@@ -57,45 +52,40 @@ function print_result()
   # the following are the fields available in the PxPayResponse object
   $Success           = $rsp->getSuccess();   # =1 when request succeeds
   $AmountSettlement  = $rsp->getAmountSettlement();
-  $AuthCode          = $rsp->getAuthCode();  # from bank
+    $AuthCode          = $rsp->getAuthCode();  # from bank
   $CardName          = $rsp->getCardName();  # e.g. "Visa"
   $CardNumber        = $rsp->getCardNumber(); # Truncated card number
   $DateExpiry        = $rsp->getDateExpiry(); # in mmyy format
   $DpsBillingId      = $rsp->getDpsBillingId();
-  $BillingId    	 = $rsp->getBillingId();
-  $CardHolderName    = $rsp->getCardHolderName();
-  $DpsTxnRef	     = $rsp->getDpsTxnRef();
-  $TxnType           = $rsp->getTxnType();
-  $TxnData1          = $rsp->getTxnData1();
-  $TxnData2          = $rsp->getTxnData2();
-  $TxnData3          = $rsp->getTxnData3();
-  $CurrencySettlement= $rsp->getCurrencySettlement();
-  $ClientInfo        = $rsp->getClientInfo(); # The IP address of the user who submitted the transaction
+    $BillingId         = $rsp->getBillingId();
+    $CardHolderName    = $rsp->getCardHolderName();
+    $DpsTxnRef         = $rsp->getDpsTxnRef();
+    $TxnType           = $rsp->getTxnType();
+    $TxnData1          = $rsp->getTxnData1();
+    $TxnData2          = $rsp->getTxnData2();
+    $TxnData3          = $rsp->getTxnData3();
+    $CurrencySettlement= $rsp->getCurrencySettlement();
+    $ClientInfo        = $rsp->getClientInfo(); # The IP address of the user who submitted the transaction
   $TxnId             = $rsp->getTxnId();
-  $CurrencyInput     = $rsp->getCurrencyInput();
-  $EmailAddress      = $rsp->getEmailAddress();
-  $MerchantReference = $rsp->getMerchantReference();
-  $ResponseText		 = $rsp->getResponseText();
-  $TxnMac            = $rsp->getTxnMac(); # An indication as to the uniqueness of a card used in relation to others
+    $CurrencyInput     = $rsp->getCurrencyInput();
+    $EmailAddress      = $rsp->getEmailAddress();
+    $MerchantReference = $rsp->getMerchantReference();
+    $ResponseText         = $rsp->getResponseText();
+    $TxnMac            = $rsp->getTxnMac(); # An indication as to the uniqueness of a card used in relation to others
 
-  if ($rsp->getSuccess() == "1")
-  {
-    $result = "The transaction was approved.";
-	
-		# Sending invoices/updating order status within database etc.
-	
-	if (!isProcessed($TxnId))
-	{
-		# Send emails, generate invoices, update order status etc.
-	}
-	
-  }
-  else
-  {
-    $result = "The transaction was declined.";
+  if ($rsp->getSuccess() == "1") {
+      $result = "The transaction was approved.";
+    
+        # Sending invoices/updating order status within database etc.
+
+    if (!isProcessed($TxnId)) {
+        # Send emails, generate invoices, update order status etc.
+    }
+  } else {
+      $result = "The transaction was declined.";
   }
 
-  print <<<HTMLEOF
+    print <<<HTMLEOF
 <html>
 <head>
 <title>Direct Payment Solutions PxPay transaction result</title>
@@ -140,8 +130,8 @@ HTMLEOF;
 
 function isProcessed($TxnId)
 {
-	# Check database if order relating to TxnId has alread been processed
-	return false;
+    # Check database if order relating to TxnId has alread been processed
+    return false;
 }
 
 #******************************************************************************
@@ -149,7 +139,7 @@ function isProcessed($TxnId)
 #******************************************************************************
 function print_form()
 {
-  print <<<HTMLEOF
+    print <<<HTMLEOF
 <html>
 <head>
 <title>Direct Payment Solutions PxPay transaction sample</title>
@@ -205,13 +195,13 @@ HTMLEOF;
 #******************************************************************************
 function redirect_form()
 {
-  global $pxpay;
+    global $pxpay;
 
-  $request = new PxPayRequest();
+    $request = new PxPayRequest();
 
-  $http_host   = getenv("HTTP_HOST");
-  $request_uri = getenv("SCRIPT_NAME");
-  $server_url  = "http://$http_host";
+    $http_host   = getenv("HTTP_HOST");
+    $request_uri = getenv("SCRIPT_NAME");
+    $server_url  = "http://$http_host";
   #$script_url  = "$server_url/$request_uri"; //using this code before PHP version 4.3.4
   #$script_url  = "$server_url$request_uri"; //Using this code after PHP version 4.3.4
   $script_url = (version_compare(PHP_VERSION, "4.3.4", ">=")) ?"$server_url$request_uri" : "$server_url/$request_uri";
@@ -219,10 +209,10 @@ function redirect_form()
 
   # the following variables are read from the form
   $Quantity = $_REQUEST["Quantity"];
-  $MerchantReference = $_REQUEST["Reference"];  
-  $Address1 = $_REQUEST["Address1"];
-  $Address2 = $_REQUEST["Address2"];
-  $Address3 = $_REQUEST["Address3"];
+    $MerchantReference = $_REQUEST["Reference"];
+    $Address1 = $_REQUEST["Address1"];
+    $Address2 = $_REQUEST["Address2"];
+    $Address3 = $_REQUEST["Address3"];
   
   #Calculate AmountInput
   $AmountInput = 19.95 * $Quantity;
@@ -232,22 +222,22 @@ function redirect_form()
   
   #Set PxPay properties
   $request->setMerchantReference($MerchantReference);
-  $request->setAmountInput($AmountInput);
-  $request->setTxnData1($Address1);
-  $request->setTxnData2($Address2);
-  $request->setTxnData3($Address3);
-  $request->setTxnType("Purchase");
-  $request->setCurrencyInput("NZD");
-  $request->setEmailAddress("your_email@paymentexpress.com");
-  $request->setUrlFail($script_url);			# can be a dedicated failure page
-  $request->setUrlSuccess($script_url);			# can be a dedicated success page
-  $request->setTxnId($TxnId);  
+    $request->setAmountInput($AmountInput);
+    $request->setTxnData1($Address1);
+    $request->setTxnData2($Address2);
+    $request->setTxnData3($Address3);
+    $request->setTxnType("Purchase");
+    $request->setCurrencyInput("NZD");
+    $request->setEmailAddress("your_email@paymentexpress.com");
+    $request->setUrlFail($script_url);            # can be a dedicated failure page
+  $request->setUrlSuccess($script_url);            # can be a dedicated success page
+  $request->setTxnId($TxnId);
   
   #The following properties are not used in this case
-  # $request->setEnableAddBillCard($EnableAddBillCard);    
+  # $request->setEnableAddBillCard($EnableAddBillCard);
   # $request->setBillingId($BillingId);
   # $request->setOpt($Opt);
-  
+
 
   
   #Call makeRequest function to obtain input XML
@@ -258,7 +248,7 @@ function redirect_form()
   
   #Parse output XML
   $url = $response->get_element_text("URI");
-  $valid = $response->get_attribute("valid");
+    $valid = $response->get_attribute("valid");
    
    #Redirect to payment page
    header("Location: ".$url);

@@ -7,15 +7,18 @@
  *
  **/
 
-class DpsPxPayPayment extends EcommercePayment {
-
+class DpsPxPayPayment extends EcommercePayment
+{
     private static $db = array(
         'TxnRef' => 'Text',
         'DebugMessage' => 'HTMLText'
     );
 
     protected $Currency = "";
-        function setCurrency($s) {$this->Currency = $s;}
+    public function setCurrency($s)
+    {
+        $this->Currency = $s;
+    }
 
     // DPS Information
 
@@ -35,22 +38,27 @@ class DpsPxPayPayment extends EcommercePayment {
         'JCB' => 'ecommerce/images/paymentmethods/jcb.jpg'*/
     );
 
-    public static function remove_credit_card($creditCard) {unset(self::$credit_cards[$creditCard]);}
+    public static function remove_credit_card($creditCard)
+    {
+        unset(self::$credit_cards[$creditCard]);
+    }
 
     private static $email_debug = false;
 
-    function getCMSFields() {
+    public function getCMSFields()
+    {
         $fields = parent::getCMSFields();
         $fields->replaceField("DebugMessage", new ReadonlyField("DebugMessage", "Debug info"));
         return $fields;
     }
 
-    function getPaymentFormFields() {
+    public function getPaymentFormFields()
+    {
         $logo = '<img src="' . $this->config()->get("logo"). '" alt="Credit card payments powered by DPS"/>';
         $privacyLink = '<a href="' . $this->config()->get("privacy_link"). '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
         $paymentsList = '';
-        if($cards = $this->config()->get("credit_cards")) {
-            foreach($cards as $name => $image) {
+        if ($cards = $this->config()->get("credit_cards")) {
+            foreach ($cards as $name => $image) {
                 $paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
             }
         }
@@ -61,7 +69,8 @@ class DpsPxPayPayment extends EcommercePayment {
         return $fields;
     }
 
-    function getPaymentFormRequirements() {
+    public function getPaymentFormRequirements()
+    {
         return array();
     }
 
@@ -71,13 +80,14 @@ class DpsPxPayPayment extends EcommercePayment {
      *
      * @return EcommercePayment_Result
      */
-    function processPayment($data, $form) {
+    public function processPayment($data, $form)
+    {
         $order = $this->Order();
         //if currency has been pre-set use this
         $currency = $this->Amount->Currency;
         //if amout has been pre-set, use this
         $amount = $this->Amount->Amount;
-        if($order) {
+        if ($order) {
             //amount may need to be adjusted to total outstanding
             //or amount may not have been set yet
             $amount = $order->TotalOutstanding();
@@ -85,18 +95,18 @@ class DpsPxPayPayment extends EcommercePayment {
             //this is better than the pre-set currency one
             //which may have been set to the default
             $currencyObject = $order->CurrencyUsed();
-            if($currencyObject) {
+            if ($currencyObject) {
                 $currency = $currencyObject->Code;
             }
         }
-        if(!$amount && !empty($data["Amount"])) {
+        if (!$amount && !empty($data["Amount"])) {
             $amount = floatval($data["Amount"]);
         }
-        if(!$currency && !empty($data["Currency"])) {
+        if (!$currency && !empty($data["Currency"])) {
             $currency = floatval($data["Currency"]);
         }
         //final backup for currency
-        if(!$currency) {
+        if (!$currency) {
             $currency = EcommercePayment::site_currency();
         }
         $this->Amount->Currency = $currency;
@@ -114,7 +124,8 @@ class DpsPxPayPayment extends EcommercePayment {
      * @return String
      *
      */
-    protected function buildURL($amount, $currency) {
+    protected function buildURL($amount, $currency)
+    {
         $commsObject = new DpsPxPayComs();
 
         /**
@@ -139,22 +150,23 @@ class DpsPxPayPayment extends EcommercePayment {
         $debugMessage = $commsObject->getDebugMessage();
         $this->DebugMessage = $debugMessage;
         $this->write();
-        if($this->config()->get("email_debug")) {
+        if ($this->config()->get("email_debug")) {
             $from = Email::config()->admin_email;
             $to = Email::config()->admin_email;
             $subject = "DPS Debug Information";
             $body = $debugMessage;
-            $email = new Email($from , $to , $subject , $body);
+            $email = new Email($from, $to, $subject, $body);
             $email->send();
         }
         return $url;
     }
 
-    function executeURL($url) {
+    public function executeURL($url)
+    {
         $url = str_replace("&", "&amp;", $url);
         $url = str_replace("&amp;&amp;", "&amp;", $url);
         //$url = str_replace("==", "", $url);
-        if($url) {
+        if ($url) {
             /**
             * build redirection page
             **/
@@ -168,8 +180,7 @@ class DpsPxPayPayment extends EcommercePayment {
             //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
             //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
             return EcommercePayment_Processing::create($controller->renderWith('PaymentProcessingPage'));
-        }
-        else {
+        } else {
             $page = new SiteTree();
             $page->Title = 'Sorry, DPS can not be contacted at the moment ...';
             $page->Logo = 'Sorry, an error has occured in contacting the Payment Processing Provider, please try again in a few minutes...';
@@ -183,7 +194,8 @@ class DpsPxPayPayment extends EcommercePayment {
         }
     }
 
-    function DPSForm($url) {
+    public function DPSForm($url)
+    {
         $urlWithoutAmpersand = Convert::raw2js(str_replace('&amp;', '&', $url));
         return <<<HTML
             <form id="PaymentFormDPS" method="post" action="$url">
@@ -198,5 +210,4 @@ class DpsPxPayPayment extends EcommercePayment {
             </script>
 HTML;
     }
-
 }
