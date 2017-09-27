@@ -87,7 +87,7 @@ class DpsPxPayPayment extends EcommercePayment
         $currency = $this->Amount->Currency;
         //if amout has been pre-set, use this
         $amount = $this->Amount->Amount;
-        if ($order) {
+        if ($order && $order->exists()) {
             //amount may need to be adjusted to total outstanding
             //or amount may not have been set yet
             $amount = $order->TotalOutstanding();
@@ -134,6 +134,7 @@ class DpsPxPayPayment extends EcommercePayment
         $commsObject->setTxnType(DpsPxPayComs::get_txn_type());
         $commsObject->setMerchantReference($this->ID);
         //replace any character that is NOT [0-9] or dot (.)
+
         $commsObject->setAmountInput(floatval(preg_replace("/[^0-9\.]/", "", $amount)));
         $commsObject->setCurrencyInput($currency);
 
