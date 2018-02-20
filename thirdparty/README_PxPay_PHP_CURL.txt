@@ -1,19 +1,19 @@
 #******************************************************************************
 #* Name          	: README_PxPay_PHP_CURL.txt
-#* Description   	: Direct Payment Solutions Payment Express PxPay PHP cURL Sample
-#* Copyright	 	: Direct Payment Solutions 2009(c)
-#* Date          	: 2009-04-10
-#* References    	: http://www.paymentexpress.com/technical_resources/ecommerce_hosted/pxpay.html
-#*@version 		: 1.0
-#* Author 		: Thomas Treadwell
+#* Description   	: Payment Express PxPay PHP cURL Sample
+#* Copyright	 	: Payment Express 2017(c)
+#* Date          	: 2017-04-10
+#* References    	: https://www.paymentexpress.com/developer-e-commerce-paymentexpress-hosted-pxpay
+#*@version 		    : 2.0
+#* Author 		    : Payment Express DevSupport
 #******************************************************************************
 
 
 Development Spec
 ================
-Windows Xp with Service pack 2
-PHP Version 5.0.2
-Microsoft-IIS/5.1
+Windows 7
+PHP Version 5.0.2+
+Microsoft-IIS/5.1+
 
 Different specifications and configurations may encounter issues that need to be addressed.
 
@@ -77,11 +77,11 @@ INSTALLATION
 
 DISCLAIMER
 ============
-Software downloaded from the Direct Payment Solutions web site is provided 'as is' without warranty of any kind,
+Software downloaded from the Payment Express web site is provided 'as is' without warranty of any kind,
 either express or implied, including, but not limited to; the implied warranties of fitness for a purpose,
 or the warranty of non-infringement.
 
-Without limiting the foregoing, the Direct Payment Solutions makes no warranty that:
+Without limiting the foregoing, the Payment Express makes no warranty that:
 
 - The software will meet your requirements.
 
@@ -90,9 +90,9 @@ Without limiting the foregoing, the Direct Payment Solutions makes no warranty t
 - The quality of the software will meet your expectations.
 
 
-Software and its documentation made available on the Direct Payment Solutions web site could include technical or other mistakes,
-inaccuracies or typographical errors. Direct Payment Solutions may make changes at any time to the software or documentation made
+Software and its documentation made available on the Payment Express web site could include technical or other mistakes,
+inaccuracies or typographical errors. Payment Express may make changes at any time to the software or documentation made
 available on its web site.
 
 
-Direct Payment Solutions assumes no responsibility for errors or omissions in the software or documentation available from its web site.
+Payment Express assumes no responsibility for errors or omissions in the software or documentation available from its web site.
