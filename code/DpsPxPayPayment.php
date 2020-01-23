@@ -52,7 +52,7 @@ class DpsPxPayPayment extends EcommercePayment
         return $fields;
     }
 
-    public function getPaymentFormFields()
+    public function getPaymentFormFields($amount = 0, $order = null)
     {
         $logo = '<img src="' . $this->config()->get("logo"). '" alt="Credit card payments powered by DPS"/>';
         $privacyLink = '<a href="' . $this->config()->get("privacy_link"). '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';

@@ -19,7 +19,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
     private static $add_card_explanation = "Storing a Card means your Credit Card will be kept on file for your next purchase. ";
 
-    public function getPaymentFormFields()
+    public function getPaymentFormFields($amount = 0, $order = null)
     {
         $logo = '<img src="' . self::$logo . '" alt="Credit Card Payments Powered by DPS"/>';
         $privacyLink = '<a href="' . self::$privacy_link . '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
