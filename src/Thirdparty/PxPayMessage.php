@@ -1,5 +1,10 @@
 <?php
 
+namespace Sunnysideup\PaymentDps\Thirdparty;
+
+
+
+
 #******************************************************************************
 # Abstract base class for PxPay messages.
 # These are messages with certain defined elements,  which can be serialized to XML.

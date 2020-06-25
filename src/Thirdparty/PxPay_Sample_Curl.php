@@ -1,4 +1,9 @@
 <?php
+
+namespace Sunnysideup\PaymentDps\Thirdparty;
+
+
+
 #******************************************************************************
 #* Name          	: PxPay_Sample_Curl.php
 #* Description   	: Payment Express PxPay PHP cURL Sample

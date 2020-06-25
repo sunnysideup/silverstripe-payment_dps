@@ -1,5 +1,10 @@
 <?php
 
+namespace Sunnysideup\PaymentDps\Thirdparty;
+
+
+
+
 class PxPay_Curl
 {
     public $PxPay_Key;

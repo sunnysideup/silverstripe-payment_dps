@@ -1,5 +1,20 @@
 <?php
 
+namespace Sunnysideup\PaymentDps;
+
+use FieldList;
+use Member;
+use DpsPxPayStoredCard;
+use DropdownField;
+use LiteralField;
+use Config;
+use Requirements;
+use DB;
+use EcommercePaymentSuccess;
+use EcommercePaymentFailure;
+use DpsPxPayStoredPayment_Handler;
+
+
 /**
  *@author nicolaas [at] sunny side up. co . nz
  *

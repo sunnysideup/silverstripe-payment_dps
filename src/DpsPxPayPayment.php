@@ -1,5 +1,21 @@
 <?php
 
+namespace Sunnysideup\PaymentDps;
+
+use EcommercePayment;
+use ReadonlyField;
+use FieldList;
+use LiteralField;
+use DpsPxPayPayment_Handler;
+use Email;
+use SiteTree;
+use ContentController;
+use Requirements;
+use EcommercePaymentProcessing;
+use EcommercePaymentFailure;
+use Convert;
+
+
 /**
  *@author nicolaas[at]sunnysideup.co.nz
  *@description: OrderNumber and PaymentID

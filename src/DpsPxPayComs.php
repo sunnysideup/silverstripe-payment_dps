@@ -1,4 +1,14 @@
 <?php
+
+namespace Sunnysideup\PaymentDps;
+
+use Config;
+use Director;
+use PxPay_Curl;
+use PxPayRequest;
+use MifMessage;
+use debug;
+
 /**
  *@author nicolaas [at] sunnysideup.co.nz
  **/

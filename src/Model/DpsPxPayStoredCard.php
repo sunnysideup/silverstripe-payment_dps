@@ -1,5 +1,11 @@
 <?php
 
+namespace Sunnysideup\PaymentDps\Model;
+
+use DataObject;
+use Member;
+
+
 class DpsPxPayStoredCard extends DataObject
 {
 

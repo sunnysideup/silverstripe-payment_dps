@@ -1,5 +1,15 @@
 <?php
 
+namespace Sunnysideup\PaymentDps\Control;
+
+use Controller;
+use Config;
+use Director;
+use EcommercePayment;
+use DpsPxPayComs;
+use DpsPxPayPayment;
+
+
 
 class DpsPxPayPayment_Handler extends Controller
 {

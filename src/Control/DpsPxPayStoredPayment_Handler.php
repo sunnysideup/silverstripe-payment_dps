@@ -1,5 +1,14 @@
 <?php
 
+namespace Sunnysideup\PaymentDps\Control;
+
+use Config;
+use Director;
+use DpsPxPayComs;
+use DpsPxPayStoredPayment;
+use DpsPxPayStoredCard;
+
+
 class DpsPxPayStoredPayment_Handler extends DpsPxPayPayment_Handler
 {
     private static $url_segment = 'dpspxpaystoredpayment';

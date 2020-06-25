@@ -1,5 +1,15 @@
 <?php
 
+namespace Sunnysideup\PaymentDps;
+
+use EcommercePayment;
+use LiteralField;
+use Convert;
+use SimpleXMLElement;
+use EcommercePaymentSuccess;
+use EcommercePaymentFailure;
+
+
 /**
  *
  *
