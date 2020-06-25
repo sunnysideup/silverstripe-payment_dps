@@ -26,7 +26,12 @@
         "sunnysideup/ecommerce": "*",
         "silverstripe/recipe-cms": "^4.4"
     },
-    "extra": [],
+    "extra": {
+        "expose": [
+            "client/javascript",
+            "client/images"
+        ]
+    },
     "autoload": {
         "psr-4": {
             "Sunnysideup\\PaymentDps\\": "src/"
