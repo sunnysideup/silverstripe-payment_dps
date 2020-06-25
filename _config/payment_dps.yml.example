@@ -3,8 +3,8 @@
 ##############################
 ---
 Name: payment_dps
-Before: 'mysite/*'
-After: 'framework/*','cms/*','ecommerce/*'
+Before: 'app/*'
+After: ['#coreconfig', '#cmsextensions', '#ecommerce']
 ---
 
 EcommercePayment:

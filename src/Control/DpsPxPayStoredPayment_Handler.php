@@ -1,5 +1,21 @@
 <?php
 
+namespace Sunnysideup\PaymentDps\Control;
+
+
+
+
+
+
+use SilverStripe\Core\Config\Config;
+use Sunnysideup\PaymentDps\Control\DpsPxPayStoredPayment_Handler;
+use SilverStripe\Control\Director;
+use Sunnysideup\PaymentDps\DpsPxPayComs;
+use Sunnysideup\PaymentDps\DpsPxPayStoredPayment;
+use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
+
+
+
 class DpsPxPayStoredPayment_Handler extends DpsPxPayPayment_Handler
 {
     private static $url_segment = 'dpspxpaystoredpayment';
@@ -7,7 +23,7 @@ class DpsPxPayStoredPayment_Handler extends DpsPxPayPayment_Handler
 
     public static function complete_link()
     {
-        return Config::inst()->get('DpsPxPayStoredPayment_Handler', 'url_segment') . '/paid/';
+        return Config::inst()->get(DpsPxPayStoredPayment_Handler::class, 'url_segment') . '/paid/';
     }
 
     public static function absolute_complete_link()
@@ -55,3 +71,4 @@ class DpsPxPayStoredPayment_Handler extends DpsPxPayPayment_Handler
         return;
     }
 }
+

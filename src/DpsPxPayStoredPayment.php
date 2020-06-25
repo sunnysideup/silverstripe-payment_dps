@@ -1,5 +1,33 @@
 <?php
 
+namespace Sunnysideup\PaymentDps;
+
+
+
+
+
+
+
+
+
+
+
+
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Security\Member;
+use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Core\Config\Config;
+use Sunnysideup\PaymentDps\DpsPxPayStoredPayment;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\View\Requirements;
+use SilverStripe\ORM\DB;
+use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
+use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
+use Sunnysideup\PaymentDps\Control\DpsPxPayStoredPayment_Handler;
+
+
+
 /**
  *@author nicolaas [at] sunny side up. co . nz
  *
@@ -48,14 +76,14 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             $fields->push(new DropdownField('DPSUseStoredCard', 'Use a stored card?', $cardsDropdown, $value = $card->BillingID, $form = null, $emptyString = "--- use new Credit Card ---"));
         } else {
             $fields->push(new DropdownField('DPSStoreCard', '', array(1 => 'Store Credit Card', 0 => 'Do NOT Store Credit Card')));
-            $fields->push(new LiteralField("AddCardExplanation", "<p>".Config::inst()->get('DpsPxPayStoredPayment', 'add_card_explanation')."</p>"));
+            $fields->push(new LiteralField("AddCardExplanation", "<p>".Config::inst()->get(DpsPxPayStoredPayment::class, 'add_card_explanation')."</p>"));
         }
         $fields->push(new LiteralField('DPSInfo', $privacyLink));
         $fields->push(new LiteralField('DPSPaymentsList', $paymentsList));
         Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
         //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
         //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
-        Requirements::javascript("payment_dps/javascript/DpxPxPayStoredPayment.js");
+        Requirements::javascript("sunnysideup/payment_dps: payment_dps/javascript/DpxPxPayStoredPayment.js");
         return $fields;
     }
 
@@ -150,10 +178,10 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         if (isset($responseFields['SUCCESS']) && $responseFields['SUCCESS']) {
             $this->Status = 'Success';
-            $result = EcommercePayment_Success::create();
+            $result = EcommercePaymentSuccess::create();
         } else {
             $this->Status = 'Failure';
-            $result = EcommercePayment_Failure::create();
+            $result = EcommercePaymentFailure::create();
         }
         if (isset($responseFields['DPSTXNREF'])) {
             if ($transactionRef = $responseFields['DPSTXNREF']) {
@@ -215,8 +243,8 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         // 6) XML Result Parsed In A PHP Array
 
-        $resultPhp = array();
-        $level = array();
+        $resultPhp = [];
+        $level = [];
         foreach ($values as $xmlElement) {
             if ($xmlElement['type'] == 'open') {
                 if (array_key_exists('attributes', $xmlElement)) {
@@ -277,3 +305,4 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         return $url;
     }
 }
+

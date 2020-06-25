@@ -1,0 +1,13 @@
+mappings:
+  DpsPxPayPayment_Handler: Sunnysideup\PaymentDps\Control\DpsPxPayPayment_Handler
+  DpsPxPayStoredPayment_Handler: Sunnysideup\PaymentDps\Control\DpsPxPayStoredPayment_Handler
+  PxPayMessage: Sunnysideup\PaymentDps\Thirdparty\PxPayMessage
+  PxPayResponse: Sunnysideup\PaymentDps\Thirdparty\PxPayResponse
+  MifMessage: Sunnysideup\PaymentDps\Thirdparty\MifMessage
+  PxPayRequest: Sunnysideup\PaymentDps\Thirdparty\PxPayRequest
+  PxPay_Curl: Sunnysideup\PaymentDps\Thirdparty\PxPay_Curl
+  DpsPxPayStoredPayment: Sunnysideup\PaymentDps\DpsPxPayStoredPayment
+  DpsPxPost: Sunnysideup\PaymentDps\DpsPxPost
+  DpsPxPayComs: Sunnysideup\PaymentDps\DpsPxPayComs
+  DpsPxPayPayment: Sunnysideup\PaymentDps\DpsPxPayPayment
+  DpsPxPayStoredCard: Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard

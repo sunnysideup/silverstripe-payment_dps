@@ -1,5 +1,21 @@
 <?php
 
+namespace Sunnysideup\PaymentDps;
+
+
+
+
+use SimpleXMLElement;
+
+
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Core\Convert;
+use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
+use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
+use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
+
+
+
 /**
  *
  *
@@ -67,6 +83,20 @@ class DpsPxPost extends EcommercePayment
      * Failure: Payment failed during process
      * Pending: Payment awaiting receipt/bank transfer etc
      */
+
+/**
+  * ### @@@@ START REPLACEMENT @@@@ ###
+  * OLD: private static $db (case sensitive)
+  * NEW: 
+    private static $table_name = '[SEARCH_REPLACE_CLASS_NAME_GOES_HERE]';
+
+    private static $db (COMPLEX)
+  * EXP: Check that is class indeed extends DataObject and that it is not a data-extension!
+  * ### @@@@ STOP REPLACEMENT @@@@ ###
+  */
+    
+    private static $table_name = 'DpsPxPost';
+
     private static $db = array(
         "CardNumber" => "Varchar(64)",
         "NameOnCard" => "Varchar(40)",
@@ -213,10 +243,10 @@ class DpsPxPost extends EcommercePayment
             trim($this->OrderID) == trim($txn->MerchantReference)
         ) {
             $this->Status = "Success";
-            $returnObject = EcommercePayment_Success::create();
+            $returnObject = EcommercePaymentSuccess::create();
         } else {
             $this->Status = "Failure";
-            $returnObject = EcommercePayment_Failure::create();
+            $returnObject = EcommercePaymentFailure::create();
         }
         $this->write();
         return $returnObject;
@@ -249,3 +279,4 @@ class DpsPxPost extends EcommercePayment
         return "<pre>".$this->Response."</pre>";
     }
 }
+

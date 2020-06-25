@@ -2,7 +2,7 @@
 Name: paymentdpsroutes
 After: framework/routes#coreroutes
 ---
-Director:
+SilverStripe\Control\Director:
   rules:
-    'dpspxpaypayment//$Action/$ID' : 'DpsPxPayPayment_Handler'
-    'dpspxpaystoredpayment//$Action/$ID' : 'DpsPxPayStoredPayment_Handler'
+    dpspxpaypayment//$Action/$ID: Sunnysideup\PaymentDps\Control\DpsPxPayPayment_Handler
+    dpspxpaystoredpayment//$Action/$ID: Sunnysideup\PaymentDps\Control\DpsPxPayStoredPayment_Handler

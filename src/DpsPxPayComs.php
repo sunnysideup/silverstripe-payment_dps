@@ -1,31 +1,50 @@
 <?php
+
+namespace Sunnysideup\PaymentDps;
+
+
+
+
+
+
+use debug;
+use SilverStripe\Core\Config\Config;
+use Sunnysideup\PaymentDps\DpsPxPayComs;
+use SilverStripe\Control\Director;
+use Sunnysideup\PaymentDps\Thirdparty\PxPay_Curl;
+use Sunnysideup\PaymentDps\Thirdparty\PxPayRequest;
+use Sunnysideup\PaymentDps\Thirdparty\MifMessage;
+
+
 /**
  *@author nicolaas [at] sunnysideup.co.nz
  **/
 
-class DpsPxPayComs extends Object
+use SilverStripe\Core\Extensible;
+use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Core\Config\Configurable;
+/**
+ *@author nicolaas [at] sunnysideup.co.nz
+ **/
+class DpsPxPayComs
 {
+    use Extensible;
+    use Injectable;
+    use Configurable;
     private static $pxpay_url = 'https://sec.paymentexpress.com/pxaccess/pxpay.aspx';
-
     private static $pxpay_userid = "";
-
-    private static $pxpay_encryption_key =  "";
-
-    private static $alternative_thirdparty_folder =  "";
-
-    private static $overriding_txn_type =  ""; //e.g. AUTH
-
+    private static $pxpay_encryption_key = "";
+    private static $alternative_thirdparty_folder = "";
+    private static $overriding_txn_type = "";
+    //e.g. AUTH
     public static function get_txn_type()
     {
-        $overridingTxnType = Config::inst()->get("DpsPxPayComs", "overriding_txn_type");
-        return $overridingTxnType  ? $overridingTxnType : "Purchase";
+        $overridingTxnType = Config::inst()->get(DpsPxPayComs::class, "overriding_txn_type");
+        return $overridingTxnType ? $overridingTxnType : "Purchase";
     }
-
-
     /**
-    * customer details
-    **/
-
+     * customer details
+     **/
     protected $TxnData1 = "";
     public function setTxnData1($v)
     {
@@ -46,43 +65,37 @@ class DpsPxPayComs extends Object
     {
         $this->EmailAddress = $v;
     }
-
     /**
-    * order details
-    **/
+     * order details
+     **/
     protected $AmountInput = 0;
     public function setAmountInput($v)
     {
         $this->AmountInput = $v;
     }
-
     protected $MerchantReference = "";
     public function setMerchantReference($v)
     {
         $this->MerchantReference = $v;
     }
-
     protected $CurrencyInput = "NZD";
     public function setCurrencyInput($v)
     {
         $this->CurrencyInput = $v;
     }
-
     protected $TxnType = "Purchase";
     public function setTxnType($v)
     {
         $this->TxnType = $v;
     }
-
     protected $TxnId = "";
     public function setTxnId($v)
     {
         $this->TxnId = $v;
     }
-
     /**
-    * details of the redirection
-    **/
+     * details of the redirection
+     **/
     protected $UrlFail = "";
     public function setUrlFail($v)
     {
@@ -93,7 +106,6 @@ class DpsPxPayComs extends Object
     {
         $this->UrlSuccess = $v;
     }
-
     /**
      * Details to use stored cards
      */
@@ -107,36 +119,28 @@ class DpsPxPayComs extends Object
     {
         $this->BillingId = $v;
     }
-
     /**
-    * external object
-    **/
+     * external object
+     **/
     protected $PxPayObject = null;
     protected $response = null;
-
     public function __construct()
     {
         if (!self::$alternative_thirdparty_folder) {
-            self::$alternative_thirdparty_folder = Director::baseFolder().'/payment_dps/code/thirdparty';
+            self::$alternative_thirdparty_folder = Director::baseFolder() . '/payment_dps/code/thirdparty';
         }
-        require_once(self::$alternative_thirdparty_folder."/PxPay_Curl.inc.php");
-        if (!Config::inst()->get("DpsPxPayComs", "pxpay_url")) {
-            user_error("error in DpsPxPayComs::__construct, self::$pxpay_url not set. ", E_USER_WARNING);
+        require_once self::$alternative_thirdparty_folder . "/PxPay_Curl.inc.php";
+        if (!Config::inst()->get(DpsPxPayComs::class, "pxpay_url")) {
+            user_error("error in DpsPxPayComs::__construct, self::{$pxpay_url} not set. ", E_USER_WARNING);
         }
-        if (!Config::inst()->get("DpsPxPayComs", "pxpay_userid")) {
-            user_error("error in DpsPxPayComs::__construct, self::$pxpay_userid not set. ", E_USER_WARNING);
+        if (!Config::inst()->get(DpsPxPayComs::class, "pxpay_userid")) {
+            user_error("error in DpsPxPayComs::__construct, self::{$pxpay_userid} not set. ", E_USER_WARNING);
         }
-        if (!Config::inst()->get("DpsPxPayComs", "pxpay_encryption_key")) {
-            user_error("error in DpsPxPayComs::__construct, self::$pxpay_encryption_key not set. ", E_USER_WARNING);
+        if (!Config::inst()->get(DpsPxPayComs::class, "pxpay_encryption_key")) {
+            user_error("error in DpsPxPayComs::__construct, self::{$pxpay_encryption_key} not set. ", E_USER_WARNING);
         }
-
-        $this->PxPayObject = new PxPay_Curl(
-            Config::inst()->get("DpsPxPayComs", "pxpay_url"),
-            Config::inst()->get("DpsPxPayComs", "pxpay_userid"),
-            Config::inst()->get("DpsPxPayComs", "pxpay_encryption_key")
-        );
+        $this->PxPayObject = new PxPay_Curl(Config::inst()->get(DpsPxPayComs::class, "pxpay_url"), Config::inst()->get(DpsPxPayComs::class, "pxpay_userid"), Config::inst()->get(DpsPxPayComs::class, "pxpay_encryption_key"));
     }
-
     /*
      * This function formats data into a request and returns redirection URL
      * NOTE: you will need to set all the variables prior to running this.
@@ -148,7 +152,6 @@ class DpsPxPayComs extends Object
             $this->TxnId = uniqid("ID");
         }
         $request = new PxPayRequest();
-
         #Set PxPay properties
         if ($this->MerchantReference) {
             $request->setMerchantReference($this->MerchantReference);
@@ -201,27 +204,21 @@ class DpsPxPayComs extends Object
         if ($this->BillingId) {
             $request->setBillingId($this->BillingId);
         }
-
         /* TODO:
-        $request->setEnableAddBillCard($EnableAddBillCard);
-        $request->setBillingId($BillingId);
-        $request->setOpt($Opt);
-        */
-
+           $request->setEnableAddBillCard($EnableAddBillCard);
+           $request->setBillingId($BillingId);
+           $request->setOpt($Opt);
+           */
         #Call makeRequest function to obtain input XML
         $request_string = $this->PxPayObject->makeRequest($request);
-
         #Obtain output XML
         $this->response = new MifMessage($request_string);
         #Parse output XML
         $url = $this->response->get_element_text("URI");
         //$valid = $this->response->get_attribute("valid");
-
         #Redirect to payment page
         return $url;
     }
-
-
     /*
      * This function receives information back from the payments page as a response object
      * --------------------- RESPONSE DATA ---------------------
@@ -250,14 +247,12 @@ class DpsPxPayComs extends Object
      *
      * also see: https://www.paymentexpress.com/technical_resources/ecommerce_hosted/error_codes.html
      **/
-
     public function processRequestAndReturnResultsAsObject()
     {
         #getResponse method in PxPay object returns PxPayResponse object
         #which encapsulates all the response data
         return $this->PxPayObject->getResponse($_REQUEST["result"]);
     }
-
     public function getDebugMessage()
     {
         $string = "<pre>";
@@ -266,10 +261,10 @@ class DpsPxPayComs extends Object
         $string .= "</pre>";
         return $string;
     }
-
     public function debug()
     {
         debug::show("debugging DpsPxPayComs");
         echo $this->getDebugMessage();
     }
 }
+
