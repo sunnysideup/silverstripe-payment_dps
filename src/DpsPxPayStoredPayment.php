@@ -150,10 +150,10 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         if (isset($responseFields['SUCCESS']) && $responseFields['SUCCESS']) {
             $this->Status = 'Success';
-            $result = EcommercePayment_Success::create();
+            $result = EcommercePaymentSuccess::create();
         } else {
             $this->Status = 'Failure';
-            $result = EcommercePayment_Failure::create();
+            $result = EcommercePaymentFailure::create();
         }
         if (isset($responseFields['DPSTXNREF'])) {
             if ($transactionRef = $responseFields['DPSTXNREF']) {
@@ -215,8 +215,8 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         // 6) XML Result Parsed In A PHP Array
 
-        $resultPhp = array();
-        $level = array();
+        $resultPhp = [];
+        $level = [];
         foreach ($values as $xmlElement) {
             if ($xmlElement['type'] == 'open') {
                 if (array_key_exists('attributes', $xmlElement)) {

@@ -180,7 +180,16 @@ class DpsPxPayPayment extends EcommercePayment
             Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
             //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
             //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
-            return EcommercePayment_Processing::create($controller->renderWith('PaymentProcessingPage'));
+
+/**
+  * ### @@@@ START REPLACEMENT @@@@ ###
+  * WHY: automated upgrade
+  * OLD: ->RenderWith( (ignore case)
+  * NEW: ->RenderWith( (COMPLEX)
+  * EXP: Check that the template location is still valid!
+  * ### @@@@ STOP REPLACEMENT @@@@ ###
+  */
+            return EcommercePaymentProcessing::create($controller->RenderWith('PaymentProcessingPage'));
         } else {
             $page = new SiteTree();
             $page->Title = 'Sorry, DPS can not be contacted at the moment ...';
@@ -188,10 +197,28 @@ class DpsPxPayPayment extends EcommercePayment
             $page->Form = $this->DPSForm($url);
             $controller = new ContentController($page);
             Requirements::clear();
-            Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
+
+/**
+  * ### @@@@ START REPLACEMENT @@@@ ###
+  * WHY: automated upgrade
+  * OLD: THIRDPARTY_DIR."/jquery/jquery.js" (case sensitive)
+  * NEW: 'silverstripe/admin: thirdparty/jquery/jquery.js' (COMPLEX)
+  * EXP: Check for best usage and inclusion of Jquery
+  * ### @@@@ STOP REPLACEMENT @@@@ ###
+  */
+            Requirements::javascript('silverstripe/admin: thirdparty/jquery/jquery.js');
             //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
             //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
-            return EcommercePayment_Failure::create($controller->renderWith('PaymentProcessingPage'));
+
+/**
+  * ### @@@@ START REPLACEMENT @@@@ ###
+  * WHY: automated upgrade
+  * OLD: ->RenderWith( (ignore case)
+  * NEW: ->RenderWith( (COMPLEX)
+  * EXP: Check that the template location is still valid!
+  * ### @@@@ STOP REPLACEMENT @@@@ ###
+  */
+            return EcommercePaymentFailure::create($controller->RenderWith('PaymentProcessingPage'));
         }
     }
 

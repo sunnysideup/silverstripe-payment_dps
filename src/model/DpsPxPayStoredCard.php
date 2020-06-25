@@ -52,16 +52,16 @@ class DpsPxPayStoredCard extends DataObject
 
     private static $default_sort = "Created DESC";
 
-    private static $defaults = array();//use fieldName => Default Value
+    private static $defaults = [];//use fieldName => Default Value
 
     private static $can_create = false;
 
-    public function canCreate($member = null)
+    public function canCreate($member = null, $context = [])
     {
         return false;
     }
 
-    public function canView($member = null)
+    public function canView($member = null, $context = [])
     {
         if (!$member) {
             $member = Member::currentUser();
@@ -75,18 +75,18 @@ class DpsPxPayStoredCard extends DataObject
         }
     }
 
-    public function canEdit($member = null)
+    public function canEdit($member = null, $context = [])
     {
         return false;
     }
 
-    public function canDelete($member = null)
+    public function canDelete($member = null, $context = [])
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
         if ($extended !== null) {
             return $extended;
         }
-        return $this->canView($member = null);
+        return $this->canView($member = null, $context = []);
     }
 }
 
