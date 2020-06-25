@@ -206,7 +206,7 @@ class DpsPxPayPayment extends EcommercePayment
   * EXP: Check for best usage and inclusion of Jquery
   * ### @@@@ STOP REPLACEMENT @@@@ ###
   */
-            Requirements::javascript('silverstripe/admin: thirdparty/jquery/jquery.js');
+            Requirements::javascript('sunnysideup/payment_dps: silverstripe/admin: thirdparty/jquery/jquery.js');
             //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
             //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
 
