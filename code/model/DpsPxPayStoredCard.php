@@ -75,3 +75,4 @@ class DpsPxPayStoredCard extends DataObject
         return $this->canView($member = null);
     }
 }
+

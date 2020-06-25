@@ -55,3 +55,4 @@ class DpsPxPayStoredPayment_Handler extends DpsPxPayPayment_Handler
         return;
     }
 }
+
