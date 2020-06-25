@@ -2,17 +2,30 @@
 
 namespace Sunnysideup\PaymentDps;
 
-use FieldList;
-use Member;
-use DpsPxPayStoredCard;
-use DropdownField;
-use LiteralField;
-use Config;
-use Requirements;
-use DB;
-use EcommercePaymentSuccess;
-use EcommercePaymentFailure;
-use DpsPxPayStoredPayment_Handler;
+
+
+
+
+
+
+
+
+
+
+
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Security\Member;
+use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Core\Config\Config;
+use Sunnysideup\PaymentDps\DpsPxPayStoredPayment;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\View\Requirements;
+use SilverStripe\ORM\DB;
+use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
+use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
+use Sunnysideup\PaymentDps\Control\DpsPxPayStoredPayment_Handler;
+
 
 
 /**
@@ -63,7 +76,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             $fields->push(new DropdownField('DPSUseStoredCard', 'Use a stored card?', $cardsDropdown, $value = $card->BillingID, $form = null, $emptyString = "--- use new Credit Card ---"));
         } else {
             $fields->push(new DropdownField('DPSStoreCard', '', array(1 => 'Store Credit Card', 0 => 'Do NOT Store Credit Card')));
-            $fields->push(new LiteralField("AddCardExplanation", "<p>".Config::inst()->get('DpsPxPayStoredPayment', 'add_card_explanation')."</p>"));
+            $fields->push(new LiteralField("AddCardExplanation", "<p>".Config::inst()->get(DpsPxPayStoredPayment::class, 'add_card_explanation')."</p>"));
         }
         $fields->push(new LiteralField('DPSInfo', $privacyLink));
         $fields->push(new LiteralField('DPSPaymentsList', $paymentsList));

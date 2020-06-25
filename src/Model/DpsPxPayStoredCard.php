@@ -2,8 +2,11 @@
 
 namespace Sunnysideup\PaymentDps\Model;
 
-use DataObject;
-use Member;
+
+
+use SilverStripe\Security\Member;
+use SilverStripe\ORM\DataObject;
+
 
 
 class DpsPxPayStoredCard extends DataObject
@@ -30,7 +33,7 @@ class DpsPxPayStoredCard extends DataObject
     );
 
     private static $has_one = array(
-        'Member' => 'Member'
+        'Member' => Member::class
     );
 
     private static $searchable_fields = array(

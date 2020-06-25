@@ -2,12 +2,18 @@
 
 namespace Sunnysideup\PaymentDps;
 
-use EcommercePayment;
-use LiteralField;
-use Convert;
+
+
+
 use SimpleXMLElement;
-use EcommercePaymentSuccess;
-use EcommercePaymentFailure;
+
+
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Core\Convert;
+use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
+use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
+use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
+
 
 
 /**

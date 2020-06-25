@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+
 class PaymentDpsTest extends SapphireTest
 {
     protected $usesDatabase = false;
