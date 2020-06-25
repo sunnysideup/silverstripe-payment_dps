@@ -24,7 +24,7 @@
     ],
     "require": {
         "sunnysideup/ecommerce": "*",
-        "silverstripe/cms": "~3.6"
+        "silverstripe/recipe-cms": "^4.4"
     },
     "extra": {
         "installer-name": "payment_dps"
