@@ -9,7 +9,7 @@ use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\PaymentDps\DpsPxPayComs;
 use Sunnysideup\PaymentDps\DpsPxPayPayment;
 
-class DpsPxPayPayment_Handler extends Controller
+class DpsPxPayPaymentHandler extends Controller
 {
     private static $allowed_actions = [
         'complete_link',
@@ -32,7 +32,7 @@ class DpsPxPayPayment_Handler extends Controller
     public function paid()
     {
         EcommercePayment::get_supported_methods();
-        $this->extend('DpsPxPayPayment_Handler_completion_start');
+        $this->extend('DpsPxPayPaymentHandler_completion_start');
         $commsObject = new DpsPxPayComs();
         $response = $commsObject->processRequestAndReturnResultsAsObject();
         if ($payment = DpsPxPayPayment::get()->byID($response->getMerchantReference())) {
