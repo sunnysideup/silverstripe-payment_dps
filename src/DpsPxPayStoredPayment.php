@@ -27,6 +27,12 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
     private static $pxpost_url = 'https://sec.paymentexpress.com/pxpost.aspx';
 
+    private static $privacy_link = '';
+
+    private static $logo = '';
+
+    private static $credit_cards = [];
+
     private static $username = '';
 
     private static $password = '';
@@ -59,7 +65,14 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
                 $s = 's';
             }
             $cardsDropdown['deletecards'] = " --- Delete Stored Card${s} --- ";
-            $fields->push(new DropdownField('DPSUseStoredCard', 'Use a stored card?', $cardsDropdown, $value = $card->BillingID, $form = null, $emptyString = '--- use new Credit Card ---'));
+            $fields->push(
+                DropdownField::create(
+                    'DPSUseStoredCard', 
+                    'Use a stored card?', 
+                    $cardsDropdown, 
+                    $value = $card->BillingID
+                )->setEmptyString('--- use new Credit Card ---')
+            );
         } else {
             $fields->push(new DropdownField('DPSStoreCard', '', [1 => 'Store Credit Card', 0 => 'Do NOT Store Credit Card']));
             $fields->push(new LiteralField('AddCardExplanation', '<p>' . Config::inst()->get(DpsPxPayStoredPayment::class, 'add_card_explanation') . '</p>'));
@@ -201,7 +214,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         // 2) CURL Creation
         $clientURL = curl_init();
-        curl_setopt($clientURL, CURLOPT_URL, $this->config() - get('pxpost_url'));
+        curl_setopt($clientURL, CURLOPT_URL, $this->config()->get('pxpost_url'));
         curl_setopt($clientURL, CURLOPT_POST, 1);
         curl_setopt($clientURL, CURLOPT_POSTFIELDS, $transaction);
         curl_setopt($clientURL, CURLOPT_RETURNTRANSFER, 1);

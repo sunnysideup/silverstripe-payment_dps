@@ -104,7 +104,7 @@ class DpsPxPost extends EcommercePayment
      * this would be a set of fields to enter your
      * credit card details.
      *
-     * @return FieldList
+     * @return \SilverStripe\Forms\FieldList
      */
     public function getPaymentFormFields($amount = 0, $order = null)
     {
@@ -136,7 +136,7 @@ class DpsPxPost extends EcommercePayment
      * returns true if all the data is correct.
      *
      * @param array $data The form request data - see OrderForm
-     * @param OrderForm $form The form object submitted on
+     * @param \Sunnysideup\Ecommerce\Forms\OrderForm $form The form object submitted on
      *
      * @return boolean
      */
