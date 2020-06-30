@@ -2,27 +2,22 @@
 
 namespace Sunnysideup\PaymentDps;
 
-
-
-
-
-
 use debug;
-use SilverStripe\Core\Config\Config;
-use Sunnysideup\PaymentDps\DpsPxPayComs;
 use SilverStripe\Control\Director;
-use Sunnysideup\PaymentDps\Thirdparty\PxPay_Curl;
-use Sunnysideup\PaymentDps\Thirdparty\PxPayRequest;
-use Sunnysideup\PaymentDps\Thirdparty\MifMessage;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Config\Configurable;
+use SilverStripe\Core\Extensible;
+use SilverStripe\Core\Injector\Injectable;
 
 
 /**
  *@author nicolaas [at] sunnysideup.co.nz
  **/
 
-use SilverStripe\Core\Extensible;
-use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Core\Config\Configurable;
+use Sunnysideup\PaymentDps\Thirdparty\MifMessage;
+use Sunnysideup\PaymentDps\Thirdparty\PxPay_Curl;
+use Sunnysideup\PaymentDps\Thirdparty\PxPayRequest;
+
 /**
  *@author nicolaas [at] sunnysideup.co.nz
  **/
@@ -31,116 +26,152 @@ class DpsPxPayComs
     use Extensible;
     use Injectable;
     use Configurable;
-    private static $pxpay_url = 'https://sec.paymentexpress.com/pxaccess/pxpay.aspx';
-    private static $pxpay_userid = "";
-    private static $pxpay_encryption_key = "";
-    private static $alternative_thirdparty_folder = "";
-    private static $overriding_txn_type = "";
-    //e.g. AUTH
-    public static function get_txn_type()
-    {
-        $overridingTxnType = Config::inst()->get(DpsPxPayComs::class, "overriding_txn_type");
-        return $overridingTxnType ? $overridingTxnType : "Purchase";
-    }
+
     /**
      * customer details
      **/
-    protected $TxnData1 = "";
-    public function setTxnData1($v)
-    {
-        $this->TxnData1 = $v;
-    }
-    protected $TxnData2 = "";
-    public function setTxnData2($v)
-    {
-        $this->TxnData2 = $v;
-    }
-    protected $TxnData3 = "";
-    public function setTxnData3($v)
-    {
-        $this->TxnData3 = $v;
-    }
-    protected $EmailAddress = "";
-    public function setEmailAddress($v)
-    {
-        $this->EmailAddress = $v;
-    }
+    protected $TxnData1 = '';
+
+    protected $TxnData2 = '';
+
+    protected $TxnData3 = '';
+
+    protected $EmailAddress = '';
+
     /**
      * order details
      **/
     protected $AmountInput = 0;
-    public function setAmountInput($v)
-    {
-        $this->AmountInput = $v;
-    }
-    protected $MerchantReference = "";
-    public function setMerchantReference($v)
-    {
-        $this->MerchantReference = $v;
-    }
-    protected $CurrencyInput = "NZD";
-    public function setCurrencyInput($v)
-    {
-        $this->CurrencyInput = $v;
-    }
-    protected $TxnType = "Purchase";
-    public function setTxnType($v)
-    {
-        $this->TxnType = $v;
-    }
-    protected $TxnId = "";
-    public function setTxnId($v)
-    {
-        $this->TxnId = $v;
-    }
+
+    protected $MerchantReference = '';
+
+    protected $CurrencyInput = 'NZD';
+
+    protected $TxnType = 'Purchase';
+
+    protected $TxnId = '';
+
     /**
      * details of the redirection
      **/
-    protected $UrlFail = "";
-    public function setUrlFail($v)
-    {
-        $this->UrlFail = $v;
-    }
-    protected $UrlSuccess = "";
-    public function setUrlSuccess($v)
-    {
-        $this->UrlSuccess = $v;
-    }
+    protected $UrlFail = '';
+
+    protected $UrlSuccess = '';
+
     /**
      * Details to use stored cards
      */
     protected $EnableAddBillCard = 0;
-    public function setEnableAddBillCard($v)
-    {
-        $this->EnableAddBillCard = $v;
-    }
+
     protected $BillingId = 0;
-    public function setBillingId($v)
-    {
-        $this->BillingId = $v;
-    }
+
     /**
      * external object
      **/
     protected $PxPayObject = null;
+
     protected $response = null;
+
+    private static $pxpay_url = 'https://sec.paymentexpress.com/pxaccess/pxpay.aspx';
+
+    private static $pxpay_userid = '';
+
+    private static $pxpay_encryption_key = '';
+
+    private static $alternative_thirdparty_folder = '';
+
+    private static $overriding_txn_type = '';
+
     public function __construct()
     {
-        if (!self::$alternative_thirdparty_folder) {
+        if (! self::$alternative_thirdparty_folder) {
             self::$alternative_thirdparty_folder = Director::baseFolder() . '/payment_dps/code/thirdparty';
         }
-        require_once self::$alternative_thirdparty_folder . "/PxPay_Curl.inc.php";
-        if (!Config::inst()->get(DpsPxPayComs::class, "pxpay_url")) {
+        require_once self::$alternative_thirdparty_folder . '/PxPay_Curl.inc.php';
+        if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_url')) {
             user_error("error in DpsPxPayComs::__construct, self::{$pxpay_url} not set. ", E_USER_WARNING);
         }
-        if (!Config::inst()->get(DpsPxPayComs::class, "pxpay_userid")) {
+        if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_userid')) {
             user_error("error in DpsPxPayComs::__construct, self::{$pxpay_userid} not set. ", E_USER_WARNING);
         }
-        if (!Config::inst()->get(DpsPxPayComs::class, "pxpay_encryption_key")) {
+        if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_encryption_key')) {
             user_error("error in DpsPxPayComs::__construct, self::{$pxpay_encryption_key} not set. ", E_USER_WARNING);
         }
-        $this->PxPayObject = new PxPay_Curl(Config::inst()->get(DpsPxPayComs::class, "pxpay_url"), Config::inst()->get(DpsPxPayComs::class, "pxpay_userid"), Config::inst()->get(DpsPxPayComs::class, "pxpay_encryption_key"));
+        $this->PxPayObject = new PxPay_Curl(Config::inst()->get(DpsPxPayComs::class, 'pxpay_url'), Config::inst()->get(DpsPxPayComs::class, 'pxpay_userid'), Config::inst()->get(DpsPxPayComs::class, 'pxpay_encryption_key'));
     }
+
+    //e.g. AUTH
+    public static function get_txn_type()
+    {
+        $overridingTxnType = Config::inst()->get(DpsPxPayComs::class, 'overriding_txn_type');
+        return $overridingTxnType ?: 'Purchase';
+    }
+
+    public function setTxnData1($v)
+    {
+        $this->TxnData1 = $v;
+    }
+
+    public function setTxnData2($v)
+    {
+        $this->TxnData2 = $v;
+    }
+
+    public function setTxnData3($v)
+    {
+        $this->TxnData3 = $v;
+    }
+
+    public function setEmailAddress($v)
+    {
+        $this->EmailAddress = $v;
+    }
+
+    public function setAmountInput($v)
+    {
+        $this->AmountInput = $v;
+    }
+
+    public function setMerchantReference($v)
+    {
+        $this->MerchantReference = $v;
+    }
+
+    public function setCurrencyInput($v)
+    {
+        $this->CurrencyInput = $v;
+    }
+
+    public function setTxnType($v)
+    {
+        $this->TxnType = $v;
+    }
+
+    public function setTxnId($v)
+    {
+        $this->TxnId = $v;
+    }
+
+    public function setUrlFail($v)
+    {
+        $this->UrlFail = $v;
+    }
+
+    public function setUrlSuccess($v)
+    {
+        $this->UrlSuccess = $v;
+    }
+
+    public function setEnableAddBillCard($v)
+    {
+        $this->EnableAddBillCard = $v;
+    }
+
+    public function setBillingId($v)
+    {
+        $this->BillingId = $v;
+    }
+
     /*
      * This function formats data into a request and returns redirection URL
      * NOTE: you will need to set all the variables prior to running this.
@@ -148,20 +179,20 @@ class DpsPxPayComs
      **/
     public function startPaymentProcess()
     {
-        if (!$this->TxnId) {
-            $this->TxnId = uniqid("ID");
+        if (! $this->TxnId) {
+            $this->TxnId = uniqid('ID');
         }
         $request = new PxPayRequest();
         #Set PxPay properties
         if ($this->MerchantReference) {
             $request->setMerchantReference($this->MerchantReference);
         } else {
-            user_error("error in DpsPxPayComs::startPaymentProcess, MerchantReference not set. ", E_USER_WARNING);
+            user_error('error in DpsPxPayComs::startPaymentProcess, MerchantReference not set. ', E_USER_WARNING);
         }
         if ($this->AmountInput) {
             $request->setAmountInput($this->AmountInput);
         } else {
-            user_error("error in DpsPxPayComs::startPaymentProcess, AmountInput not set. ", E_USER_WARNING);
+            user_error('error in DpsPxPayComs::startPaymentProcess, AmountInput not set. ', E_USER_WARNING);
         }
         if ($this->TxnData1) {
             $request->setTxnData1($this->TxnData1);
@@ -175,12 +206,12 @@ class DpsPxPayComs
         if ($this->TxnType) {
             $request->setTxnType($this->TxnType);
         } else {
-            user_error("error in DpsPxPayComs::startPaymentProcess, TxnType not set. ", E_USER_WARNING);
+            user_error('error in DpsPxPayComs::startPaymentProcess, TxnType not set. ', E_USER_WARNING);
         }
         if ($this->CurrencyInput) {
             $request->setCurrencyInput($this->CurrencyInput);
         } else {
-            user_error("error in DpsPxPayComs::startPaymentProcess, CurrencyInput not set. ", E_USER_WARNING);
+            user_error('error in DpsPxPayComs::startPaymentProcess, CurrencyInput not set. ', E_USER_WARNING);
         }
         if ($this->EmailAddress) {
             $request->setEmailAddress($this->EmailAddress);
@@ -188,12 +219,12 @@ class DpsPxPayComs
         if ($this->UrlFail) {
             $request->setUrlFail($this->UrlFail);
         } else {
-            user_error("error in DpsPxPayComs::startPaymentProcess, UrlFail not set. ", E_USER_WARNING);
+            user_error('error in DpsPxPayComs::startPaymentProcess, UrlFail not set. ', E_USER_WARNING);
         }
         if ($this->UrlSuccess) {
             $request->setUrlSuccess($this->UrlSuccess);
         } else {
-            user_error("error in DpsPxPayComs::startPaymentProcess, UrlSuccess not set. ", E_USER_WARNING);
+            user_error('error in DpsPxPayComs::startPaymentProcess, UrlSuccess not set. ', E_USER_WARNING);
         }
         if ($this->TxnId) {
             $request->setTxnId($this->TxnId);
@@ -214,11 +245,9 @@ class DpsPxPayComs
         #Obtain output XML
         $this->response = new MifMessage($request_string);
         #Parse output XML
-        $url = $this->response->get_element_text("URI");
-        //$valid = $this->response->get_attribute("valid");
-        #Redirect to payment page
-        return $url;
+        return $this->response->get_element_text('URI');
     }
+
     /*
      * This function receives information back from the payments page as a response object
      * --------------------- RESPONSE DATA ---------------------
@@ -251,20 +280,21 @@ class DpsPxPayComs
     {
         #getResponse method in PxPay object returns PxPayResponse object
         #which encapsulates all the response data
-        return $this->PxPayObject->getResponse($_REQUEST["result"]);
+        return $this->PxPayObject->getResponse($_REQUEST['result']);
     }
+
     public function getDebugMessage()
     {
-        $string = "<pre>";
+        $string = '<pre>';
         $string .= print_r($this->PxPayObject, true);
         $string .= print_r($this->response, true);
-        $string .= "</pre>";
+        $string .= '</pre>';
         return $string;
     }
+
     public function debug()
     {
-        debug::show("debugging DpsPxPayComs");
+        debug::show('debugging DpsPxPayComs');
         echo $this->getDebugMessage();
     }
 }
-

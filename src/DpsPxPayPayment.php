@@ -2,32 +2,17 @@
 
 namespace Sunnysideup\PaymentDps;
 
-
-
-
-
-
-
-
-
-
-
-
-
-use SilverStripe\Forms\ReadonlyField;
-use SilverStripe\Forms\LiteralField;
-use SilverStripe\Forms\FieldList;
-use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
-use Sunnysideup\PaymentDps\Control\DpsPxPayPayment_Handler;
-use SilverStripe\Control\Email\Email;
-use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\CMS\Controllers\ContentController;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Email\Email;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\View\Requirements;
-use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentProcessing;
+use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
-use SilverStripe\Core\Convert;
-
-
+use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentProcessing;
+use Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler;
 
 /**
  *@author nicolaas[at]sunnysideup.co.nz
@@ -38,16 +23,12 @@ use SilverStripe\Core\Convert;
 
 class DpsPxPayPayment extends EcommercePayment
 {
-    private static $db = array(
-        'TxnRef' => 'Text',
-        'DebugMessage' => 'HTMLText'
-    );
+    protected $Currency = '';
 
-    protected $Currency = "";
-    public function setCurrency($s)
-    {
-        $this->Currency = $s;
-    }
+    private static $db = [
+        'TxnRef' => 'Text',
+        'DebugMessage' => 'HTMLText',
+    ];
 
     // DPS Information
 
@@ -55,59 +36,62 @@ class DpsPxPayPayment extends EcommercePayment
 
     private static $logo = 'payment_dps/images/dps_paymentexpress_small.png';
 
-
     // URLs
 
     // Please set from YAML. See _config/payment_dps.yml.example
-    private static $credit_cards = array(
+    private static $credit_cards = [
         /*'Visa' => 'ecommerce/images/paymentmethods/visa.jpg',
         'MasterCard' => 'ecommerce/images/paymentmethods/mastercard.jpg',
         'American Express' => 'ecommerce/images/paymentmethods/american-express.gif',
         'Dinners Club' => 'ecommerce/images/paymentmethods/dinners-club.jpg',
         'JCB' => 'ecommerce/images/paymentmethods/jcb.jpg'*/
-    );
+    ];
+
+    private static $email_debug = false;
+
+    public function setCurrency($s)
+    {
+        $this->Currency = $s;
+    }
 
     public static function remove_credit_card($creditCard)
     {
         unset(self::$credit_cards[$creditCard]);
     }
 
-    private static $email_debug = false;
-
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
-        $fields->replaceField("DebugMessage", new ReadonlyField("DebugMessage", "Debug info"));
+        $fields->replaceField('DebugMessage', new ReadonlyField('DebugMessage', 'Debug info'));
         return $fields;
     }
 
     public function getPaymentFormFields($amount = 0, $order = null)
     {
-        $logo = '<img src="' . $this->config()->get("logo"). '" alt="Credit card payments powered by DPS"/>';
-        $privacyLink = '<a href="' . $this->config()->get("privacy_link"). '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
+        $logo = '<img src="' . $this->config()->get('logo') . '" alt="Credit card payments powered by DPS"/>';
+        $privacyLink = '<a href="' . $this->config()->get('privacy_link') . '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
         $paymentsList = '';
-        if ($cards = $this->config()->get("credit_cards")) {
+        if ($cards = $this->config()->get('credit_cards')) {
             foreach ($cards as $name => $image) {
                 $paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
             }
         }
-        $fields = new FieldList(
+        return new FieldList(
             new LiteralField('DPSInfo', $privacyLink),
             new LiteralField('DPSPaymentsList', $paymentsList)
         );
-        return $fields;
     }
 
     public function getPaymentFormRequirements()
     {
-        return array();
+        return [];
     }
 
     /**
      * @param array $data The form request data - see OrderForm
-     * @param OrderForm $form The form object submitted on
+     * @param \Sunnysideup\Ecommerce\Forms\OrderForm $form The form object submitted on
      *
-     * @return EcommercePayment_Result
+     * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
      */
     public function processPayment($data, $form)
     {
@@ -128,14 +112,14 @@ class DpsPxPayPayment extends EcommercePayment
                 $currency = $currencyObject->Code;
             }
         }
-        if (!$amount && !empty($data["Amount"])) {
-            $amount = floatval($data["Amount"]);
+        if (! $amount && ! empty($data['Amount'])) {
+            $amount = floatval($data['Amount']);
         }
-        if (!$currency && !empty($data["Currency"])) {
-            $currency = floatval($data["Currency"]);
+        if (! $currency && ! empty($data['Currency'])) {
+            $currency = floatval($data['Currency']);
         }
         //final backup for currency
-        if (!$currency) {
+        if (! $currency) {
             $currency = EcommercePayment::site_currency();
         }
         $this->Amount->Currency = $currency;
@@ -146,116 +130,60 @@ class DpsPxPayPayment extends EcommercePayment
         return $this->executeURL($url);
     }
 
-    /**
-     *
-     * @param Float $amount
-     * @param String $currency - e.g. NZD
-     * @return String
-     *
-     */
-    protected function buildURL($amount, $currency)
-    {
-        $commsObject = new DpsPxPayComs();
-
-        /**
-        * order details
-        **/
-        $commsObject->setTxnType(DpsPxPayComs::get_txn_type());
-        $commsObject->setMerchantReference($this->ID);
-        //replace any character that is NOT [0-9] or dot (.)
-
-        $commsObject->setAmountInput(floatval(preg_replace("/[^0-9\.]/", "", $amount)));
-        $commsObject->setCurrencyInput($currency);
-
-        /**
-        * details of the redirection
-        **/
-        $commsObject->setUrlFail(DpsPxPayPayment_Handler::absolute_complete_link());
-        $commsObject->setUrlSuccess(DpsPxPayPayment_Handler::absolute_complete_link());
-
-        /**
-        * process payment data (check if it is OK and go forward if it is...
-        **/
-        $url = $commsObject->startPaymentProcess();
-        $debugMessage = $commsObject->getDebugMessage();
-        $this->DebugMessage = $debugMessage;
-        $this->write();
-        if ($this->config()->get("email_debug")) {
-            $from = Email::config()->admin_email;
-            $to = Email::config()->admin_email;
-            $subject = "DPS Debug Information";
-            $body = $debugMessage;
-            $email = new Email($from, $to, $subject, $body);
-            $email->send();
-        }
-        return $url;
-    }
-
     public function executeURL($url)
     {
-        $url = str_replace("&", "&amp;", $url);
-        $url = str_replace("&amp;&amp;", "&amp;", $url);
+        $url = str_replace('&', '&amp;', $url);
+        $url = str_replace('&amp;&amp;', '&amp;', $url);
         //$url = str_replace("==", "", $url);
         if ($url) {
             /**
-            * build redirection page
-            **/
+             * build redirection page
+             **/
             $page = new SiteTree();
             $page->Title = 'Redirection to DPS...';
-            $page->Logo = '<img src="' . $this->config()->get("logo") . '" alt="Payments powered by DPS"/>';
+            $page->Logo = '<img src="' . $this->config()->get('logo') . '" alt="Payments powered by DPS"/>';
             $page->Form = $this->DPSForm($url);
             $controller = new ContentController($page);
             Requirements::clear();
-            Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
+            Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
             //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
             //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
 
-/**
-  * ### @@@@ START REPLACEMENT @@@@ ###
-  * WHY: automated upgrade
-  * OLD: ->RenderWith( (ignore case)
-  * NEW: ->RenderWith( (COMPLEX)
-  * EXP: Check that the template location is still valid!
-  * ### @@@@ STOP REPLACEMENT @@@@ ###
-  */
+            /**
+             * ### @@@@ START REPLACEMENT @@@@ ###
+             * WHY: automated upgrade
+             * OLD: ->RenderWith( (ignore case)
+             * NEW: ->RenderWith( (COMPLEX)
+             * EXP: Check that the template location is still valid!
+             * ### @@@@ STOP REPLACEMENT @@@@ ###
+             */
             return EcommercePaymentProcessing::create($controller->RenderWith('PaymentProcessingPage'));
-        } else {
-            $page = new SiteTree();
-            $page->Title = 'Sorry, DPS can not be contacted at the moment ...';
-            $page->Logo = 'Sorry, an error has occured in contacting the Payment Processing Provider, please try again in a few minutes...';
-            $page->Form = $this->DPSForm($url);
-            $controller = new ContentController($page);
-            Requirements::clear();
-
-/**
-  * ### @@@@ START REPLACEMENT @@@@ ###
-  * WHY: automated upgrade
-  * OLD: THIRDPARTY_DIR."/jquery/jquery.js" (case sensitive)
-  * NEW: 'silverstripe/admin: thirdparty/jquery/jquery.js' (COMPLEX)
-  * EXP: Check for best usage and inclusion of Jquery
-  * ### @@@@ STOP REPLACEMENT @@@@ ###
-  */
-            Requirements::javascript('sunnysideup/payment_dps: silverstripe/admin: thirdparty/jquery/jquery.js');
-            //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
-            //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
-
-/**
-  * ### @@@@ START REPLACEMENT @@@@ ###
-  * WHY: automated upgrade
-  * OLD: ->RenderWith( (ignore case)
-  * NEW: ->RenderWith( (COMPLEX)
-  * EXP: Check that the template location is still valid!
-  * ### @@@@ STOP REPLACEMENT @@@@ ###
-  */
-            return EcommercePaymentFailure::create($controller->RenderWith('PaymentProcessingPage'));
         }
+        $page = new SiteTree();
+        $page->Title = 'Sorry, DPS can not be contacted at the moment ...';
+        $page->Logo = 'Sorry, an error has occured in contacting the Payment Processing Provider, please try again in a few minutes...';
+        $page->Form = $this->DPSForm($url);
+        $controller = new ContentController($page);
+        Requirements::clear();
+        Requirements::javascript('silverstripe/admin: thirdparty/jquery/jquery.js');
+        //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
+        //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
+
+        /**
+         * ### @@@@ START REPLACEMENT @@@@ ###
+         * WHY: automated upgrade
+         * OLD: ->RenderWith( (ignore case)
+         * NEW: ->RenderWith( (COMPLEX)
+         * EXP: Check that the template location is still valid!
+         * ### @@@@ STOP REPLACEMENT @@@@ ###
+         */
+        return EcommercePaymentFailure::create($controller->RenderWith('PaymentProcessingPage'));
     }
 
     public function DPSForm($url)
     {
-        $urlWithoutAmpersand = Convert::raw2js(str_replace('&amp;', '&', $url));
         return <<<HTML
-            <form id="PaymentFormDPS" method="post" action="$url">
+            <form id="PaymentFormDPS" method="post" action="${url}">
                 <input type="submit" value="pay now" />
             </form>
             <script type="text/javascript">
@@ -267,5 +195,47 @@ class DpsPxPayPayment extends EcommercePayment
             </script>
 HTML;
     }
-}
 
+    /**
+     * @param float $amount
+     * @param string $currency - e.g. NZD
+     * @return string
+     */
+    protected function buildURL($amount, $currency)
+    {
+        $commsObject = new DpsPxPayComs();
+
+        /**
+         * order details
+         **/
+        $commsObject->setTxnType(DpsPxPayComs::get_txn_type());
+        $commsObject->setMerchantReference($this->ID);
+        //replace any character that is NOT [0-9] or dot (.)
+
+        $commsObject->setAmountInput(floatval(preg_replace("/[^0-9\.]/", '', $amount)));
+        $commsObject->setCurrencyInput($currency);
+
+        /**
+         * details of the redirection
+         **/
+        $commsObject->setUrlFail(DpsPxPayPaymentHandler::absolute_complete_link());
+        $commsObject->setUrlSuccess(DpsPxPayPaymentHandler::absolute_complete_link());
+
+        /**
+         * process payment data (check if it is OK and go forward if it is...
+         **/
+        $url = $commsObject->startPaymentProcess();
+        $debugMessage = $commsObject->getDebugMessage();
+        $this->DebugMessage = $debugMessage;
+        $this->write();
+        if ($this->config()->get('email_debug')) {
+            $from = Email::config()->admin_email;
+            $to = Email::config()->admin_email;
+            $subject = 'DPS Debug Information';
+            $body = $debugMessage;
+            $email = new Email($from, $to, $subject, $body);
+            $email->send();
+        }
+        return $url;
+    }
+}

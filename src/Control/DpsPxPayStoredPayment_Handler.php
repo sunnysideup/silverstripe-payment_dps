@@ -2,28 +2,19 @@
 
 namespace Sunnysideup\PaymentDps\Control;
 
-
-
-
-
-
-use SilverStripe\Core\Config\Config;
-use Sunnysideup\PaymentDps\Control\DpsPxPayStoredPayment_Handler;
 use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
 use Sunnysideup\PaymentDps\DpsPxPayComs;
 use Sunnysideup\PaymentDps\DpsPxPayStoredPayment;
 use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
 
-
-
-class DpsPxPayStoredPayment_Handler extends DpsPxPayPayment_Handler
+class DpsPxPayStoredPayment_Handler extends DpsPxPayPaymentHandler
 {
     private static $url_segment = 'dpspxpaystoredpayment';
 
-
     public static function complete_link()
     {
-        return Config::inst()->get(DpsPxPayStoredPayment_Handler::class, 'url_segment') . '/paid/';
+        return Config::inst()->get(DpsPxPayStoredPaymentHandler::class, 'url_segment') . '/paid/';
     }
 
     public static function absolute_complete_link()
@@ -36,14 +27,14 @@ class DpsPxPayStoredPayment_Handler extends DpsPxPayPayment_Handler
         $commsObject = new DpsPxPayComs();
         $response = $commsObject->processRequestAndReturnResultsAsObject();
         if ($payment = DpsPxPayStoredPayment::get()->byID($response->getMerchantReference())) {
-            if ($payment->Status != 'Success') {
-                if (1 == $response->getSuccess()) {
+            if ($payment->Status !== 'Success') {
+                if ($response->getSuccess() === 1) {
                     $payment->Status = 'Success';
 
                     if ($response->DpsBillingId) {
-                        $existingCard = DpsPxPayStoredCard::get()->filter(array("BillingID" => $response->DpsBillingId))->First();
+                        $existingCard = DpsPxPayStoredCard::get()->filter(['BillingID' => $response->DpsBillingId])->First();
 
-                        if ($existingCard == false) {
+                        if ($existingCard === false) {
                             $storedCard = new DpsPxPayStoredCard();
                             $storedCard->BillingID = $response->DpsBillingId;
                             $storedCard->CardName = $response->CardName;
@@ -66,9 +57,8 @@ class DpsPxPayStoredPayment_Handler extends DpsPxPayPayment_Handler
             }
             $payment->redirectToOrder();
         } else {
-            USER_ERROR("could not find payment with matching ID", E_USER_WARNING);
+            USER_ERROR('could not find payment with matching ID', E_USER_WARNING);
         }
         return;
     }
 }
-

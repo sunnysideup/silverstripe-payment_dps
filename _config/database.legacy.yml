@@ -1,7 +1,7 @@
 SilverStripe\ORM\DatabaseAdmin:
   classname_value_remapping:
-    DpsPxPayPayment_Handler: Sunnysideup\PaymentDps\Control\DpsPxPayPayment_Handler
-    DpsPxPayStoredPayment_Handler: Sunnysideup\PaymentDps\Control\DpsPxPayStoredPayment_Handler
+    DpsPxPayPayment_Handler: Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler
+    DpsPxPayStoredPayment_Handler: Sunnysideup\PaymentDps\Control\DpsPxPayStoredPaymentHandler
     PxPayMessage: Sunnysideup\PaymentDps\Thirdparty\PxPayMessage
     PxPayResponse: Sunnysideup\PaymentDps\Thirdparty\PxPayResponse
     MifMessage: Sunnysideup\PaymentDps\Thirdparty\MifMessage

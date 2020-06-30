@@ -1,4 +1,4 @@
-Sunnysideup\PaymentDps\Control\DpsPxPayPayment_Handler:
+Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler:
   url_segment: dpspxpaypayment
-Sunnysideup\PaymentDps\Control\DpsPxPayStoredPayment_Handler:
+Sunnysideup\PaymentDps\Control\DpsPxPayStoredPaymentHandler:
   url_segment: dpspxpaystoredpayment
