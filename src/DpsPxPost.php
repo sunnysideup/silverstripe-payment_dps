@@ -211,29 +211,6 @@ class DpsPxPost extends EcommercePayment
         $this->Response = str_replace('\n', "\n", Convert::raw2sql(print_r($params, 1)));
         $this->Message = Convert::raw2sql($txn->CardHolderResponseText . ' ' . $txn->CardHolderResponseDescription);
         $this->CardNumber = Convert::raw2sql($txn->CardNumber);
-
-        echo '<pre>';
-        print_r($params->Success);
-        echo '</pre>';
-        echo '<pre>';
-        print_r($amount);
-        echo '</pre>';
-        echo '<pre>';
-        print_r($txn->Amount);
-        echo '</pre>';
-        echo '<pre>';
-        print_r($currency);
-        echo '</pre>';
-        echo '<pre>';
-        print_r($txn->CurrencyName);
-        echo '</pre>';
-        echo '<pre>';
-        print_r($this->OrderID);
-        echo '</pre>';
-        echo '<pre>';
-        print_r($txn->MerchantReference);
-        echo '</pre>';
-        die('sdfsdf');
         if ($params->Success === 1 &&
             $amount === $txn->Amount &&
             $currency === $txn->CurrencyName &&
