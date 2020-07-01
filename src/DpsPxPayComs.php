@@ -84,10 +84,6 @@ class DpsPxPayComs
 
     public function __construct()
     {
-        if (! self::$alternative_thirdparty_folder) {
-            self::$alternative_thirdparty_folder = Director::baseFolder() . '/payment_dps/code/thirdparty';
-        }
-        require_once self::$alternative_thirdparty_folder . '/PxPay_Curl.inc.php';
         if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_url')) {
             user_error("error in DpsPxPayComs::__construct, self::{$pxpay_url} not set. ", E_USER_WARNING);
         }

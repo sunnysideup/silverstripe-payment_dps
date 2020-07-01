@@ -5,9 +5,12 @@ namespace Sunnysideup\PaymentDps;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Email\Email;
+use SilverStripe\Core\Manifest\ModuleResourceLoader;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\ORM\DB;
+use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\View\Requirements;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
@@ -34,7 +37,7 @@ class DpsPxPayPayment extends EcommercePayment
 
     private static $privacy_link = 'http://www.paymentexpress.com/privacypolicy.htm';
 
-    private static $logo = 'payment_dps/images/dps_paymentexpress_small.png';
+    private static $logo = 'sunnysideup/payment_dps: client/images/dps_paymentexpress_small.png';
 
     // URLs
 
@@ -68,7 +71,7 @@ class DpsPxPayPayment extends EcommercePayment
 
     public function getPaymentFormFields($amount = 0, $order = null)
     {
-        $logo = '<img src="' . $this->config()->get('logo') . '" alt="Credit card payments powered by DPS"/>';
+        $logo = $this->getLogoResource();
         $privacyLink = '<a href="' . $this->config()->get('privacy_link') . '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
         $paymentsList = '';
         if ($cards = $this->config()->get('credit_cards')) {
@@ -79,6 +82,15 @@ class DpsPxPayPayment extends EcommercePayment
         return new FieldList(
             new LiteralField('DPSInfo', $privacyLink),
             new LiteralField('DPSPaymentsList', $paymentsList)
+        );
+    }
+
+    public function getLogoResource(){
+        $logo = $this->config()->get('logo');
+        $src = ModuleResourceLoader::singleton()->resolveURL($logo);
+        return DBField::create_field(
+            'HTMLText',
+            '<img src="' . $src . '" alt="Credit card payments powered by DPS"/>'
         );
     }
 
@@ -141,23 +153,12 @@ class DpsPxPayPayment extends EcommercePayment
              **/
             $page = new SiteTree();
             $page->Title = 'Redirection to DPS...';
-            $page->Logo = '<img src="' . $this->config()->get('logo') . '" alt="Payments powered by DPS"/>';
+            $page->Logo = $this->getLogoResource();
             $page->Form = $this->DPSForm($url);
             $controller = new ContentController($page);
             Requirements::clear();
-            Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-            //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
-            //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
-
-            /**
-             * ### @@@@ START REPLACEMENT @@@@ ###
-             * WHY: automated upgrade
-             * OLD: ->RenderWith( (ignore case)
-             * NEW: ->RenderWith( (COMPLEX)
-             * EXP: Check that the template location is still valid!
-             * ### @@@@ STOP REPLACEMENT @@@@ ###
-             */
-            return EcommercePaymentProcessing::create($controller->RenderWith('PaymentProcessingPage'));
+            Requirements::javascript('silverstripe/admin: thirdparty/jquery/jquery.js');
+            return EcommercePaymentProcessing::create($controller->RenderWith('Sunnysideup\Ecommerce\PaymentProcessingPage'));
         }
         $page = new SiteTree();
         $page->Title = 'Sorry, DPS can not be contacted at the moment ...';
@@ -166,24 +167,14 @@ class DpsPxPayPayment extends EcommercePayment
         $controller = new ContentController($page);
         Requirements::clear();
         Requirements::javascript('silverstripe/admin: thirdparty/jquery/jquery.js');
-        //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
-        //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
-
-        /**
-         * ### @@@@ START REPLACEMENT @@@@ ###
-         * WHY: automated upgrade
-         * OLD: ->RenderWith( (ignore case)
-         * NEW: ->RenderWith( (COMPLEX)
-         * EXP: Check that the template location is still valid!
-         * ### @@@@ STOP REPLACEMENT @@@@ ###
-         */
-        return EcommercePaymentFailure::create($controller->RenderWith('PaymentProcessingPage'));
+        return EcommercePaymentFailure::create($controller->RenderWith('Sunnysideup\Ecommerce\PaymentProcessingPage'));
     }
 
     public function DPSForm($url)
     {
-        return <<<HTML
-            <form id="PaymentFormDPS" method="post" action="${url}">
+        return DBField::create_field(
+            'HTMLText',
+            '<form id="PaymentFormDPS" method="post" action="' . $url . '">
                 <input type="submit" value="pay now" />
             </form>
             <script type="text/javascript">
@@ -192,8 +183,8 @@ class DpsPxPayPayment extends EcommercePayment
                         jQuery("#PaymentFormDPS").submit();
                     }
                 });
-            </script>
-HTML;
+            </script>'
+        );
     }
 
     /**
