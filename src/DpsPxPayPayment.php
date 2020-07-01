@@ -27,6 +27,8 @@ class DpsPxPayPayment extends EcommercePayment
 {
     protected $Currency = '';
 
+    private static $table_name = 'DpsPxPayPayment';
+
     private static $db = [
         'TxnRef' => 'Text',
         'DebugMessage' => 'HTMLText',
