@@ -85,13 +85,13 @@ class DpsPxPayComs
     public function __construct()
     {
         if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_url')) {
-            user_error("error in DpsPxPayComs::__construct, self::{$pxpay_url} not set. ", E_USER_WARNING);
+            user_error("error in DpsPxPayComs::__construct, " . self::$pxpay_url . " not set. ", E_USER_WARNING);
         }
         if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_userid')) {
-            user_error("error in DpsPxPayComs::__construct, self::{$pxpay_userid} not set. ", E_USER_WARNING);
+            user_error("error in DpsPxPayComs::__construct, " . self::$pxpay_userid . " not set. ", E_USER_WARNING);
         }
         if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_encryption_key')) {
-            user_error("error in DpsPxPayComs::__construct, self::{$pxpay_encryption_key} not set. ", E_USER_WARNING);
+            user_error("error in DpsPxPayComs::__construct, " . self::$pxpay_encryption_key . " not set. ", E_USER_WARNING);
         }
         $this->PxPayObject = new PxPay_Curl(Config::inst()->get(DpsPxPayComs::class, 'pxpay_url'), Config::inst()->get(DpsPxPayComs::class, 'pxpay_userid'), Config::inst()->get(DpsPxPayComs::class, 'pxpay_encryption_key'));
     }

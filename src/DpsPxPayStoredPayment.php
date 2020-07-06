@@ -57,6 +57,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         $cardsDropdown = ['' => ' --- Select Stored Card ---'];
 
         if ($storedCards->count()) {
+            $card = null;
             foreach ($storedCards as $card) {
                 $cardsDropdown[$card->BillingID] = $card->CardHolder . ' - ' . $card->CardNumber . ' (' . $card->CardName . ')';
             }
