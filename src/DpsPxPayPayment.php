@@ -11,6 +11,7 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\View\Requirements;
+use Sunnysideup\Ecommerce\Forms\OrderForm;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentProcessing;
@@ -102,11 +103,11 @@ class DpsPxPayPayment extends EcommercePayment
 
     /**
      * @param array $data The form request data - see OrderForm
-     * @param \Sunnysideup\Ecommerce\Forms\OrderForm $form The form object submitted on
+     * @param OrderForm $form The form object submitted on
      *
      * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
      */
-    public function processPayment($data, $form)
+    public function processPayment($data, OrderForm $form)
     {
         $order = $this->Order();
         //if currency has been pre-set use this

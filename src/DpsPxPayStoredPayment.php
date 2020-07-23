@@ -9,6 +9,7 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\DB;
 use SilverStripe\Security\Member;
 use SilverStripe\View\Requirements;
+use Sunnysideup\Ecommerce\Forms\OrderForm;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
 use Sunnysideup\PaymentDps\Control\DpsPxPayStoredPaymentHandler;
@@ -68,9 +69,9 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             $cardsDropdown['deletecards'] = " --- Delete Stored Card${s} --- ";
             $fields->push(
                 DropdownField::create(
-                    'DPSUseStoredCard', 
-                    'Use a stored card?', 
-                    $cardsDropdown, 
+                    'DPSUseStoredCard',
+                    'Use a stored card?',
+                    $cardsDropdown,
                     $value = $card->BillingID
                 )->setEmptyString('--- use new Credit Card ---')
             );
@@ -112,11 +113,11 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
     /**
      * @param array $data The form request data - see OrderForm
-     * @param \Sunnysideup\Ecommerce\Forms\OrderForm $form The form object submitted on
+     * @param OrderForm $form The form object submitted on
      *
      * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
      */
-    public function processPayment($data, $form)
+    public function processPayment($data, OrderForm $form)
     {
         if (! isset($data['DPSUseStoredCard'])) {
             $data['DPSUseStoredCard'] = null;

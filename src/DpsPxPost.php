@@ -7,6 +7,7 @@ use SilverStripe\Core\Convert;
 
 use SilverStripe\Forms\LiteralField;
 use SimpleXMLElement;
+use Sunnysideup\Ecommerce\Forms\OrderForm;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
@@ -157,11 +158,11 @@ class DpsPxPost extends EcommercePayment
      * submitted.
      *
      * @param array $data The form request data - see OrderForm
-     * @param \Sunnysideup\Ecommerce\Forms\OrderForm $form The form object submitted on
+     * @param OrderForm $form The form object submitted on
      *
      * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
      */
-    public function processPayment($data, $form)
+    public function processPayment($data, OrderForm $form)
     {
         //save data
         $this->write();
