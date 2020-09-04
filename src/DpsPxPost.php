@@ -139,7 +139,7 @@ class DpsPxPost extends EcommercePayment
      * @param array $data The form request data - see OrderForm
      * @param OrderForm $form The form object submitted on
      *
-     * @return boolean
+     * @return bool
      */
     public function validatePayment($data, OrderForm $form)
     {
@@ -240,7 +240,7 @@ class DpsPxPost extends EcommercePayment
     /**
      * are you running in test mode?
      *
-     * @return boolean
+     * @return bool
      */
     protected function isTest()
     {
