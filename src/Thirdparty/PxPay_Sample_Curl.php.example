@@ -16,7 +16,7 @@ namespace Sunnysideup\PaymentDps\Thirdparty;
 
 # This file is a sample demonstrating integration with the PxPay interface using PHP with the cURL extension installed.
 #Inlcude PxPay objects
-include "PxPay_Curl.inc.php";
+include "PxPayCurl.inc.php";
 
    $PxPay_Url    = "https://sec.paymentexpress.com/pxaccess/pxpay.aspx";
   $PxPay_Userid = "PratikG_Dev";//"PratikPxPay_Dev"; #Important! Update with your UserId
@@ -25,7 +25,7 @@ include "PxPay_Curl.inc.php";
   # MAIN
   #
 
-  $pxpay = new PxPay_Curl($PxPay_Url, $PxPay_Userid, $PxPay_Key);
+  $pxpay = new PxPayCurl($PxPay_Url, $PxPay_Userid, $PxPay_Key);
 
   if (isset($_REQUEST["result"])) {
       # this is a redirection from the payments page.

@@ -5,7 +5,7 @@ mappings:
   PxPayResponse: Sunnysideup\PaymentDps\Thirdparty\PxPayResponse
   MifMessage: Sunnysideup\PaymentDps\Thirdparty\MifMessage
   PxPayRequest: Sunnysideup\PaymentDps\Thirdparty\PxPayRequest
-  PxPay_Curl: Sunnysideup\PaymentDps\Thirdparty\PxPay_Curl
+  PxPayCurl: Sunnysideup\PaymentDps\Thirdparty\PxPayCurl
   DpsPxPayStoredPayment: Sunnysideup\PaymentDps\DpsPxPayStoredPayment
   DpsPxPost: Sunnysideup\PaymentDps\DpsPxPost
   DpsPxPayComs: Sunnysideup\PaymentDps\DpsPxPayComs

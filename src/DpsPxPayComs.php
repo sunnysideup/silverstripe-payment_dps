@@ -14,7 +14,7 @@ use SilverStripe\Core\Injector\Injectable;
  **/
 
 use Sunnysideup\PaymentDps\Thirdparty\MifMessage;
-use Sunnysideup\PaymentDps\Thirdparty\PxPay_Curl;
+use Sunnysideup\PaymentDps\Thirdparty\PxPayCurl;
 use Sunnysideup\PaymentDps\Thirdparty\PxPayRequest;
 
 /**
@@ -92,7 +92,7 @@ class DpsPxPayComs
         if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_encryption_key')) {
             user_error('error in DpsPxPayComs::__construct, ' . self::$pxpay_encryption_key . ' not set. ', E_USER_WARNING);
         }
-        $this->PxPayObject = new PxPay_Curl(Config::inst()->get(DpsPxPayComs::class, 'pxpay_url'), Config::inst()->get(DpsPxPayComs::class, 'pxpay_userid'), Config::inst()->get(DpsPxPayComs::class, 'pxpay_encryption_key'));
+        $this->PxPayObject = new PxPayCurl(Config::inst()->get(DpsPxPayComs::class, 'pxpay_url'), Config::inst()->get(DpsPxPayComs::class, 'pxpay_userid'), Config::inst()->get(DpsPxPayComs::class, 'pxpay_encryption_key'));
     }
 
     //e.g. AUTH

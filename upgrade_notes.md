@@ -23,12 +23,12 @@ Running upgrades on "/var/www/upgrades/payment_dps/payment_dps"
 [2020-06-26 10:50:58] Applying ClassToTraitRule to MifMessage.php...
 [2020-06-26 10:50:58] Applying RenameClasses to PxPayRequest.php...
 [2020-06-26 10:50:58] Applying ClassToTraitRule to PxPayRequest.php...
-[2020-06-26 10:50:58] Applying RenameClasses to PxPay_Curl.php...
-[2020-06-26 10:50:58] Applying ClassToTraitRule to PxPay_Curl.php...
+[2020-06-26 10:50:58] Applying RenameClasses to PxPayCurl.php...
+[2020-06-26 10:50:58] Applying ClassToTraitRule to PxPayCurl.php...
 [2020-06-26 10:50:58] Applying RenameClasses to PxPay_Sample_Curl.php...
 [2020-06-26 10:50:58] Applying ClassToTraitRule to PxPay_Sample_Curl.php...
-[2020-06-26 10:50:58] Applying RenameClasses to PxPay_Curl.inc.php...
-[2020-06-26 10:50:58] Applying ClassToTraitRule to PxPay_Curl.inc.php...
+[2020-06-26 10:50:58] Applying RenameClasses to PxPayCurl.inc.php...
+[2020-06-26 10:50:58] Applying ClassToTraitRule to PxPayCurl.inc.php...
 [2020-06-26 10:50:58] Applying RenameClasses to DpsPxPayStoredPayment.php...
 [2020-06-26 10:50:58] Applying ClassToTraitRule to DpsPxPayStoredPayment.php...
 [2020-06-26 10:50:58] Applying RenameClasses to DpsPxPost.php...
@@ -270,7 +270,7 @@ modified:	src/DpsPxPayComs.php
 
 -use Config;
 -use Director;
--use PxPay_Curl;
+-use PxPayCurl;
 -use PxPayRequest;
 -use MifMessage;
 +
@@ -282,7 +282,7 @@ modified:	src/DpsPxPayComs.php
 +use SilverStripe\Core\Config\Config;
 +use Sunnysideup\PaymentDps\DpsPxPayComs;
 +use SilverStripe\Control\Director;
-+use Sunnysideup\PaymentDps\Thirdparty\PxPay_Curl;
++use Sunnysideup\PaymentDps\Thirdparty\PxPayCurl;
 +use Sunnysideup\PaymentDps\Thirdparty\PxPayRequest;
 +use Sunnysideup\PaymentDps\Thirdparty\MifMessage;
 +
@@ -414,7 +414,7 @@ modified:	src/DpsPxPayComs.php
          if (!self::$alternative_thirdparty_folder) {
 -            self::$alternative_thirdparty_folder = Director::baseFolder().'/payment_dps/code/thirdparty';
 -        }
--        require_once(self::$alternative_thirdparty_folder."/PxPay_Curl.inc.php");
+-        require_once(self::$alternative_thirdparty_folder."/PxPayCurl.inc.php");
 -        if (!Config::inst()->get("DpsPxPayComs", "pxpay_url")) {
 -            user_error("error in DpsPxPayComs::__construct, self::$pxpay_url not set. ", E_USER_WARNING);
 -        }
@@ -425,7 +425,7 @@ modified:	src/DpsPxPayComs.php
 -            user_error("error in DpsPxPayComs::__construct, self::$pxpay_encryption_key not set. ", E_USER_WARNING);
 -        }
 -
--        $this->PxPayObject = new PxPay_Curl(
+-        $this->PxPayObject = new PxPayCurl(
 -            Config::inst()->get("DpsPxPayComs", "pxpay_url"),
 -            Config::inst()->get("DpsPxPayComs", "pxpay_userid"),
 -            Config::inst()->get("DpsPxPayComs", "pxpay_encryption_key")
@@ -434,7 +434,7 @@ modified:	src/DpsPxPayComs.php
 -
 +            self::$alternative_thirdparty_folder = Director::baseFolder() . '/payment_dps/code/thirdparty';
 +        }
-+        require_once self::$alternative_thirdparty_folder . "/PxPay_Curl.inc.php";
++        require_once self::$alternative_thirdparty_folder . "/PxPayCurl.inc.php";
 +        if (!Config::inst()->get(DpsPxPayComs::class, "pxpay_url")) {
 +            user_error("error in DpsPxPayComs::__construct, self::{$pxpay_url} not set. ", E_USER_WARNING);
 +        }
@@ -444,7 +444,7 @@ modified:	src/DpsPxPayComs.php
 +        if (!Config::inst()->get(DpsPxPayComs::class, "pxpay_encryption_key")) {
 +            user_error("error in DpsPxPayComs::__construct, self::{$pxpay_encryption_key} not set. ", E_USER_WARNING);
 +        }
-+        $this->PxPayObject = new PxPay_Curl(Config::inst()->get(DpsPxPayComs::class, "pxpay_url"), Config::inst()->get(DpsPxPayComs::class, "pxpay_userid"), Config::inst()->get(DpsPxPayComs::class, "pxpay_encryption_key"));
++        $this->PxPayObject = new PxPayCurl(Config::inst()->get(DpsPxPayComs::class, "pxpay_url"), Config::inst()->get(DpsPxPayComs::class, "pxpay_userid"), Config::inst()->get(DpsPxPayComs::class, "pxpay_encryption_key"));
 +    }
      /*
       * This function formats data into a request and returns redirection URL

@@ -32,7 +32,7 @@ There are two files included in the release:
 	   -- PHP include file which contains classes for Payments Page
 	2. PxPay_Sample_Curl.php
 	   -- For clients with the cURL PHP extension on their host
-	   -- Sample code to post payment and process response using PxPay_Curl,
+	   -- Sample code to post payment and process response using PxPayCurl,
 	      PxPayReQuest, PxPayResponse objects
 	
 
@@ -71,7 +71,7 @@ PREREQUISITES
 INSTALLATION
 ============
 
-   1. Install PxPay_Sample_Curl.php and PxPay_Curl.inc.php wherever you put your PHP scripts.
+   1. Install PxPay_Sample_Curl.php and PxPayCurl.inc.php wherever you put your PHP scripts.
    2. Set your PxPay UserId and PxPay Key in the PxPay_Sample_Curl.php file into the variables 
       $PxPay_Userid and $PxPay_Key
 

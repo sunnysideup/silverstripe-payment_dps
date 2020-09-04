@@ -246,7 +246,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             if ($xmlElement['type'] === 'open') {
                 if (array_key_exists('attributes', $xmlElement)) {
                     $arrayValues = array_values($xmlElement['attributes']);
-                    list($level[$xmlElement['level']], $extra) = $arrayValues;
+                    list($level[$xmlElement['level']]) = $arrayValues;
                 } else {
                     $level[$xmlElement['level']] = $xmlElement['tag'];
                 }
