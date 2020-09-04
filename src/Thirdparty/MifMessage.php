@@ -58,7 +58,7 @@ class MifMessage
         }
         #When element existent but empty
         $elementObj = $this->xml_value_[$index];
-        if (!array_key_exists('value', $elementObj)) {
+        if (! array_key_exists('value', $elementObj)) {
             return '';
         }
 
@@ -93,7 +93,7 @@ class MifMessage
         $index = $rootindex + 1;
         while (
             $index < count($this->xml_value_) &&
-            !($this->xml_value_[$index]['level'] === $level &&
+            ! ($this->xml_value_[$index]['level'] === $level &&
             $this->xml_value_[$index]['type'] === 'close')
         ) {
             # if one below parent and tag matches, bingo

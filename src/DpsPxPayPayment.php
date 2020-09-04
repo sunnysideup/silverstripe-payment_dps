@@ -87,7 +87,8 @@ class DpsPxPayPayment extends EcommercePayment
         );
     }
 
-    public function getLogoResource(){
+    public function getLogoResource()
+    {
         $logo = $this->config()->get('logo');
         $src = ModuleResourceLoader::singleton()->resolveURL($logo);
         return DBField::create_field(
