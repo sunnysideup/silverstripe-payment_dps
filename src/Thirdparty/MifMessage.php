@@ -91,14 +91,12 @@ class MifMessage
             return 0;   # no children
         }
         $index = $rootindex + 1;
-        while (
-            $index < count($this->xml_value_) &&
+        while ($index < count($this->xml_value_) &&
             ! ($this->xml_value_[$index]['level'] === $level &&
             $this->xml_value_[$index]['type'] === 'close')
         ) {
             # if one below parent and tag matches, bingo
-            if (
-                $this->xml_value_[$index]['level'] === $level + 1 &&
+            if ($this->xml_value_[$index]['level'] === $level + 1 &&
                 $this->xml_value_[$index]['tag'] === $element
             ) {
                 return $index;
