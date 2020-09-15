@@ -59,7 +59,7 @@ class DpsPxPayStoredCard extends DataObject
     public function canView($member = null, $context = [])
     {
         if (! $member) {
-            $member = Security::currentUser();
+            $member = Security::getCurrentUser();
         }
         $extended = $this->extendedCan(__FUNCTION__, $member);
         if ($extended !== null) {

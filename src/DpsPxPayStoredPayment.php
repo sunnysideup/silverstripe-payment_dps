@@ -51,7 +51,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         $fields = new FieldList();
         $storedCards = null;
-        if ($m = Security::currentUser()) {
+        if ($m = Security::getCurrentUser()) {
             $storedCards = DpsPxPayStoredCard::get()->filter(['MemberID' => $m->ID]);
         }
 
@@ -131,7 +131,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         if ($data['DPSUseStoredCard'] === 'deletecards') {
             //important!!!
             $data['DPSUseStoredCard'] = null;
-            if ($m = Security::currentUser()) {
+            if ($m = Security::getCurrentUser()) {
                 $storedCards = DpsPxPayStoredCard::get()->filter(['MemberID' => $m->ID]);
                 if ($storedCards->count()) {
                     foreach ($storedCards as $card) {
