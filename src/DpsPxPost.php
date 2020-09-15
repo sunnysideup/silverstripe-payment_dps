@@ -127,9 +127,10 @@ class DpsPxPost extends EcommercePayment
      *
      * @return array
      */
-    public function getPaymentFormRequirements()
+    public function getPaymentFormRequirements(): array
     {
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
+
         return $formHelper->getCreditCardPaymentFormFields($this);
     }
 
