@@ -7,7 +7,7 @@ use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\DB;
-use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 use Sunnysideup\Ecommerce\Forms\OrderForm;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
@@ -51,7 +51,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         $fields = new FieldList();
         $storedCards = null;
-        if ($m = Member::currentUser()) {
+        if ($m = Security::currentUser()) {
             $storedCards = DpsPxPayStoredCard::get()->filter(['MemberID' => $m->ID]);
         }
 
@@ -131,7 +131,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         if ($data['DPSUseStoredCard'] === 'deletecards') {
             //important!!!
             $data['DPSUseStoredCard'] = null;
-            if ($m = Member::currentUser()) {
+            if ($m = Security::currentUser()) {
                 $storedCards = DpsPxPayStoredCard::get()->filter(['MemberID' => $m->ID]);
                 if ($storedCards->count()) {
                     foreach ($storedCards as $card) {

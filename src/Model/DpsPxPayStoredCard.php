@@ -4,6 +4,7 @@ namespace Sunnysideup\PaymentDps\Model;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 
 class DpsPxPayStoredCard extends DataObject
 {
@@ -58,7 +59,7 @@ class DpsPxPayStoredCard extends DataObject
     public function canView($member = null, $context = [])
     {
         if (! $member) {
-            $member = Member::currentUser();
+            $member = Security::currentUser();
         }
         $extended = $this->extendedCan(__FUNCTION__, $member);
         if ($extended !== null) {
