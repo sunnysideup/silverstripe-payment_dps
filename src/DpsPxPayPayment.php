@@ -38,13 +38,25 @@ class DpsPxPayPayment extends EcommercePayment
 
     private static $max_random_deduction = 1;
 
-    public function setRandomDeduction()
+    private static $min_risk_level_for_random_deduction = 5;
+
+    protected function hasRandomDeduction() : bool
+    {
+        $minRisk = $this->Config()->get('min_risk_level_for_random_deduction');
+        if($this->RiskLevel >= $minRisk) {
+            return true;
+        }
+        return false;
+    }
+
+    protected function setAndReturnRandomDeduction() : float
     {
         $max = $this->Config()->get('max_random_deduction');
-        $amount = $max * (mt_rand() / mt_getrandmax());
+        $amount = round($max * (mt_rand() / mt_getrandmax()), 2);
         $this->RandomDeduction = $amount;
         $this->write;
 
+        return floatval($this->RandomDeduction);
     }
 
     // DPS Information
@@ -153,9 +165,11 @@ class DpsPxPayPayment extends EcommercePayment
         $this->Amount->Amount = $amount;
         //no need to write here, as it will be done by BuildURL
         //$this->write();
-        $randomDeduction = round(floatval($this->RandomDeduction), 2);
-        if($randomDeduction) {
-            $amount = $amount - $randomDeduction;
+        if($this->hasRandomDeduction()) {
+            $randomDeduction = $this->setAndReturnRandomDeduction();
+            if($randomDeduction) {
+                $amount = $amount - $randomDeduction;
+            }
         }
         $url = $this->buildURL($amount, $currency);
         return $this->executeURL($url);
