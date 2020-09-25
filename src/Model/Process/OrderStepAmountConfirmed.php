@@ -8,6 +8,7 @@ use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Model\Process\OrderStep;
 use Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount;
+use SilverStripe\Control\Controller;
 
 /**
  * @authors: Nicolaas [at] Sunny Side Up .co.nz
@@ -23,10 +24,22 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         //the one below may seem a bit paradoxical, but the thing is that the customer can pay up to and inclusive of this step
         //that ist he code PAID means that the Order has been paid ONCE this step is completed
         'CustomerCanPay' => 0,
-        'Name' => 'AmountConfirmed',
+        'Name' => 'Amount Confirmed',
         'Code' => 'AMOUNTCONFIRMED',
         'ShowAsInProcessOrder' => 1,
     ];
+
+    /**
+     * A form that can be used by the Customer to progress step!
+     * @param Controller $controller
+     * @param string     $name
+     * @param Order      $order
+     * @return \SilverStripe\Forms\Form|null (CustomerOrderStepForm)
+     **/
+    public function CustomerOrderStepForm(Controller $controller, string $name, Order $order)
+    {
+        return CustomerOrderStepForm::create($controller, $name, $order);
+    }
 
     /**
      *initStep:
