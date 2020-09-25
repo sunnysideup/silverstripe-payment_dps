@@ -26,8 +26,6 @@ use Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler;
 
 class DpsPxPayPayment extends EcommercePayment
 {
-    protected $Currency = '';
-
     private static $table_name = 'DpsPxPayPayment';
 
     private static $db = [
@@ -36,27 +34,14 @@ class DpsPxPayPayment extends EcommercePayment
         'RandomDeduction' => 'Currency',
     ];
 
-    private static $max_random_deduction = 1;
-
-    private static $min_risk_level_for_random_deduction = 5;
-
     protected function hasRandomDeduction() : bool
     {
-        $minRisk = $this->Config()->get('min_risk_level_for_random_deduction');
-        if($this->RiskLevel >= $minRisk) {
-            return true;
-        }
         return false;
     }
 
     protected function setAndReturnRandomDeduction() : float
     {
-        $max = $this->Config()->get('max_random_deduction');
-        $amount = round($max * (mt_rand() / mt_getrandmax()), 2);
-        $this->RandomDeduction = $amount;
-        $this->write;
-
-        return floatval($this->RandomDeduction);
+        return 0;
     }
 
     // DPS Information
