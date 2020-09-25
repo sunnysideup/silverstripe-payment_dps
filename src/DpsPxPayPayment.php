@@ -33,7 +33,19 @@ class DpsPxPayPayment extends EcommercePayment
     private static $db = [
         'TxnRef' => 'Text',
         'DebugMessage' => 'HTMLText',
+        'RandomDeduction' => 'Currency',
     ];
+
+    private static $max_random_deduction = 1;
+
+    public function setRandomDeduction()
+    {
+        $max = $this->Config()->get('max_random_deduction');
+        $amount = $max * (mt_rand() / mt_getrandmax());
+        $this->RandomDeduction = $amount;
+        $this->write;
+
+    }
 
     // DPS Information
 
@@ -141,6 +153,10 @@ class DpsPxPayPayment extends EcommercePayment
         $this->Amount->Amount = $amount;
         //no need to write here, as it will be done by BuildURL
         //$this->write();
+        $randomDeduction = round(floatval($this->RandomDeduction), 2);
+        if($randomDeduction) {
+            $amount = $amount - $randomDeduction;
+        }
         $url = $this->buildURL($amount, $currency);
         return $this->executeURL($url);
     }
