@@ -33,6 +33,8 @@ class DpsPxPayPaymentRandomAmount extends DpsPxPayPayment
         'RandomDeduction' => 'Currency',
     ];
 
+    private static $table_name = 'DpsPxPayPaymentRandomAmount';
+
     protected function hasRandomDeduction() : bool
     {
         return true;
