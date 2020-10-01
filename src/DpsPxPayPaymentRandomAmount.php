@@ -26,6 +26,7 @@ use Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler;
 
 class DpsPxPayPaymentRandomAmount extends DpsPxPayPayment
 {
+    private static $table_name = 'DpsPxPayPaymentRandomAmount';
 
     private static $max_random_deduction = 1;
 
