@@ -4,16 +4,13 @@ namespace Sunnysideup\PaymentDps\Forms;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Convert;
-use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HiddenField;
-use Sunnysideup\Ecommerce\Forms\Validation\OrderFormPaymentValidator;
-use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
-use Sunnysideup\Ecommerce\Model\Order;
-
 use SilverStripe\Forms\RequiredFields;
+
+use Sunnysideup\Ecommerce\Model\Order;
 
 class CustomerOrderStepForm extends Form
 {
@@ -68,16 +65,16 @@ class CustomerOrderStepForm extends Form
             if ($orderID = intval($SQLData['OrderID'])) {
                 $order = Order::get()->byID($orderID);
                 if ($order) {
-                    if(OrderStepAmountConfirmedLog::is_locked_out($order)) {
+                    if (OrderStepAmountConfirmedLog::is_locked_out($order)) {
                         $form->sessionMessage('Sorry, you can only try three times per day', 'bad');
 
                         return $this->controller->redirectBack();
                     }
                 } else {
                     $answer = floatval($data['AmountPaid']);
-                    if($answer) {
+                    if ($answer) {
                         $isValid = OrderStepAmountConfirmedLog::test_answer($order, $answer);
-                        if($isValid) {
+                        if ($isValid) {
                             $order->tryToFinaliseOrder();
                         } else {
                             $form->sessionMessage(_t('OrderForm.WRONGANSWER', 'Sorry, the amount does not match.'), 'bad');

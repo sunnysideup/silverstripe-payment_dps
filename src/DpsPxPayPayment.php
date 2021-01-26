@@ -34,16 +34,6 @@ class DpsPxPayPayment extends EcommercePayment
         'RandomDeduction' => 'Currency',
     ];
 
-    protected function hasRandomDeduction() : bool
-    {
-        return false;
-    }
-
-    protected function setAndReturnRandomDeduction() : float
-    {
-        return 0;
-    }
-
     // DPS Information
 
     private static $privacy_link = 'http://www.paymentexpress.com/privacypolicy.htm';
@@ -150,10 +140,10 @@ class DpsPxPayPayment extends EcommercePayment
         $this->Amount->Amount = $amount;
         //no need to write here, as it will be done by BuildURL
         //$this->write();
-        if($this->hasRandomDeduction()) {
+        if ($this->hasRandomDeduction()) {
             $randomDeduction = $this->setAndReturnRandomDeduction();
-            if($randomDeduction) {
-                $amount = $amount - $randomDeduction;
+            if ($randomDeduction) {
+                $amount -= $randomDeduction;
             }
         }
         $url = $this->buildURL($amount, $currency);
@@ -203,6 +193,16 @@ class DpsPxPayPayment extends EcommercePayment
                 });
             </script>'
         );
+    }
+
+    protected function hasRandomDeduction(): bool
+    {
+        return false;
+    }
+
+    protected function setAndReturnRandomDeduction(): float
+    {
+        return 0;
     }
 
     /**

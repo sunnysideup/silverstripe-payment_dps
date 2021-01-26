@@ -2,13 +2,13 @@
 
 namespace Sunnysideup\PaymentDps\Forms\Process;
 
+use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Model\Process\OrderStep;
 use Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount;
-use SilverStripe\Control\Controller;
 
 /**
  * @authors: Nicolaas [at] Sunny Side Up .co.nz
@@ -89,7 +89,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         if ($this->hasAmountValidation($order)) {
             return $this->hasAmountConfirmed($order);
         }
-        if($canDo) {
+        if ($canDo) {
             return parent::nextStep($order);
         }
 
@@ -121,21 +121,11 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         return $fields;
     }
 
-    /**
-     * Explains the current order step.
-     *
-     * @return string
-     */
-    protected function myDescription()
+    public function hasAmountValidation($order): bool
     {
-        return _t('OrderStep.PAID_DESCRIPTION', 'The order amount charged is confirmed by customer.');
-    }
-
-    public function hasAmountValidation($order) : bool
-    {
-        foreach($order->Payments() as $payment) {
-            if($payment) {
-                if($payment instanceof DpsPxPayPaymentRandomAmount) {
+        foreach ($order->Payments() as $payment) {
+            if ($payment) {
+                if ($payment instanceof DpsPxPayPaymentRandomAmount) {
                     return $payment->RandomDeduction > 0;
                 }
             }
@@ -153,14 +143,23 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         );
     }
 
-    public function hasAmountConfirmed(Order $order) : bool
+    public function hasAmountConfirmed(Order $order): bool
     {
         return $order->OrderStatusLogs()->filter(
             [
                 'ClassName' => OrderStepAmountConfirmedLog::class,
-                'IsValid' => true
+                'IsValid' => true,
             ]
         )->count() ? true : false;
     }
 
+    /**
+     * Explains the current order step.
+     *
+     * @return string
+     */
+    protected function myDescription()
+    {
+        return _t('OrderStep.PAID_DESCRIPTION', 'The order amount charged is confirmed by customer.');
+    }
 }
