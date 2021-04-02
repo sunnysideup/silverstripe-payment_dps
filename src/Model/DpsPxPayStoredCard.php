@@ -62,12 +62,13 @@ class DpsPxPayStoredCard extends DataObject
             $member = Security::getCurrentUser();
         }
         $extended = $this->extendedCan(__FUNCTION__, $member);
-        if ($extended !== null) {
-            return $extended;
+        if ($extended === false) {
+            return false;
         }
         if ($member) {
             return $member->IsAdmin();
         }
+        return false;
     }
 
     public function canEdit($member = null, $context = [])

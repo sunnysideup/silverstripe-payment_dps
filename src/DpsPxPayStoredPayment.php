@@ -266,7 +266,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         return $resultPhp['TXN'];
     }
 
-    protected function buildURL($amount, $cardToUse = '', $storeCard = false)
+    protected function buildURL($amount, $cardToUse = '', ?bool $storeCard = false)
     {
         $commsObject = new DpsPxPayComs();
 
@@ -278,7 +278,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         //replace any character that is NOT [0-9] or dot (.)
         $commsObject->setAmountInput(floatval(preg_replace("/[^0-9\.]/", '', $amount)));
 
-        if (isset($cardToUse)) {
+        if (! empty($cardToUse)) {
             $commsObject->setBillingId($cardToUse);
         } elseif ($storeCard) {
             $commsObject->setEnableAddBillCard(1);

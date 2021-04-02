@@ -249,5 +249,6 @@ class DpsPxPost extends EcommercePayment
             return false;
         }
         user_error('Class not set to live or test correctly.');
+        return false;
     }
 }

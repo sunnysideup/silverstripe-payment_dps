@@ -66,15 +66,15 @@ class CustomerOrderStepForm extends Form
                         $form->sessionMessage('Sorry, you can only try three times per day', 'bad');
 
                         return $this->controller->redirectBack();
-                    }
-                } else {
-                    $answer = floatval($data['AmountPaid']);
-                    if ($answer) {
-                        $isValid = OrderStepAmountConfirmedLog::test_answer($order, $answer);
-                        if ($isValid) {
-                            $order->tryToFinaliseOrder();
-                        } else {
-                            $form->sessionMessage(_t('OrderForm.WRONGANSWER', 'Sorry, the amount does not match.'), 'bad');
+                    } else {
+                        $answer = floatval($data['AmountPaid']);
+                        if ($answer) {
+                            $isValid = OrderStepAmountConfirmedLog::test_answer($order, $answer);
+                            if ($isValid) {
+                                $order->tryToFinaliseOrder();
+                            } else {
+                                $form->sessionMessage(_t('OrderForm.WRONGANSWER', 'Sorry, the amount does not match.'), 'bad');
+                            }
                         }
                     }
                 }
