@@ -124,8 +124,6 @@ class DpsPxPost extends EcommercePayment
      *
      * @see DPSPayment->getPaymentFormRequirements() for an example on how
      * this is implemented.
-     *
-     * @return array
      */
     public function getPaymentFormRequirements(): array
     {

@@ -1,4 +1,5 @@
 <?php
+
 use Sunnysideup\Ecommerce\Model\Process\OrderStatusLog;
 
 class OrderStepAmountConfirmedLog extends OrderStatusLog
