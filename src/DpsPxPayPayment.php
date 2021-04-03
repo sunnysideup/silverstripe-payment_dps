@@ -51,9 +51,10 @@ class DpsPxPayPayment extends EcommercePayment
 
     private static $email_debug = false;
 
-    public function setCurrency(string $s) : self
+    public function setCurrency(string $s): self
     {
         $this->Currency = $s;
+
         return $this;
     }
 
