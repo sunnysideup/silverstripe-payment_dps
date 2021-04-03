@@ -94,7 +94,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     /**
      * Allows the opportunity for the Order Step to add any fields to Order::getCMSFields.
      *
-     *@return \SilverStripe\Forms\FieldList
+     * @return \SilverStripe\Forms\FieldList
      **/
     public function addOrderStepFields(FieldList $fields, Order $order)
     {
