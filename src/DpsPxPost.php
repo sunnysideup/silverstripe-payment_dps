@@ -9,9 +9,10 @@ use SilverStripe\Forms\LiteralField;
 use SimpleXMLElement;
 use Sunnysideup\Ecommerce\Forms\OrderForm;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
+use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
-use Sunnysideup\Ecommerce\Model\Order;
+
 /**
  * @see: https://www.paymentexpress.com/Technical_Resources/Ecommerce_NonHosted/PxPost
  */
@@ -104,10 +105,8 @@ class DpsPxPost extends EcommercePayment
      * payment type. Example: for {@link DPSPayment},
      * this would be a set of fields to enter your
      * credit card details.
-     *
-     * @return FieldList
      */
-    public function getPaymentFormFields(?float $amount = 0, ?Order $order = null) : FieldList
+    public function getPaymentFormFields(?float $amount = 0, ?Order $order = null): FieldList
     {
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
         $fieldList = $formHelper->getCreditCardPaymentFormFields($this);

@@ -10,12 +10,11 @@ use SilverStripe\ORM\DB;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 use Sunnysideup\Ecommerce\Forms\OrderForm;
+use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
 use Sunnysideup\PaymentDps\Control\DpsPxPayStoredPaymentHandler;
 use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
-use Sunnysideup\Ecommerce\Model\Order;
-
 
 class DpsPxPayStoredPayment extends DpsPxPayPayment
 {
@@ -35,7 +34,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
     private static $add_card_explanation = 'Storing a Card means your Credit Card will be kept on file for your next purchase. ';
 
-    public function getPaymentFormFields(?float $amount = 0, ?Order $order = null) : FieldList
+    public function getPaymentFormFields(?float $amount = 0, ?Order $order = null): FieldList
     {
         $logo = '<img src="' . self::$logo . '" alt="Credit Card Payments Powered by DPS"/>';
         $privacyLink = '<a href="' . self::$privacy_link . '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
