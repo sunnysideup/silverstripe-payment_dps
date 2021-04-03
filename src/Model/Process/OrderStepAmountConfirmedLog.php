@@ -2,12 +2,11 @@
 
 namespace Sunnysideup\PaymentDps\Forms\Process;
 
-use Sunnysideup\Ecommerce\Model\Process\OrderStatusLog;
+use SilverStripe\Core\Config\Config;
 
-use Sunnysideup\PaymentDps\Forms\Process\OrderStepAmountConfirmed;
 use Sunnysideup\Ecommerce\Model\Order;
 
-use SilverStripe\Core\Config\Config;
+use Sunnysideup\Ecommerce\Model\Process\OrderStatusLog;
 
 class OrderStepAmountConfirmedLog extends OrderStatusLog
 {
@@ -43,8 +42,6 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
         return $count > $max;
     }
 
-    /**
-     */
     public static function test_answer(Order $order, string $answer): bool
     {
         if (self::is_rigth_step($order)) {
@@ -69,9 +66,8 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
             $log->write();
 
             return $isValid;
-        } else {
-            return true;
         }
+        return true;
     }
 
     protected static function is_rigth_step($order): bool
