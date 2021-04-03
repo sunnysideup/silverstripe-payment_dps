@@ -78,13 +78,9 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      *
      * @return OrderStep|null (next step OrderStep object)
      **/
-    public function nextStep(Order $order) : bool
+    public function nextStep(Order $order)
     {
-        $canDo = true;
         if ($this->hasAmountValidation($order)) {
-            return $this->hasAmountConfirmed($order);
-        }
-        if ($canDo) {
             return parent::nextStep($order);
         }
 
