@@ -9,13 +9,12 @@ use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\RequiredFields;
-
 use Sunnysideup\Ecommerce\Model\Order;
 
 class CustomerOrderStepForm extends Form
 {
     /**
-     * @param string     $name
+     * @param string $name
      */
     public function __construct(Controller $controller, $name, Order $order)
     {
@@ -81,6 +80,7 @@ class CustomerOrderStepForm extends Form
         } else {
             $form->sessionMessage(_t('OrderForm.COULDNOTPROCESSPAYMENT', 'Sorry, we could not find the Order for payment.'), 'bad');
         }
+
         return $this->controller->redirectBack();
     }
 

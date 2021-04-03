@@ -7,11 +7,7 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
-
-
-/**
- *@author nicolaas [at] sunnysideup.co.nz
- **/
+// @author nicolaas [at] sunnysideup.co.nz
 
 use Sunnysideup\PaymentDps\Thirdparty\MifMessage;
 use Sunnysideup\PaymentDps\Thirdparty\PxPayCurl;
@@ -19,7 +15,7 @@ use Sunnysideup\PaymentDps\Thirdparty\PxPayRequest;
 
 /**
  *@author nicolaas [at] sunnysideup.co.nz
- **/
+ */
 class DpsPxPayComs
 {
     use Extensible;
@@ -27,8 +23,8 @@ class DpsPxPayComs
     use Configurable;
 
     /**
-     * customer details
-     **/
+     * customer details.
+     */
     protected $TxnData1 = '';
 
     protected $TxnData2 = '';
@@ -38,8 +34,8 @@ class DpsPxPayComs
     protected $EmailAddress = '';
 
     /**
-     * order details
-     **/
+     * order details.
+     */
     protected $AmountInput = 0;
 
     protected $MerchantReference = '';
@@ -51,25 +47,25 @@ class DpsPxPayComs
     protected $TxnId = '';
 
     /**
-     * details of the redirection
-     **/
+     * details of the redirection.
+     */
     protected $UrlFail = '';
 
     protected $UrlSuccess = '';
 
     /**
-     * Details to use stored cards
+     * Details to use stored cards.
      */
     protected $EnableAddBillCard = 0;
 
     protected $BillingId = 0;
 
     /**
-     * external object
-     **/
-    protected $PxPayObject = null;
+     * external object.
+     */
+    protected $PxPayObject;
 
-    protected $response = null;
+    protected $response;
 
     private static $pxpay_url = 'https://sec.paymentexpress.com/pxaccess/pxpay.aspx';
 
@@ -99,6 +95,7 @@ class DpsPxPayComs
     public static function get_txn_type()
     {
         $overridingTxnType = Config::inst()->get(DpsPxPayComs::class, 'overriding_txn_type');
+
         return $overridingTxnType ?: 'Purchase';
     }
 
@@ -171,14 +168,14 @@ class DpsPxPayComs
      * This function formats data into a request and returns redirection URL
      * NOTE: you will need to set all the variables prior to running this.
      * e.g. $myDPSPxPayComsObject->setMerchantReference("myreferenceHere");
-     **/
+     */
     public function startPaymentProcess()
     {
         if (! $this->TxnId) {
             $this->TxnId = uniqid('ID');
         }
         $request = new PxPayRequest();
-        #Set PxPay properties
+        //Set PxPay properties
         if ($this->MerchantReference) {
             $request->setMerchantReference($this->MerchantReference);
         } else {
@@ -235,11 +232,11 @@ class DpsPxPayComs
            $request->setBillingId($BillingId);
            $request->setOpt($Opt);
            */
-        #Call makeRequest function to obtain input XML
+        //Call makeRequest function to obtain input XML
         $request_string = $this->PxPayObject->makeRequest($request);
-        #Obtain output XML
+        //Obtain output XML
         $this->response = new MifMessage($request_string);
-        #Parse output XML
+        //Parse output XML
         return $this->response->get_element_text('URI');
     }
 
@@ -270,11 +267,11 @@ class DpsPxPayComs
      * $TxnMac            = $responseObject->getTxnMac(); # An indication as to the uniqueness of a card used in relation to others
      *
      * also see: https://www.paymentexpress.com/technical_resources/ecommerce_hosted/error_codes.html
-     **/
+     */
     public function processRequestAndReturnResultsAsObject()
     {
-        #getResponse method in PxPay object returns PxPayResponse object
-        #which encapsulates all the response data
+        //getResponse method in PxPay object returns PxPayResponse object
+        //which encapsulates all the response data
         return $this->PxPayObject->getResponse($_REQUEST['result']);
     }
 
@@ -284,6 +281,7 @@ class DpsPxPayComs
         $string .= print_r($this->PxPayObject, true);
         $string .= print_r($this->response, true);
         $string .= '</pre>';
+
         return $string;
     }
 

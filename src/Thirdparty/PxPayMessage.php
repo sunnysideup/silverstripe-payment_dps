@@ -2,21 +2,21 @@
 
 namespace Sunnysideup\PaymentDps\Thirdparty;
 
-#******************************************************************************
-#* Name          : PxPayCurl.inc.php
-#* Description   : Classes used interact with the PxPay interface using PHP with the cURL extension installed
-#* Copyright	 : Payment Express 2017(c)
-#* Date          : 2017-04-10
-#*@version 		 : 2.0
-#* Author 		 : Payment Express DevSupport
-#******************************************************************************
-# Use this class to parse an XML document
+//******************************************************************************
+//* Name          : PxPayCurl.inc.php
+//* Description   : Classes used interact with the PxPay interface using PHP with the cURL extension installed
+//* Copyright	 : Payment Express 2017(c)
+//* Date          : 2017-04-10
+//*@version 		 : 2.0
+//* Author 		 : Payment Express DevSupport
+//******************************************************************************
+// Use this class to parse an XML document
 
-#******************************************************************************
-# Abstract base class for PxPay messages.
-# These are messages with certain defined elements,  which can be serialized to XML.
+//******************************************************************************
+// Abstract base class for PxPay messages.
+// These are messages with certain defined elements,  which can be serialized to XML.
 
-#******************************************************************************
+//******************************************************************************
 
 class PxPayMessage
 {
@@ -138,10 +138,11 @@ class PxPayMessage
 
         $xml = '<GenerateRequest>';
         while (list($prop, $val) = each($arr)) {
-            $xml .= "<${prop}>${val}</${prop}>";
+            $xml .= "<{$prop}>{$val}</{$prop}>";
         }
 
         $xml .= '</GenerateRequest>';
+
         return $xml;
     }
 }

@@ -4,7 +4,6 @@ namespace Sunnysideup\PaymentDps;
 
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\FieldList;
-
 use SilverStripe\Forms\LiteralField;
 use SimpleXMLElement;
 use Sunnysideup\Ecommerce\Forms\OrderForm;
@@ -16,14 +15,13 @@ use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
 /**
  * @see: https://www.paymentexpress.com/Technical_Resources/Ecommerce_NonHosted/PxPost
  */
-
-
 class DpsPxPost extends EcommercePayment
 {
     /**
      * set the required privacy link as you see fit...
      * also see: https://www.paymentexpress.com/About/Artwork_Downloads
-     * also see: https://www.paymentexpress.com/About/About_DPS/Privacy_Policy
+     * also see: https://www.paymentexpress.com/About/About_DPS/Privacy_Policy.
+     *
      * @var string
      */
     private static $dps_logo_and_link = '
@@ -41,15 +39,17 @@ class DpsPxPost extends EcommercePayment
 
     /**
      * we use yes / no as this is more reliable than a boolean value
-     * for configs
+     * for configs.
+     *
      * @var string
      */
     private static $is_test = 'yes';
 
     /**
      * we use yes / no as this is more reliable than a boolean value
-     * for configs
-     * @var boolean
+     * for configs.
+     *
+     * @var bool
      */
     private static $is_live = 'no';
 
@@ -65,6 +65,7 @@ class DpsPxPost extends EcommercePayment
 
     /**
      * type: purchase / Authorisation / refund ...
+     *
      * @var string
      */
     private static $type = 'Purchase';
@@ -73,7 +74,7 @@ class DpsPxPost extends EcommercePayment
      * Incomplete (default): Payment created but nothing confirmed as successful
      * Success: Payment successful
      * Failure: Payment failed during process
-     * Pending: Payment awaiting receipt/bank transfer etc
+     * Pending: Payment awaiting receipt/bank transfer etc.
      */
     private static $table_name = 'DpsPxPost';
 
@@ -96,6 +97,7 @@ class DpsPxPost extends EcommercePayment
         $fields = parent::getCMSFields();
         $fields->addFieldToTab('Root.Details', new LiteralField('Request', $this->getRequestDetails()));
         $fields->addFieldToTab('Root.Details', new LiteralField('Response', $this->getResponseDetails()));
+
         return $fields;
     }
 
@@ -114,6 +116,7 @@ class DpsPxPost extends EcommercePayment
             new LiteralField('DpsPxPost_Logo', $this->Config()->get('dps_logo_and_link')),
             'DpsPxPost_CreditCard'
         );
+
         return $fieldList;
     }
 
@@ -134,7 +137,7 @@ class DpsPxPost extends EcommercePayment
     /**
      * returns true if all the data is correct.
      *
-     * @param array $data The form request data - see OrderForm
+     * @param array     $data The form request data - see OrderForm
      * @param OrderForm $form The form object submitted on
      *
      * @return bool
@@ -142,6 +145,7 @@ class DpsPxPost extends EcommercePayment
     public function validatePayment($data, OrderForm $form)
     {
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
+
         return $formHelper->validateAndSaveCreditCardInformation($data, $form, $this);
     }
 
@@ -155,7 +159,7 @@ class DpsPxPost extends EcommercePayment
      * This is used by {@link OrderForm} when it is
      * submitted.
      *
-     * @param array $data The form request data - see OrderForm
+     * @param array     $data The form request data - see OrderForm
      * @param OrderForm $form The form object submitted on
      *
      * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
@@ -210,7 +214,7 @@ class DpsPxPost extends EcommercePayment
         $this->Response = str_replace('\n', "\n", Convert::raw2sql(print_r($params, 1)));
         $this->Message = Convert::raw2sql($txn->CardHolderResponseText . ' ' . $txn->CardHolderResponseDescription);
         $this->CardNumber = Convert::raw2sql($txn->CardNumber);
-        if ($params->Success === 1 &&
+        if (1 === $params->Success &&
             $amount === $txn->Amount &&
             $currency === $txn->CurrencyName &&
             trim($this->OrderID) === trim($txn->MerchantReference)
@@ -222,6 +226,7 @@ class DpsPxPost extends EcommercePayment
             $returnObject = EcommercePaymentFailure::create();
         }
         $this->write();
+
         return $returnObject;
     }
 
@@ -242,12 +247,14 @@ class DpsPxPost extends EcommercePayment
      */
     protected function isTest()
     {
-        if ($this->Config()->get('is_test') === 'yes' && $this->Config()->get('is_live') === 'no') {
+        if ('yes' === $this->Config()->get('is_test') && 'no' === $this->Config()->get('is_live')) {
             return true;
-        } elseif ($this->Config()->get('is_test') === 'no' && $this->Config()->get('is_live') === 'yes') {
+        }
+        if ('no' === $this->Config()->get('is_test') && 'yes' === $this->Config()->get('is_live')) {
             return false;
         }
         user_error('Class not set to live or test correctly.');
+
         return false;
     }
 }

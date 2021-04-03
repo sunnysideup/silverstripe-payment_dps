@@ -5,10 +5,7 @@ namespace Sunnysideup\PaymentDps;
 /**
  *@author nicolaas[at]sunnysideup.co.nz
  *@description: OrderNumber and PaymentID
- *
- *
- **/
-
+ */
 class DpsPxPayPaymentRandomAmount extends DpsPxPayPayment
 {
     private static $max_random_deduction = 1;

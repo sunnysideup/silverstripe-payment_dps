@@ -14,8 +14,7 @@ use Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount;
  * @authors: Nicolaas [at] Sunny Side Up .co.nz
  * @package: ecommerce
  * @sub-package: model
-
- **/
+ */
 class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 {
     private static $defaults = [
@@ -31,8 +30,9 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     /**
      * A form that can be used by the Customer to progress step!
-     * @return \SilverStripe\Forms\Form|null (CustomerOrderStepForm)
-     **/
+     *
+     * @return null|\SilverStripe\Forms\Form (CustomerOrderStepForm)
+     */
     public function CustomerOrderStepForm(Controller $controller, string $name, Order $order)
     {
         return CustomerOrderStepForm::create($controller, $name, $order);
@@ -48,7 +48,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      * @param Order $order object
      *
      * @return bool - true if the current step is ready to be run...
-     **/
+     */
     public function initStep(Order $order): bool
     {
         return true;
@@ -64,8 +64,8 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      *
      * @param Order $order object
      *
-     * @return bool - true if run correctly.
-     **/
+     * @return bool - true if run correctly
+     */
     public function doStep(Order $order): bool
     {
         return true;
@@ -76,8 +76,8 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      *
      * @see Order::doNextStatus
      *
-     * @return OrderStep|null (next step OrderStep object)
-     **/
+     * @return null|OrderStep (next step OrderStep object)
+     */
     public function nextStep(Order $order)
     {
         if ($this->hasAmountValidation($order)) {
@@ -91,7 +91,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      * Allows the opportunity for the Order Step to add any fields to Order::getCMSFields.
      *
      * @return \SilverStripe\Forms\FieldList
-     **/
+     */
     public function addOrderStepFields(FieldList $fields, Order $order)
     {
         $fields = parent::addOrderStepFields($fields, $order);
@@ -118,6 +118,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
                 }
             }
         }
+
         return false;
     }
 

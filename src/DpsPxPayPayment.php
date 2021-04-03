@@ -21,10 +21,7 @@ use Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler;
 /**
  *@author nicolaas[at]sunnysideup.co.nz
  *@description: OrderNumber and PaymentID
- *
- *
- **/
-
+ */
 class DpsPxPayPayment extends EcommercePayment
 {
     private static $table_name = 'DpsPxPayPayment';
@@ -54,9 +51,10 @@ class DpsPxPayPayment extends EcommercePayment
 
     private static $email_debug = false;
 
-    public function setCurrency($s)
+    public function setCurrency(string $s) : self
     {
         $this->Currency = $s;
+        return $this;
     }
 
     public static function remove_credit_card($creditCard)
@@ -68,6 +66,7 @@ class DpsPxPayPayment extends EcommercePayment
     {
         $fields = parent::getCMSFields();
         $fields->replaceField('DebugMessage', new ReadonlyField('DebugMessage', 'Debug info'));
+
         return $fields;
     }
 
@@ -81,6 +80,7 @@ class DpsPxPayPayment extends EcommercePayment
                 $paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
             }
         }
+
         return new FieldList(
             new LiteralField('DPSInfo', $privacyLink),
             new LiteralField('DPSPaymentsList', $paymentsList)
@@ -91,6 +91,7 @@ class DpsPxPayPayment extends EcommercePayment
     {
         $logo = $this->config()->get('logo');
         $src = ModuleResourceLoader::singleton()->resolveURL($logo);
+
         return DBField::create_field(
             'HTMLText',
             '<img src="' . $src . '" alt="Credit card payments powered by DPS"/>'
@@ -103,7 +104,7 @@ class DpsPxPayPayment extends EcommercePayment
     }
 
     /**
-     * @param array $data The form request data - see OrderForm
+     * @param array     $data The form request data - see OrderForm
      * @param OrderForm $form The form object submitted on
      *
      * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
@@ -148,6 +149,7 @@ class DpsPxPayPayment extends EcommercePayment
             }
         }
         $url = $this->buildURL($amount, $currency);
+
         return $this->executeURL($url);
     }
 
@@ -158,8 +160,8 @@ class DpsPxPayPayment extends EcommercePayment
         //$url = str_replace("==", "", $url);
         if ($url) {
             /**
-             * build redirection page
-             **/
+             * build redirection page.
+             */
             $page = new SiteTree();
             $page->Title = 'Redirection to DPS...';
             $page->Logo = $this->getLogoResource();
@@ -167,6 +169,7 @@ class DpsPxPayPayment extends EcommercePayment
             $controller = new ContentController($page);
             Requirements::clear();
             Requirements::javascript('silverstripe/admin: thirdparty/jquery/jquery.js');
+
             return EcommercePaymentProcessing::create($controller->RenderWith('Sunnysideup\Ecommerce\PaymentProcessingPage'));
         }
         $page = new SiteTree();
@@ -176,6 +179,7 @@ class DpsPxPayPayment extends EcommercePayment
         $controller = new ContentController($page);
         Requirements::clear();
         Requirements::javascript('silverstripe/admin: thirdparty/jquery/jquery.js');
+
         return EcommercePaymentFailure::create($controller->RenderWith('Sunnysideup\Ecommerce\PaymentProcessingPage'));
     }
 
@@ -207,33 +211,30 @@ class DpsPxPayPayment extends EcommercePayment
     }
 
     /**
-     * @param float $amount
+     * @param float  $amount
      * @param string $currency - e.g. NZD
+     *
      * @return string
      */
     protected function buildURL($amount, $currency)
     {
         $commsObject = new DpsPxPayComs();
 
-        /**
-         * order details
-         **/
+        // order details
         $commsObject->setTxnType(DpsPxPayComs::get_txn_type());
         $commsObject->setMerchantReference($this->ID);
         //replace any character that is NOT [0-9] or dot (.)
 
-        $commsObject->setAmountInput(floatval(preg_replace("/[^0-9\.]/", '', $amount)));
+        $commsObject->setAmountInput(floatval(preg_replace('/[^0-9\\.]/', '', $amount)));
         $commsObject->setCurrencyInput($currency);
 
-        /**
-         * details of the redirection
-         **/
+        // details of the redirection
         $commsObject->setUrlFail(DpsPxPayPaymentHandler::absolute_complete_link());
         $commsObject->setUrlSuccess(DpsPxPayPaymentHandler::absolute_complete_link());
 
         /**
          * process payment data (check if it is OK and go forward if it is...
-         **/
+         */
         $url = $commsObject->startPaymentProcess();
         $debugMessage = $commsObject->getDebugMessage();
         $this->DebugMessage = $debugMessage;
@@ -246,6 +247,7 @@ class DpsPxPayPayment extends EcommercePayment
             $email = new Email($from, $to, $subject, $body);
             $email->send();
         }
+
         return $url;
     }
 }

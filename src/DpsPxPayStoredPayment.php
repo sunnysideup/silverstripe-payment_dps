@@ -60,7 +60,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             if ($storedCards->count() > 1) {
                 $s = 's';
             }
-            $cardsDropdown['deletecards'] = " --- Delete Stored Card${s} --- ";
+            $cardsDropdown['deletecards'] = " --- Delete Stored Card{$s} --- ";
             $fields->push(
                 DropdownField::create(
                     'DPSUseStoredCard',
@@ -79,6 +79,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
         //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
         Requirements::javascript('sunnysideup/payment_dps: payment_dps/javascript/DpxPxPayStoredPayment.js');
+
         return $fields;
     }
 
@@ -106,7 +107,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
     }
 
     /**
-     * @param array $data The form request data - see OrderForm
+     * @param array     $data The form request data - see OrderForm
      * @param OrderForm $form The form object submitted on
      *
      * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
@@ -120,9 +121,9 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             $data['DPSStoreCard'] = null;
         }
         if (! isset($data['Amount'])) {
-            USER_ERROR('There was no amount information for processing the payment.', E_USER_WARNING);
+            user_error('There was no amount information for processing the payment.', E_USER_WARNING);
         }
-        if ($data['DPSUseStoredCard'] === 'deletecards') {
+        if ('deletecards' === $data['DPSUseStoredCard']) {
             //important!!!
             $data['DPSUseStoredCard'] = null;
             if ($m = Security::getCurrentUser()) {
@@ -140,12 +141,12 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             return $this->processViaPostRatherThanPxPay($data, $form, $data['DPSUseStoredCard']);
         }
         $url = $this->buildURL($data['Amount'], $data['DPSUseStoredCard'], $data['DPSStoreCard']);
+
         return $this->executeURL($url);
     }
 
     public function processViaPostRatherThanPxPay($data, $form, $cardToUse)
     {
-
         // 1) Main Settings
 
         $inputs['PostUsername'] = $this->config->get('username');
@@ -192,19 +193,19 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         }
 
         $this->write();
+
         return $result;
     }
 
     public function doPayment(array $inputs)
     {
-
         // 1) Transaction Creation
         $transaction = '<Txn>';
         foreach ($inputs as $name => $value) {
-            if ($name === 'Amount') {
+            if ('Amount' === $name) {
                 $value = number_format($value, 2, '.', '');
             }
-            $transaction .= "<${name}>${value}</${name}>";
+            $transaction .= "<{$name}>{$value}</{$name}>";
         }
         $transaction .= '</Txn>';
 
@@ -237,14 +238,14 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         $resultPhp = [];
         $level = [];
         foreach ($values as $xmlElement) {
-            if ($xmlElement['type'] === 'open') {
+            if ('open' === $xmlElement['type']) {
                 if (array_key_exists('attributes', $xmlElement)) {
                     $arrayValues = array_values($xmlElement['attributes']);
                     list($level[$xmlElement['level']]) = $arrayValues;
                 } else {
                     $level[$xmlElement['level']] = $xmlElement['tag'];
                 }
-            } elseif ($xmlElement['type'] === 'complete') {
+            } elseif ('complete' === $xmlElement['type']) {
                 $startLevel = 1;
                 $phpArray = '$resultPhp';
                 while ($startLevel < $xmlElement['level']) {
@@ -257,6 +258,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         if (! isset($resultPhp['TXN'])) {
             return false;
         }
+
         return $resultPhp['TXN'];
     }
 
@@ -264,13 +266,11 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
     {
         $commsObject = new DpsPxPayComs();
 
-        /**
-         * order details
-         **/
+        // order details
         $commsObject->setTxnType(DpsPxPayComs::get_txn_type());
         $commsObject->setMerchantReference($this->ID);
         //replace any character that is NOT [0-9] or dot (.)
-        $commsObject->setAmountInput(floatval(preg_replace("/[^0-9\.]/", '', $amount)));
+        $commsObject->setAmountInput(floatval(preg_replace('/[^0-9\\.]/', '', $amount)));
 
         if (! empty($cardToUse)) {
             $commsObject->setBillingId($cardToUse);
@@ -279,15 +279,13 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         }
 
         /**
-         * details of the redirection
-         **/
+         * details of the redirection.
+         */
         $link = DpsPxPayStoredPaymentHandler::absolute_complete_link();
         $commsObject->setUrlFail($link);
         $commsObject->setUrlSuccess($link);
 
-        /**
-         * process payment data (check if it is OK and go forward if it is...
-         **/
+        // process payment data (check if it is OK and go forward if it is...
         return $commsObject->startPaymentProcess();
     }
 }

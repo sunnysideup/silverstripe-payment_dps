@@ -3,9 +3,7 @@
 namespace Sunnysideup\PaymentDps\Forms\Process;
 
 use SilverStripe\Core\Config\Config;
-
 use Sunnysideup\Ecommerce\Model\Order;
-
 use Sunnysideup\Ecommerce\Model\Process\OrderStatusLog;
 
 class OrderStepAmountConfirmedLog extends OrderStatusLog
@@ -67,6 +65,7 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
 
             return $isValid;
         }
+
         return true;
     }
 

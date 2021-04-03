@@ -2,19 +2,19 @@
 
 namespace Sunnysideup\PaymentDps\Thirdparty;
 
-#******************************************************************************
-#* Name          : PxPayCurl.inc.php
-#* Description   : Classes used interact with the PxPay interface using PHP with the cURL extension installed
-#* Copyright	 : Payment Express 2017(c)
-#* Date          : 2017-04-10
-#*@version 		 : 2.0
-#* Author 		 : Payment Express DevSupport
-#******************************************************************************
-# Use this class to parse an XML document
+//******************************************************************************
+//* Name          : PxPayCurl.inc.php
+//* Description   : Classes used interact with the PxPay interface using PHP with the cURL extension installed
+//* Copyright	 : Payment Express 2017(c)
+//* Date          : 2017-04-10
+//*@version 		 : 2.0
+//* Author 		 : Payment Express DevSupport
+//******************************************************************************
+// Use this class to parse an XML document
 
-#******************************************************************************
-# Class for PxPay request messages.
-#******************************************************************************
+//******************************************************************************
+// Class for PxPay request messages.
+//******************************************************************************
 
 class PxPayRequest extends PxPayMessage
 {
@@ -32,7 +32,7 @@ class PxPayRequest extends PxPayMessage
 
     public $Opt;
 
-    #Constructor
+    //Constructor
     public function __construct()
     {
         parent::__construct();
@@ -73,14 +73,14 @@ class PxPayRequest extends PxPayMessage
         $this->Opt = $Opt;
     }
 
-    #******************************************************************
-    #Data validation
-    #******************************************************************
+    //******************************************************************
+    //Data validation
+    //******************************************************************
     public function validData()
     {
         $msg = '';
-        if ($this->TxnType !== 'Purchase') {
-            if ($this->TxnType !== 'Auth') {
+        if ('Purchase' !== $this->TxnType) {
+            if ('Auth' !== $this->TxnType) {
                 $msg = "Invalid TxnType[{$this->TxnType}]<br>";
             }
         }
@@ -116,10 +116,12 @@ class PxPayRequest extends PxPayMessage
             $msg = "Invalid BillingId [{$this->BillingId}]<br>";
         }
 
-        if ($msg !== '') {
+        if ('' !== $msg) {
             trigger_error($msg, E_USER_ERROR);
+
             return false;
         }
+
         return true;
     }
 }

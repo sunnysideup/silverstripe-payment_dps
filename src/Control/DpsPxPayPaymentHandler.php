@@ -37,7 +37,7 @@ class DpsPxPayPaymentHandler extends Controller
         $response = $commsObject->processRequestAndReturnResultsAsObject();
 
         if ($payment = DpsPxPayPayment::get()->byID($response->getMerchantReference())) {
-            if (intval($response->getSuccess()) === 1) {
+            if (1 === intval($response->getSuccess())) {
                 $payment->Status = 'Success';
             } else {
                 $payment->Status = 'Failure';
@@ -51,8 +51,7 @@ class DpsPxPayPaymentHandler extends Controller
             $payment->write();
             $payment->redirectToOrder();
         } else {
-            USER_ERROR('could not find payment with matching ID', E_USER_WARNING);
+            user_error('could not find payment with matching ID', E_USER_WARNING);
         }
-        return;
     }
 }

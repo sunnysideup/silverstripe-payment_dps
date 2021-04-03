@@ -62,12 +62,13 @@ class DpsPxPayStoredCard extends DataObject
             $member = Security::getCurrentUser();
         }
         $extended = $this->extendedCan(__FUNCTION__, $member);
-        if ($extended === false) {
+        if (false === $extended) {
             return false;
         }
         if ($member) {
             return $member->IsAdmin();
         }
+
         return false;
     }
 
@@ -79,9 +80,10 @@ class DpsPxPayStoredCard extends DataObject
     public function canDelete($member = null)
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
-        if ($extended !== null) {
+        if (null !== $extended) {
             return $extended;
         }
+
         return $this->canView($member = null, $context = []);
     }
 }

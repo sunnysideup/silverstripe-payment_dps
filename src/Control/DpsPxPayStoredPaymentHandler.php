@@ -27,14 +27,14 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
         $commsObject = new DpsPxPayComs();
         $response = $commsObject->processRequestAndReturnResultsAsObject();
         if ($payment = DpsPxPayStoredPayment::get()->byID($response->getMerchantReference())) {
-            if ($payment->Status !== 'Success') {
-                if ($response->getSuccess() === 1) {
+            if ('Success' !== $payment->Status) {
+                if (1 === $response->getSuccess()) {
                     $payment->Status = 'Success';
 
                     if ($response->DpsBillingId) {
                         $existingCard = DpsPxPayStoredCard::get()->filter(['BillingID' => $response->DpsBillingId])->First();
 
-                        if ($existingCard === false) {
+                        if (false === $existingCard) {
                             $storedCard = new DpsPxPayStoredCard();
                             $storedCard->BillingID = $response->DpsBillingId;
                             $storedCard->CardName = $response->CardName;
@@ -57,8 +57,7 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
             }
             $payment->redirectToOrder();
         } else {
-            USER_ERROR('could not find payment with matching ID', E_USER_WARNING);
+            user_error('could not find payment with matching ID', E_USER_WARNING);
         }
-        return;
     }
 }
