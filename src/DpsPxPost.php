@@ -11,7 +11,7 @@ use Sunnysideup\Ecommerce\Forms\OrderForm;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
-
+use Sunnysideup\Ecommerce\Model\Order;
 /**
  * @see: https://www.paymentexpress.com/Technical_Resources/Ecommerce_NonHosted/PxPost
  */
@@ -107,7 +107,7 @@ class DpsPxPost extends EcommercePayment
      *
      * @return \SilverStripe\Forms\FieldList
      */
-    public function getPaymentFormFields($amount = 0, $order = null)
+    public function getPaymentFormFields(?float $amount = 0, ?Order $order = null) : FieldList
     {
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
         $fieldList = $formHelper->getCreditCardPaymentFormFields($this);

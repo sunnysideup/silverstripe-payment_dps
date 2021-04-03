@@ -16,6 +16,7 @@ use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentProcessing;
 use Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler;
+use Sunnysideup\Ecommerce\Model\Order;
 
 /**
  *@author nicolaas[at]sunnysideup.co.nz
@@ -70,7 +71,7 @@ class DpsPxPayPayment extends EcommercePayment
         return $fields;
     }
 
-    public function getPaymentFormFields($amount = 0, $order = null)
+    public function getPaymentFormFields(?float $amount = 0, ?Order $order = null) : FieldList
     {
         $logo = $this->getLogoResource();
         $privacyLink = '<a href="' . $this->config()->get('privacy_link') . '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
