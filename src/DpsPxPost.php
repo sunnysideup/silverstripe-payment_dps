@@ -3,7 +3,7 @@
 namespace Sunnysideup\PaymentDps;
 
 use SilverStripe\Core\Convert;
-
+use SilverStripe\Forms\FieldList;
 
 use SilverStripe\Forms\LiteralField;
 use SimpleXMLElement;
@@ -105,7 +105,7 @@ class DpsPxPost extends EcommercePayment
      * this would be a set of fields to enter your
      * credit card details.
      *
-     * @return \SilverStripe\Forms\FieldList
+     * @return FieldList
      */
     public function getPaymentFormFields(?float $amount = 0, ?Order $order = null) : FieldList
     {

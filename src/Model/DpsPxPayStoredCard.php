@@ -76,7 +76,7 @@ class DpsPxPayStoredCard extends DataObject
         return false;
     }
 
-    public function canDelete($member = null, $context = [])
+    public function canDelete($member = null)
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
         if ($extended !== null) {
