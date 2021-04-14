@@ -46,8 +46,7 @@ class DpsPxPayPayment extends EcommercePayment
         'MasterCard' => 'ecommerce/images/paymentmethods/mastercard.jpg',
         'American Express' => 'ecommerce/images/paymentmethods/american-express.gif',
         'Dinners Club' => 'ecommerce/images/paymentmethods/dinners-club.jpg',
-        'JCB' => 'ecommerce/images/paymentmethods/jcb.jpg'*/
-    ];
+        'JCB' => 'ecommerce/images/paymentmethods/jcb.jpg'*/];
 
     private static $email_debug = false;
 
@@ -71,7 +70,7 @@ class DpsPxPayPayment extends EcommercePayment
         return $fields;
     }
 
-    public function getPaymentFormFields(?float $amount = 0, ?Order $order = null): FieldList
+    public function getPaymentFormFields($amount = 0, ?Order $order = null): FieldList
     {
         $logo = $this->getLogoResource();
         $privacyLink = '<a href="' . $this->config()->get('privacy_link') . '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
@@ -129,14 +128,14 @@ class DpsPxPayPayment extends EcommercePayment
                 $currency = $currencyObject->Code;
             }
         }
-        if (! $amount && ! empty($data['Amount'])) {
+        if (!$amount && !empty($data['Amount'])) {
             $amount = floatval($data['Amount']);
         }
-        if (! $currency && ! empty($data['Currency'])) {
+        if (!$currency && !empty($data['Currency'])) {
             $currency = floatval($data['Currency']);
         }
         //final backup for currency
-        if (! $currency) {
+        if (!$currency) {
             $currency = EcommercePayment::site_currency();
         }
         $this->Amount->Currency = $currency;

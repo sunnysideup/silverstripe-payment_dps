@@ -108,7 +108,7 @@ class DpsPxPost extends EcommercePayment
      * this would be a set of fields to enter your
      * credit card details.
      */
-    public function getPaymentFormFields(?float $amount = 0, ?Order $order = null): FieldList
+    public function getPaymentFormFields($amount = 0, ?Order $order = null): FieldList
     {
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
         $fieldList = $formHelper->getCreditCardPaymentFormFields($this);
@@ -175,7 +175,7 @@ class DpsPxPost extends EcommercePayment
         $amount = $this->Amount->Amount;
         $username = $this->Config()->get('username');
         $password = $this->Config()->get('password');
-        if (! $username || ! $password) {
+        if (!$username || !$password) {
             user_error('Make sure to set a username and password.');
         }
 
@@ -214,7 +214,8 @@ class DpsPxPost extends EcommercePayment
         $this->Response = str_replace('\n', "\n", Convert::raw2sql(print_r($params, 1)));
         $this->Message = Convert::raw2sql($txn->CardHolderResponseText . ' ' . $txn->CardHolderResponseDescription);
         $this->CardNumber = Convert::raw2sql($txn->CardNumber);
-        if (1 === $params->Success &&
+        if (
+            1 === $params->Success &&
             $amount === $txn->Amount &&
             $currency === $txn->CurrencyName &&
             trim($this->OrderID) === trim($txn->MerchantReference)

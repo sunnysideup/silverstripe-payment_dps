@@ -34,7 +34,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
     private static $add_card_explanation = 'Storing a Card means your Credit Card will be kept on file for your next purchase. ';
 
-    public function getPaymentFormFields(?float $amount = 0, ?Order $order = null): FieldList
+    public function getPaymentFormFields($amount = 0, ?Order $order = null): FieldList
     {
         $logo = '<img src="' . self::$logo . '" alt="Credit Card Payments Powered by DPS"/>';
         $privacyLink = '<a href="' . self::$privacy_link . '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
@@ -114,13 +114,13 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
      */
     public function processPayment($data, OrderForm $form)
     {
-        if (! isset($data['DPSUseStoredCard'])) {
+        if (!isset($data['DPSUseStoredCard'])) {
             $data['DPSUseStoredCard'] = null;
         }
-        if (! isset($data['DPSStoreCard'])) {
+        if (!isset($data['DPSStoreCard'])) {
             $data['DPSStoreCard'] = null;
         }
-        if (! isset($data['Amount'])) {
+        if (!isset($data['Amount'])) {
             user_error('There was no amount information for processing the payment.', E_USER_WARNING);
         }
         if ('deletecards' === $data['DPSUseStoredCard']) {
@@ -255,7 +255,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
                 eval($phpArray);
             }
         }
-        if (! isset($resultPhp['TXN'])) {
+        if (!isset($resultPhp['TXN'])) {
             return false;
         }
 
@@ -272,7 +272,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         //replace any character that is NOT [0-9] or dot (.)
         $commsObject->setAmountInput(floatval(preg_replace('/[^0-9\\.]/', '', $amount)));
 
-        if (! empty($cardToUse)) {
+        if (!empty($cardToUse)) {
             $commsObject->setBillingId($cardToUse);
         } elseif ($storeCard) {
             $commsObject->setEnableAddBillCard(1);
