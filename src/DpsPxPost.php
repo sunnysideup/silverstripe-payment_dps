@@ -139,11 +139,11 @@ class DpsPxPost extends EcommercePayment
      * returns true if all the data is correct.
      *
      * @param array     $data The form request data - see OrderForm
-     * @param OrderForm $form The form object submitted on
+     * @param Form $form The form object submitted on
      *
      * @return bool
      */
-    public function validatePayment($data, OrderForm $form)
+    public function validatePayment($data, Form $form)
     {
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
 
