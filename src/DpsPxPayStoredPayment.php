@@ -52,7 +52,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         $cardsDropdown = ['' => ' --- Select Stored Card ---'];
 
-        if ($storedCards->count()) {
+        if ($storedCards->exists()) {
             $card = null;
             foreach ($storedCards as $card) {
                 $cardsDropdown[$card->BillingID] = $card->CardHolder . ' - ' . $card->CardNumber . ' (' . $card->CardName . ')';
@@ -129,7 +129,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             $data['DPSUseStoredCard'] = null;
             if ($m = Security::getCurrentUser()) {
                 $storedCards = DpsPxPayStoredCard::get()->filter(['MemberID' => $m->ID]);
-                if ($storedCards->count()) {
+                if ($storedCards->exists()) {
                     foreach ($storedCards as $card) {
                         $card->delete();
                     }

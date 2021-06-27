@@ -139,7 +139,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
                 'ClassName' => OrderStepAmountConfirmedLog::class,
                 'IsValid' => true,
             ]
-        )->count() ? true : false;
+        )->exists() ? true : false;
     }
 
     /**
