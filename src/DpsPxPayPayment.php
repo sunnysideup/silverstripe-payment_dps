@@ -43,7 +43,7 @@ class DpsPxPayPayment extends EcommercePayment
 
     // Please set from YAML. See _config/payment_dps.yml.example
     private static $credit_cards = [
-        /*'Visa' => 'ecommerce/images/paymentmethods/visa.jpg',
+    /*'Visa' => 'ecommerce/images/paymentmethods/visa.jpg',
         'MasterCard' => 'ecommerce/images/paymentmethods/mastercard.jpg',
         'American Express' => 'ecommerce/images/paymentmethods/american-express.gif',
         'Dinners Club' => 'ecommerce/images/paymentmethods/dinners-club.jpg',
@@ -105,8 +105,8 @@ class DpsPxPayPayment extends EcommercePayment
     }
 
     /**
-     * @param array     $data The form request data - see OrderForm
-     * @param Form $form The form object submitted on
+     * @param array $data The form request data - see OrderForm
+     * @param Form  $form The form object submitted on
      *
      * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
      */
@@ -129,14 +129,14 @@ class DpsPxPayPayment extends EcommercePayment
                 $currency = $currencyObject->Code;
             }
         }
-        if (!$amount && !empty($data['Amount'])) {
+        if (! $amount && ! empty($data['Amount'])) {
             $amount = floatval($data['Amount']);
         }
-        if (!$currency && !empty($data['Currency'])) {
+        if (! $currency && ! empty($data['Currency'])) {
             $currency = floatval($data['Currency']);
         }
         //final backup for currency
-        if (!$currency) {
+        if (! $currency) {
             $currency = EcommercePayment::site_currency();
         }
         $this->Amount->Currency = $currency;

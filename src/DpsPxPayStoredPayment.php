@@ -108,20 +108,20 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
     }
 
     /**
-     * @param array     $data The form request data - see OrderForm
-     * @param Form $form The form object submitted on
+     * @param array $data The form request data - see OrderForm
+     * @param Form  $form The form object submitted on
      *
      * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
      */
     public function processPayment($data, Form $form)
     {
-        if (!isset($data['DPSUseStoredCard'])) {
+        if (! isset($data['DPSUseStoredCard'])) {
             $data['DPSUseStoredCard'] = null;
         }
-        if (!isset($data['DPSStoreCard'])) {
+        if (! isset($data['DPSStoreCard'])) {
             $data['DPSStoreCard'] = null;
         }
-        if (!isset($data['Amount'])) {
+        if (! isset($data['Amount'])) {
             user_error('There was no amount information for processing the payment.', E_USER_WARNING);
         }
         if ('deletecards' === $data['DPSUseStoredCard']) {
@@ -256,7 +256,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
                 eval($phpArray);
             }
         }
-        if (!isset($resultPhp['TXN'])) {
+        if (! isset($resultPhp['TXN'])) {
             return false;
         }
 
@@ -273,7 +273,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         //replace any character that is NOT [0-9] or dot (.)
         $commsObject->setAmountInput(floatval(preg_replace('/[^0-9\\.]/', '', $amount)));
 
-        if (!empty($cardToUse)) {
+        if (! empty($cardToUse)) {
             $commsObject->setBillingId($cardToUse);
         } elseif ($storeCard) {
             $commsObject->setEnableAddBillCard(1);

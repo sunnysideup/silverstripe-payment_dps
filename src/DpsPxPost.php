@@ -108,6 +108,8 @@ class DpsPxPost extends EcommercePayment
      * payment type. Example: for {@link DPSPayment},
      * this would be a set of fields to enter your
      * credit card details.
+     *
+     * @param mixed $amount
      */
     public function getPaymentFormFields($amount = 0, ?Order $order = null): FieldList
     {
@@ -138,8 +140,8 @@ class DpsPxPost extends EcommercePayment
     /**
      * returns true if all the data is correct.
      *
-     * @param array     $data The form request data - see OrderForm
-     * @param Form $form The form object submitted on
+     * @param array $data The form request data - see OrderForm
+     * @param Form  $form The form object submitted on
      *
      * @return bool
      */
@@ -160,8 +162,8 @@ class DpsPxPost extends EcommercePayment
      * This is used by {@link OrderForm} when it is
      * submitted.
      *
-     * @param array     $data The form request data - see OrderForm
-     * @param Form $form The form object submitted on
+     * @param array $data The form request data - see OrderForm
+     * @param Form  $form The form object submitted on
      *
      * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
      */
@@ -176,7 +178,7 @@ class DpsPxPost extends EcommercePayment
         $amount = $this->Amount->Amount;
         $username = $this->Config()->get('username');
         $password = $this->Config()->get('password');
-        if (!$username || !$password) {
+        if (! $username || ! $password) {
             user_error('Make sure to set a username and password.');
         }
 
