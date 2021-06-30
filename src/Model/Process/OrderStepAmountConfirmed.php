@@ -84,17 +84,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      */
     public function nextStep(Order $order)
     {
-        $isDPSPayment = false;
-        if ($order->Payments()->exists()) {
-            $payments = $order->Payments();
-            foreach ($payments as $payment) {
-                if($payment instanceof DpsPxPayPayment){
-                    $isDPSPayment = true;
-                    break;
-                }
-            }
-        }
-        if ($this->hasAmountValidation($order) || !$isDPSPayment) {
+        if ($this->hasAmountValidation($order)) {
             return parent::nextStep($order);
         }
 
@@ -133,7 +123,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
             }
         }
 
-        return false;
+        return true;
     }
 
     public function relevantPayments(Order $order)
