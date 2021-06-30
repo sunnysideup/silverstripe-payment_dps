@@ -6,9 +6,13 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
+use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
+use Sunnysideup\Ecommerce\Model\Money\PaymentTypes\EcommercePaymentTestSuccess;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Model\Process\OrderStep;
+use Sunnysideup\PaymentDps\DpsPxPayPayment;
 use Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount;
+use Sunnysideup\PaymentDps\Forms\CustomerOrderStepForm;
 
 /**
  * @authors: Nicolaas [at] Sunny Side Up .co.nz
@@ -80,7 +84,17 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      */
     public function nextStep(Order $order)
     {
-        if ($this->hasAmountValidation($order)) {
+        $isDPSPayment = false;
+        if ($order->Payments()->exists()) {
+            $payments = $order->Payments();
+            foreach ($payments as $payment) {
+                if($payment instanceof DpsPxPayPayment){
+                    $isDPSPayment = true;
+                    break;
+                }
+            }
+        }
+        if ($this->hasAmountValidation($order) || !$isDPSPayment) {
             return parent::nextStep($order);
         }
 
