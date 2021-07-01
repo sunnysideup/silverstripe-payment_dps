@@ -84,7 +84,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      */
     public function nextStep(Order $order)
     {
-        if ($this->hasAmountValidation($order)) {
+        if (! $this->hasAmountValidation($order) || $this->hasAmountConfirmed($order)) {
             return parent::nextStep($order);
         }
 
@@ -99,7 +99,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     public function addOrderStepFields(FieldList $fields, Order $order)
     {
         $fields = parent::addOrderStepFields($fields, $order);
-        if (! $order->IsPaid()) {
+        if (! $this->hasAmountConfirmed($order)) {
             $msg = _t(
                 'OrderStep.AMOUNTNOTCONFIRMED',
                 '
@@ -123,7 +123,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
             }
         }
 
-        return true;
+        return false;
     }
 
     public function relevantPayments(Order $order)
@@ -138,12 +138,11 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     public function hasAmountConfirmed(Order $order): bool
     {
-        return $order->OrderStatusLogs()->filter(
-            [
-                'ClassName' => OrderStepAmountConfirmedLog::class,
-                'IsValid' => true,
-            ]
-        )->exists() ? true : false;
+        $relevantLogs = $order->OrderStatusLogs()->filter(['ClassName' => OrderStepAmountConfirmedLog::class]);
+        if($relevantLogs->count()){
+            return OrderStepAmountConfirmedLog::get()->filter(['ID' => $relevantLogs->column('ID'), 'IsValid' => true])->count();
+        }
+        return  false;
     }
 
     /**

@@ -26,7 +26,7 @@ class DpsPxPayPaymentRandomAmount extends DpsPxPayPayment
         $max = $this->Config()->get('max_random_deduction');
         $amount = round($max * (mt_rand() / mt_getrandmax()), 2);
         $this->RandomDeduction = $amount;
-        $this->write;
+        $this->write();
 
         return floatval($this->RandomDeduction);
     }

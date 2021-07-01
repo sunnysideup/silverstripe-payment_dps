@@ -8,6 +8,8 @@ use Sunnysideup\Ecommerce\Model\Process\OrderStatusLog;
 
 class OrderStepAmountConfirmedLog extends OrderStatusLog
 {
+    private $table_name = 'OrderStepAmountConfirmedLog';
+
     private static $db = [
         'IsValid' => 'Boolean',
     ];
@@ -42,8 +44,9 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
 
     public static function test_answer(Order $order, string $answer): bool
     {
-        if (self::is_rigth_step($order)) {
-            if ($order->Status()->hasAmountConfirmed($order)) {
+        $orderStep = $order->Status();
+        if (self::is_right_step($orderStep)) {
+            if ($orderStep->hasAmountConfirmed($order)) {
                 return true;
             }
             $isValid = false;
@@ -51,12 +54,12 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
             $log = OrderStepAmountConfirmedLog::create(
                 ['OrderID' => $order->ID, 'Answer' => floatval($answer)]
             );
-            $payment = $order->Status()->relevantPayments()->Last();
+            $payment = $orderStep->relevantPayments($order)->last();
             if ($payment) {
                 $amount = (float) $payment->Amount->Amount;
                 $deduction = (float) $payment->RandomDeduction;
                 $expectedAnswer = (float) $amount - $deduction;
-                if ($expectedAnswer === $answer) {
+                if ($expectedAnswer === (float) $answer) {
                     $isValid = true;
                 }
             }
@@ -69,10 +72,8 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
         return true;
     }
 
-    protected static function is_rigth_step($order): bool
+    protected static function is_right_step($orderStep): bool
     {
-        $status = $order->Status();
-
-        return $status instanceof OrderStepAmountConfirmed;
+        return $orderStep instanceof OrderStepAmountConfirmed;
     }
 }

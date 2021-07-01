@@ -4,12 +4,15 @@ namespace Sunnysideup\PaymentDps\Forms;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Convert;
+use SilverStripe\Forms\CurrencyField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\RequiredFields;
+use Sunnysideup\Ecommerce\Api\Sanitizer;
 use Sunnysideup\Ecommerce\Model\Order;
+use Sunnysideup\PaymentDps\Forms\Process\OrderStepAmountConfirmedLog;
 
 class CustomerOrderStepForm extends Form
 {
