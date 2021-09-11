@@ -137,12 +137,26 @@ class PxPayMessage
         $arr = get_object_vars($this);
 
         $xml = '<GenerateRequest>';
-        while (list($prop, $val) = each($arr)) {
-            $xml .= "<{$prop}>{$val}</{$prop}>";
+        foreach ($arr as $key => $value) {
+            $xml .= "<{$key}>{$value}</{$key}>";
         }
 
         $xml .= '</GenerateRequest>';
 
         return $xml;
     }
+    //
+    // private function legacyEach($array){
+    //     $key = key($array);
+    //     $value = current($array);
+    //     $each = is_null($key) ? false : [
+    //         1        => $value,
+    //         'value'    => $value,
+    //         0        => $key,
+    //         'key'    => $key,
+    //     ];
+    //     next($array);
+    //     return $each;
+    // }
+
 }

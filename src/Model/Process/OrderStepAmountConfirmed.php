@@ -7,10 +7,8 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
-use Sunnysideup\Ecommerce\Model\Money\PaymentTypes\EcommercePaymentTestSuccess;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Model\Process\OrderStep;
-use Sunnysideup\PaymentDps\DpsPxPayPayment;
 use Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount;
 use Sunnysideup\PaymentDps\Forms\CustomerOrderStepForm;
 
@@ -139,9 +137,10 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     public function hasAmountConfirmed(Order $order): bool
     {
         $relevantLogs = $order->OrderStatusLogs()->filter(['ClassName' => OrderStepAmountConfirmedLog::class]);
-        if($relevantLogs->count()){
+        if ($relevantLogs->count()) {
             return OrderStepAmountConfirmedLog::get()->filter(['ID' => $relevantLogs->column('ID'), 'IsValid' => true])->count();
         }
+
         return  false;
     }
 
