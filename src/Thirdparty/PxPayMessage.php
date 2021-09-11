@@ -145,6 +145,7 @@ class PxPayMessage
 
         return $xml;
     }
+
     //
     // private function legacyEach($array){
     //     $key = key($array);
@@ -158,5 +159,4 @@ class PxPayMessage
     //     next($array);
     //     return $each;
     // }
-
 }
