@@ -105,7 +105,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
                     deducted from their credit card.
                 '
             );
-            $fields->addFieldToTab('Root.Next', new LiteralField('NotPaidMessage', '<p>' . $msg . '</p>'), 'ActionNextStepManually');
+            $fields->addFieldToTab('Root.Next', new LiteralField('NotPaidMessage', '<p>' . $msg . '</p>'));
         }
 
         return $fields;
