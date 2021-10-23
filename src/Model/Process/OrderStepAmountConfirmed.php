@@ -137,8 +137,12 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     public function hasAmountConfirmed(Order $order): bool
     {
         $relevantLogs = $order->OrderStatusLogs()->filter(['ClassName' => OrderStepAmountConfirmedLog::class]);
-        if ($relevantLogs->count()) {
-            return OrderStepAmountConfirmedLog::get()->filter(['ID' => $relevantLogs->column('ID'), 'IsValid' => true])->count();
+        if ($relevantLogs->exists()) {
+            return OrderStepAmountConfirmedLog::get()
+                ->filter([
+                    'ID' => [0 => 0] + $relevantLogs->columnUnique(),
+                    'IsValid' => true
+                ])->eixsts();
         }
 
         return  false;
