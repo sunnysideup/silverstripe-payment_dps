@@ -141,7 +141,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
             return OrderStepAmountConfirmedLog::get()
                 ->filter([
                     'ID' => [0 => 0] + $relevantLogs->columnUnique(),
-                    'IsValid' => true
+                    'IsValid' => true,
                 ])->eixsts();
         }
 
