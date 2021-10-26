@@ -76,7 +76,8 @@ class DpsPxPayPayment extends EcommercePayment
         $logo = $this->getLogoResource();
         $privacyLink = '<a href="' . $this->config()->get('privacy_link') . '" target="_blank" title="Read DPS\'s privacy policy">' . $logo . '</a><br/>';
         $paymentsList = '';
-        if ($cards = $this->config()->get('credit_cards')) {
+        $cards = $this->config()->get('credit_cards');
+        if ($cards) {
             foreach ($cards as $name => $image) {
                 $paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
             }

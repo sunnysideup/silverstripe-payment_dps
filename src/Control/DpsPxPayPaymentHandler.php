@@ -35,6 +35,8 @@ class DpsPxPayPaymentHandler extends Controller
         $this->extend('DpsPxPayPaymentHandler_completion_start');
         $commsObject = new DpsPxPayComs();
         $response = $commsObject->processRequestAndReturnResultsAsObject();
+        $ResponseText = $response->getResponseText();
+        $DpsTxnRef = $response->getDpsTxnRef();
 
         if ($payment = DpsPxPayPayment::get()->byID($response->getMerchantReference())) {
             if (1 === intval($response->getSuccess())) {
@@ -42,10 +44,10 @@ class DpsPxPayPaymentHandler extends Controller
             } else {
                 $payment->Status = 'Failure';
             }
-            if ($DpsTxnRef = $response->getDpsTxnRef()) {
+            if ($DpsTxnRef) {
                 $payment->TxnRef = $DpsTxnRef;
             }
-            if ($ResponseText = $response->getResponseText()) {
+            if ($ResponseText) {
                 $payment->Message = $ResponseText;
             }
             $payment->write();
