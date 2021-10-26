@@ -61,7 +61,8 @@ class CustomerOrderStepForm extends Form
     {
         $SQLData = Convert::raw2sql($data);
         if (isset($SQLData['OrderID'])) {
-            if ($orderID = intval($SQLData['OrderID'])) {
+            $orderID = intval($SQLData['OrderID']);
+            if ($orderID) {
                 $order = Order::get()->byID($orderID);
                 if ($order) {
                     if (OrderStepAmountConfirmedLog::is_locked_out($order)) {

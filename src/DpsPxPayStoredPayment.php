@@ -46,7 +46,8 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         $fields = new FieldList();
         $storedCards = null;
-        if ($m = Security::getCurrentUser()) {
+        $m = Security::getCurrentUser();
+        if ($m) {
             $storedCards = DpsPxPayStoredCard::get()->filter(['MemberID' => $m->ID]);
         }
 
@@ -127,7 +128,8 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         if ('deletecards' === $data['DPSUseStoredCard']) {
             //important!!!
             $data['DPSUseStoredCard'] = null;
-            if ($m = Security::getCurrentUser()) {
+            $m = Security::getCurrentUser();
+            if ($m) {
                 $storedCards = DpsPxPayStoredCard::get()->filter(['MemberID' => $m->ID]);
                 if ($storedCards->exists()) {
                     foreach ($storedCards as $card) {
@@ -177,18 +179,21 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             $result = EcommercePaymentFailure::create();
         }
         if (isset($responseFields['DPSTXNREF'])) {
-            if ($transactionRef = $responseFields['DPSTXNREF']) {
+            $transactionRef = $responseFields['DPSTXNREF'];
+            if ($transactionRef) {
                 $this->TxnRef = $transactionRef;
             }
         }
 
         if (isset($responseFields['HELPTEXT'])) {
-            if ($helpText = $responseFields['HELPTEXT']) {
+            $helpText = $responseFields['HELPTEXT'];
+            if ($helpText) {
                 $this->Message = $helpText;
             }
         }
         if (isset($responseFields['RESPONSETEXT'])) {
-            if ($responseText = $responseFields['RESPONSETEXT']) {
+            $responseText = $responseFields['RESPONSETEXT'];
+            if ($responseText) {
                 $this->Message .= $responseText;
             }
         }
