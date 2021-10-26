@@ -26,6 +26,8 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
     {
         $commsObject = new DpsPxPayComs();
         $response = $commsObject->processRequestAndReturnResultsAsObject();
+        $ResponseText = $response->getResponseText();
+        $DpsTxnRef = $response->getDpsTxnRef();
         if ($payment = DpsPxPayStoredPayment::get()->byID($response->getMerchantReference())) {
             if ('Success' !== $payment->Status) {
                 if (1 === $response->getSuccess()) {
@@ -47,10 +49,10 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
                 } else {
                     $payment->Status = 'Failure';
                 }
-                if ($DpsTxnRef = $response->getDpsTxnRef()) {
+                if ($DpsTxnRef) {
                     $payment->TxnRef = $DpsTxnRef;
                 }
-                if ($ResponseText = $response->getResponseText()) {
+                if ($ResponseText) {
                     $payment->Message = $ResponseText;
                 }
                 $payment->write();
