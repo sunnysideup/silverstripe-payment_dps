@@ -113,7 +113,7 @@ class DpsPxPayPayment extends EcommercePayment
      */
     public function processPayment($data, Form $form)
     {
-        $order = $this->Order();
+        $order = $this->getOrderCached();
         //if currency has been pre-set use this
         $currency = $this->Amount->Currency;
         //if amout has been pre-set, use this

@@ -43,7 +43,7 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
                             $storedCard->CardName = $response->CardName;
                             $storedCard->CardHolder = $response->CardHolderName;
                             $storedCard->CardNumber = $response->CardNumber;
-                            $storedCard->MemberID = $payment->Order()->MemberID;
+                            $storedCard->MemberID = $payment->getOrderCached()->MemberID;
                             $storedCard->write();
                         }
                     }
