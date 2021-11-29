@@ -63,7 +63,7 @@ class CustomerOrderStepForm extends Form
         if (isset($SQLData['OrderID'])) {
             $orderID = intval($SQLData['OrderID']);
             if ($orderID) {
-                $order = Order::get()->byID($orderID);
+                $order = Order::get_order_cached((int) $orderID);
                 if ($order) {
                     if (OrderStepAmountConfirmedLog::is_locked_out($order)) {
                         $form->sessionMessage('Sorry, you can only try three times per day', 'bad');
