@@ -37,7 +37,7 @@ class DpsPxPayPaymentHandler extends Controller
         $response = $commsObject->processRequestAndReturnResultsAsObject();
         $ResponseText = $response->getResponseText();
         $DpsTxnRef = $response->getDpsTxnRef();
-        $payment = DpsPxPayPayment::get()->byID($response->getMerchantReference());
+        $payment = DpsPxPayPayment::get_by_id($response->getMerchantReference());
         if ($payment) {
             if (1 === intval($response->getSuccess())) {
                 $payment->Status = 'Success';

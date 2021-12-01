@@ -28,7 +28,7 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
         $response = $commsObject->processRequestAndReturnResultsAsObject();
         $ResponseText = $response->getResponseText();
         $DpsTxnRef = $response->getDpsTxnRef();
-        $payment = DpsPxPayStoredPayment::get()->byID($response->getMerchantReference());
+        $payment = DpsPxPayStoredPayment::get_by_id($response->getMerchantReference());
         if ($payment) {
             if ('Success' !== $payment->Status) {
                 if (1 === $response->getSuccess()) {
