@@ -223,10 +223,10 @@ class DpsPxPost extends EcommercePayment
             $currency === $txn->CurrencyName &&
             trim($this->OrderID) === trim($txn->MerchantReference)
         ) {
-            $this->Status = 'Success';
+            $this->Status = EcommercePayment::SUCCESS_STATUS;
             $returnObject = EcommercePaymentSuccess::create();
         } else {
-            $this->Status = 'Failure';
+            $this->Status = EcommercePayment::FAILURE_STATUS;
             $returnObject = EcommercePaymentFailure::create();
         }
         $this->write();

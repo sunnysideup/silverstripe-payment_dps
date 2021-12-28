@@ -40,9 +40,9 @@ class DpsPxPayPaymentHandler extends Controller
         $payment = DpsPxPayPayment::get_by_id($response->getMerchantReference());
         if ($payment) {
             if (1 === intval($response->getSuccess())) {
-                $payment->Status = 'Success';
+                $payment->Status = EcommercePayment::SUCCESS_STATUS;
             } else {
-                $payment->Status = 'Failure';
+                $payment->Status = EcommercePayment::FAILURE_STATUS;
             }
             if ($DpsTxnRef) {
                 $payment->TxnRef = $DpsTxnRef;

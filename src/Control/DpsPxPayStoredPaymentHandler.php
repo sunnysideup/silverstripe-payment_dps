@@ -7,6 +7,7 @@ use SilverStripe\Core\Config\Config;
 use Sunnysideup\PaymentDps\DpsPxPayComs;
 use Sunnysideup\PaymentDps\DpsPxPayStoredPayment;
 use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
+use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 
 class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
 {
@@ -30,9 +31,9 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
         $DpsTxnRef = $response->getDpsTxnRef();
         $payment = DpsPxPayStoredPayment::get_by_id($response->getMerchantReference());
         if ($payment) {
-            if ('Success' !== $payment->Status) {
+            if (EcommercePayment::SUCCESS_STATUS !== $payment->Status) {
                 if (1 === $response->getSuccess()) {
-                    $payment->Status = 'Success';
+                    $payment->Status = EcommercePayment::SUCCESS_STATUS;
 
                     if ($response->DpsBillingId) {
                         $existingCard = DpsPxPayStoredCard::get()->filter(['BillingID' => $response->DpsBillingId])->First();
@@ -48,7 +49,7 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
                         }
                     }
                 } else {
-                    $payment->Status = 'Failure';
+                    $payment->Status = EcommercePayment::FAILURE_STATUS;
                 }
                 if ($DpsTxnRef) {
                     $payment->TxnRef = $DpsTxnRef;
