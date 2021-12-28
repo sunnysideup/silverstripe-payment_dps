@@ -5,12 +5,11 @@ namespace Sunnysideup\PaymentDps\Forms\Process;
 use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
+use Sunnysideup\Ecommerce\Api\ArrayMethods;
 use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Model\Process\OrderStep;
-
-use Sunnysideup\Ecommerce\Api\ArrayMethods;
 use Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount;
 use Sunnysideup\PaymentDps\Forms\CustomerOrderStepForm;
 

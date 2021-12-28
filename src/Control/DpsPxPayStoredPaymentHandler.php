@@ -4,10 +4,10 @@ namespace Sunnysideup\PaymentDps\Control;
 
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
+use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\PaymentDps\DpsPxPayComs;
 use Sunnysideup\PaymentDps\DpsPxPayStoredPayment;
 use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
-use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 
 class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
 {

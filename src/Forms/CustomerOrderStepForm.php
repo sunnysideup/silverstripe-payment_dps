@@ -8,8 +8,8 @@ use SilverStripe\Forms\CurrencyField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\HeaderField;
+use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\RequiredFields;
 use Sunnysideup\Ecommerce\Api\Sanitizer;
 use Sunnysideup\Ecommerce\Model\Order;
@@ -33,7 +33,7 @@ class CustomerOrderStepForm extends Form
                     'AmountPaid',
                     'Amount Paid'
                 ),
-                new HiddenField('OrderID', '', $order->ID)
+                new HiddenField('OrderID', '', $order->ID),
             ]
         );
         $actions = new FieldList(
