@@ -131,10 +131,10 @@ class DpsPxPayPayment extends EcommercePayment
             }
         }
         if (! $amount && ! empty($data['Amount'])) {
-            $amount = floatval($data['Amount']);
+            $amount = (float) $data['Amount'];
         }
         if (! $currency && ! empty($data['Currency'])) {
-            $currency = floatval($data['Currency']);
+            $currency = (string) $data['Currency'];
         }
         //final backup for currency
         if (! $currency) {

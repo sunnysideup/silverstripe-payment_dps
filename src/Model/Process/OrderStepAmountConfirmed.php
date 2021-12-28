@@ -9,6 +9,8 @@ use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Model\Process\OrderStep;
+
+use Sunnysideup\Ecommerce\Api\ArrayMethods;
 use Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount;
 use Sunnysideup\PaymentDps\Forms\CustomerOrderStepForm;
 
@@ -25,7 +27,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         //the one below may seem a bit paradoxical, but the thing is that the customer can pay up to and inclusive of this step
         //that ist he code PAID means that the Order has been paid ONCE this step is completed
         'CustomerCanPay' => 0,
-        'Name' => 'Amount Confirmed',
+        'Name' => 'Confirm Amount',
         'Code' => 'AMOUNTCONFIRMED',
         'ShowAsInProcessOrder' => 1,
     ];
@@ -140,9 +142,9 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         if ($relevantLogs->exists()) {
             return OrderStepAmountConfirmedLog::get()
                 ->filter([
-                    'ID' => [0 => 0] + $relevantLogs->columnUnique(),
+                    'ID' => ArrayMethods::filter_array($relevantLogs->columnUnique()),
                     'IsValid' => true,
-                ])->eixsts();
+                ])->exists();
         }
 
         return  false;

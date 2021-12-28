@@ -9,6 +9,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\RequiredFields;
 use Sunnysideup\Ecommerce\Api\Sanitizer;
 use Sunnysideup\Ecommerce\Model\Order;
@@ -23,11 +24,17 @@ class CustomerOrderStepForm extends Form
     {
         $requiredFields = [];
         $fields = new FieldList(
-            CurrencyField::create(
-                'AmountPaid',
-                'Amount Paid'
-            ),
-            new HiddenField('OrderID', '', $order->ID)
+            [
+                HeaderField::create(
+                    'AmountPaidHeader',
+                    'Amount Paid (check bank balance)'
+                ),
+                CurrencyField::create(
+                    'AmountPaid',
+                    'Amount Paid'
+                ),
+                new HiddenField('OrderID', '', $order->ID)
+            ]
         );
         $actions = new FieldList(
             new FormAction('confirmamount', 'Confirm Amount')
