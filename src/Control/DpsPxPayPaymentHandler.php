@@ -50,6 +50,9 @@ class DpsPxPayPaymentHandler extends Controller
             if ($ResponseText) {
                 $payment->Message = $ResponseText;
             }
+            // check amount and currency...
+            $payment->SettlementAmount->Amount = $response->getAmountSettlement();
+            $payment->SettlementAmount->Currency = $response->getCurrencySettlement();
             $payment->write();
             $payment->redirectToOrder();
         } else {

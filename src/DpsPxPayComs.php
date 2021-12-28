@@ -252,7 +252,7 @@ class DpsPxPayComs
      * $DpsBillingId      = $responseObject->getDpsBillingId();
      * $BillingId         = $responseObject->getBillingId();
      * $CardHolderName    = $responseObject->getCardHolderName();
-     * $DpsTxnRef	        = $responseObject->getDpsTxnRef();
+     * $DpsTxnRef         = $responseObject->getDpsTxnRef();
      * $TxnType           = $responseObject->getTxnType();
      * $TxnData1          = $responseObject->getTxnData1();
      * $TxnData2          = $responseObject->getTxnData2();
