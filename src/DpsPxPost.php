@@ -26,17 +26,17 @@ class DpsPxPost extends EcommercePayment
      * @var string
      */
     private static $dps_logo_and_link = '
-	<div id="PXPostPrivacy">
-		<a href="https://www.paymentexpress.com/About/About_DPS/Privacy_Policy">
-			<img src="https://www.paymentexpress.com/DPS/media/theme/pxlogostackedreg.png" alt="Payment Processor" width="50%" height="50%" />
-		</a>
-		<span>
-			<a href="https://www.paymentexpress.com/About/About_DPS/Privacy_Policy">
-				Payment processing provided by DPS (view Privacy Policy)
-			</a>
-		</span>
-	</div>
-	';
+    <div id="PXPostPrivacy">
+        <a href="https://www.paymentexpress.com/About/About_DPS/Privacy_Policy">
+            <img src="https://www.paymentexpress.com/DPS/media/theme/pxlogostackedreg.png" alt="Payment Processor" width="50%" height="50%" />
+        </a>
+        <span>
+            <a href="https://www.paymentexpress.com/About/About_DPS/Privacy_Policy">
+                Payment processing provided by DPS (view Privacy Policy)
+            </a>
+        </span>
+    </div>
+    ';
 
     /**
      * we use yes / no as this is more reliable than a boolean value

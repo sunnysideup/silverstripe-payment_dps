@@ -5,10 +5,10 @@ namespace Sunnysideup\PaymentDps\Thirdparty;
 //******************************************************************************
 //* Name          : PxPayCurl.inc.php
 //* Description   : Classes used interact with the PxPay interface using PHP with the cURL extension installed
-//* Copyright	 : Payment Express 2017(c)
+//* Copyright     : Payment Express 2017(c)
 //* Date          : 2017-04-10
-//*@version 		 : 2.0
-//* Author 		 : Payment Express DevSupport
+//*@version          : 2.0
+//* Author          : Payment Express DevSupport
 //******************************************************************************
 // Use this class to parse an XML document
 
