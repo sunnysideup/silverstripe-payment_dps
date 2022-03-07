@@ -46,7 +46,7 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
         return $count > $max;
     }
 
-    public static function test_answer(Order $order, string $answer): bool
+    public static function test_answer(Order $order, float $answer): bool
     {
         $orderStep = $order->Status();
         if (self::is_right_step($orderStep)) {

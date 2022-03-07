@@ -148,14 +148,14 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      */
     public function nextStep(Order $order)
     {
-        if ($this->stillToDo($order)) {
+        if ($this->stillToDo($order) === false) {
             return parent::nextStep($order);
         }
 
         return null;
     }
 
-    protected function stillToDo(Order $order)
+    protected function stillToDo(Order $order) : bool
     {
         return $this->hasAmountValidation($order) && !$this->hasAmountConfirmed($order);
     }

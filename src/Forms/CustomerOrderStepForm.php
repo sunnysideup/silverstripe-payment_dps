@@ -97,10 +97,6 @@ class CustomerOrderStepForm extends Form
         return $this->controller->redirectBack();
     }
 
-    protected function currencyToFloat($value) : float
-    {
-        return (float) preg_replace('/[^0-9.\-]/', '', $value);
-    }
     /**
      * saves the form into session.
      */
