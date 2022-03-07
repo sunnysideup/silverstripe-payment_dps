@@ -13,6 +13,7 @@ use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\RequiredFields;
 use Sunnysideup\Ecommerce\Api\Sanitizer;
 use Sunnysideup\Ecommerce\Model\Order;
+use Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmed;
 use Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmedLog;
 
 class CustomerOrderStepForm extends Form
@@ -77,7 +78,8 @@ class CustomerOrderStepForm extends Form
 
                         return $this->controller->redirectBack();
                     }
-                    $answer = floatval($data['AmountPaid']);
+                    $answer = OrderStepAmountConfirmed::currency_to_float($data['AmountPaid']);
+
                     if ($answer) {
                         $isValid = OrderStepAmountConfirmedLog::test_answer($order, $answer);
                         if ($isValid) {
@@ -95,6 +97,10 @@ class CustomerOrderStepForm extends Form
         return $this->controller->redirectBack();
     }
 
+    protected function currencyToFloat($value) : float
+    {
+        return (float) preg_replace('/[^0-9.\-]/', '', $value);
+    }
     /**
      * saves the form into session.
      */

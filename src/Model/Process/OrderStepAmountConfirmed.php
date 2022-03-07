@@ -44,15 +44,15 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     public function getMinimumAmountUnknownCustomersRaw() : float
     {
-        return $this->currencyToFloat($this->MinimumAmountUnknownCustomers);
+        return self::currency_to_float($this->MinimumAmountUnknownCustomers);
     }
 
     public function getMinimumAmountKnownCustomersRaw() : float
     {
-        return $this->currencyToFloat($this->MinimumAmountKnownCustomers);
+        return self::currency_to_float($this->MinimumAmountKnownCustomers);
     }
 
-    protected function currencyToFloat($value) : float
+    public static function currency_to_float($value) : float
     {
         return (float) preg_replace('/[^0-9.\-]/', '', $value);
     }
@@ -126,7 +126,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     {
         $adminOnlyOrToEmail = ! (bool) $this->SendMessageToCustomer;
 
-        if($this->hasAmountValidation($order)) {
+        if($this->stillToDo($order)) {
             return $this->sendEmailForStep(
                 $order,
                 $subject = $this->EmailSubject ?: 'Confirm Paid Amount',
@@ -148,11 +148,16 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      */
     public function nextStep(Order $order)
     {
-        if (! $this->hasAmountValidation($order) || $this->hasAmountConfirmed($order)) {
+        if ($this->stillToDo($order)) {
             return parent::nextStep($order);
         }
 
         return null;
+    }
+
+    protected function stillToDo(Order $order)
+    {
+        return $this->hasAmountValidation($order) && !$this->hasAmountConfirmed($order);
     }
 
     /**
