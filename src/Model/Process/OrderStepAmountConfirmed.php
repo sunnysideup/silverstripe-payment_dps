@@ -31,6 +31,8 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         'ShowAsInProcessOrder' => 1,
     ];
 
+    private static $table_name = 'OrderStepAmountConfirmed';
+
     /**
      * A form that can be used by the Customer to progress step!
      *
