@@ -42,6 +42,14 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         'MinimumAmountKnownCustomersRaw' => 'Float',
     ];
 
+    /**
+     * @return bool
+     */
+    protected function hasCustomerMessage()
+    {
+        return $this->SendMessageToCustomer;
+    }
+
     public function getMinimumAmountUnknownCustomersRaw() : float
     {
         return self::currency_to_float($this->MinimumAmountUnknownCustomers);
