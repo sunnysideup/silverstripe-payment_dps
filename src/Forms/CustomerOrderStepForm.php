@@ -13,7 +13,7 @@ use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\RequiredFields;
 use Sunnysideup\Ecommerce\Api\Sanitizer;
 use Sunnysideup\Ecommerce\Model\Order;
-use Sunnysideup\PaymentDps\Forms\Process\OrderStepAmountConfirmedLog;
+use Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmedLog;
 
 class CustomerOrderStepForm extends Form
 {

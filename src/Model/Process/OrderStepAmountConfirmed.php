@@ -1,7 +1,10 @@
 <?php
 
-namespace Sunnysideup\PaymentDps\Forms\Process;
+namespace Sunnysideup\PaymentDps\Model\Process;
 
+use Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmedLog;
+
+use SilverStripe\ORM\DB;
 use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
@@ -20,6 +23,14 @@ use Sunnysideup\PaymentDps\Forms\CustomerOrderStepForm;
  */
 class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 {
+
+    private static $table_name = 'OrderStepAmountConfirmed';
+
+    private static $db = [
+        'MinimumAmountUnknownCustomers' => 'Currency',
+        'MinimumAmountKnownCustomers' => 'Currency',
+    ];
+
     private static $defaults = [
         'CustomerCanEdit' => 0,
         'CustomerCanCancel' => 0,
@@ -157,5 +168,15 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     protected function myDescription()
     {
         return _t('OrderStep.PAID_DESCRIPTION', 'The order amount charged is confirmed by customer.');
+    }
+
+    public function requireDefaultRecords()
+    {
+        parent::requireDefaultRecords();
+        DB::query('
+            UPDATE "OrderStep"
+            SET "ClassName" = \''.addslashes('Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmed').'\'
+            WHERE "ClassName" = \''.addslashes('Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmed').'\'
+        ');
     }
 }
