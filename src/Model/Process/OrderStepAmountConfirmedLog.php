@@ -1,8 +1,12 @@
 <?php
 
-namespace Sunnysideup\PaymentDps\Forms\Process;
+namespace Sunnysideup\PaymentDps\Model\Process;
+
+use Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmed;
 
 use SilverStripe\Core\Config\Config;
+
+use SilverStripe\ORM\DB;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Model\Process\OrderStatusLog;
 
@@ -42,7 +46,7 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
         return $count > $max;
     }
 
-    public static function test_answer(Order $order, string $answer): bool
+    public static function test_answer(Order $order, float $answer): bool
     {
         $orderStep = $order->Status();
         if (self::is_right_step($orderStep)) {
@@ -76,4 +80,16 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
     {
         return $orderStep instanceof OrderStepAmountConfirmed;
     }
+
+
+    public function requireDefaultRecords()
+    {
+        parent::requireDefaultRecords();
+        DB::query('
+            UPDATE "OrderStatusLog"
+            SET "ClassName" = \''.addslashes('Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmedLog').'\'
+            WHERE "ClassName" = \''.addslashes('Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmedLog').'\'
+        ');
+    }
+
 }

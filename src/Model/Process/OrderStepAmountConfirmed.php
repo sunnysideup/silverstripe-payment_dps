@@ -1,15 +1,21 @@
 <?php
 
-namespace Sunnysideup\PaymentDps\Forms\Process;
+namespace Sunnysideup\PaymentDps\Model\Process;
 
+use Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmedLog;
+
+use SilverStripe\ORM\DB;
 use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\LiteralField;
 use Sunnysideup\Ecommerce\Api\ArrayMethods;
 use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Model\Process\OrderStep;
+
+use Sunnysideup\Ecommerce\Email\OrderInvoiceEmail;
 use Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount;
 use Sunnysideup\PaymentDps\Forms\CustomerOrderStepForm;
 
@@ -20,6 +26,45 @@ use Sunnysideup\PaymentDps\Forms\CustomerOrderStepForm;
  */
 class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 {
+
+    protected $emailClassName = OrderInvoiceEmail::class;
+
+    private static $table_name = 'OrderStepAmountConfirmed';
+
+    private static $db = [
+        'MinimumAmountUnknownCustomers' => 'Currency',
+        'MinimumAmountKnownCustomers' => 'Currency',
+        'SendMessageToCustomer' => 'Boolean',
+    ];
+
+    private static $casting = [
+        'MinimumAmountUnknownCustomersRaw' => 'Float',
+        'MinimumAmountKnownCustomersRaw' => 'Float',
+    ];
+
+    /**
+     * @return bool
+     */
+    protected function hasCustomerMessage()
+    {
+        return $this->SendMessageToCustomer;
+    }
+
+    public function getMinimumAmountUnknownCustomersRaw() : float
+    {
+        return self::currency_to_float($this->MinimumAmountUnknownCustomers);
+    }
+
+    public function getMinimumAmountKnownCustomersRaw() : float
+    {
+        return self::currency_to_float($this->MinimumAmountKnownCustomers);
+    }
+
+    public static function currency_to_float($value) : float
+    {
+        return (float) preg_replace('/[^0-9.\-]/', '', $value);
+    }
+
     private static $defaults = [
         'CustomerCanEdit' => 0,
         'CustomerCanCancel' => 0,
@@ -31,7 +76,21 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         'ShowAsInProcessOrder' => 1,
     ];
 
-    private static $table_name = 'OrderStepAmountConfirmed';
+    public function getCMSFields()
+    {
+        $fields = parent::getCMSFields();
+        $fields->addFieldToTab(
+            'Root.Main',
+            HeaderField::create(
+                'SendMessageToCustomerHeader',
+                _t('OrderStep.SENDMESSAGETOCUSTOMER', 'Send message to customer about amount confirmation'),
+                3
+            ),
+            'SendMessageToCustomer'
+        );
+
+        return $fields;
+    }
 
     /**
      * A form that can be used by the Customer to progress step!
@@ -73,6 +132,18 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      */
     public function doStep(Order $order): bool
     {
+        $adminOnlyOrToEmail = ! (bool) $this->SendMessageToCustomer;
+
+        if($this->stillToDo($order) === true) {
+            return $this->sendEmailForStep(
+                $order,
+                $subject = $this->EmailSubject ?: 'Confirm Paid Amount',
+                $this->CalculatedCustomerMessage(),
+                $resend = false,
+                $adminOnlyOrToEmail,
+                $this->getEmailClassName()
+            );
+        }
         return true;
     }
 
@@ -85,11 +156,16 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      */
     public function nextStep(Order $order)
     {
-        if (! $this->hasAmountValidation($order) || $this->hasAmountConfirmed($order)) {
+        if ($this->stillToDo($order) === false) {
             return parent::nextStep($order);
         }
 
         return null;
+    }
+
+    protected function stillToDo(Order $order) : bool
+    {
+        return $this->hasAmountValidation($order) && !$this->hasAmountConfirmed($order);
     }
 
     /**
@@ -159,5 +235,15 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     protected function myDescription()
     {
         return _t('OrderStep.PAID_DESCRIPTION', 'The order amount charged is confirmed by customer.');
+    }
+
+    public function requireDefaultRecords()
+    {
+        parent::requireDefaultRecords();
+        DB::query('
+            UPDATE "OrderStep"
+            SET "ClassName" = \''.addslashes('Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmed').'\'
+            WHERE "ClassName" = \''.addslashes('Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmed').'\'
+        ');
     }
 }
