@@ -4,12 +4,15 @@ namespace Sunnysideup\PaymentDps\Forms;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Convert;
+
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CurrencyField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\RequiredFields;
 use Sunnysideup\Ecommerce\Api\Sanitizer;
 use Sunnysideup\Ecommerce\Model\Order;
@@ -23,12 +26,24 @@ class CustomerOrderStepForm extends Form
      */
     public function __construct(Controller $controller, $name, Order $order)
     {
+        $step = OrderStepAmountConfirmed::get();
+        $explanation = 'Please check your credit card / bank statement to confirm the amount that was charged.';
+        if ($step) {
+            $explanation = $step->Explanation;
+        } else {
+            $defaults = Config::inst()->get(OrderStepAmountConfirmed::class, 'defaults');
+            $explanation = $defaults['Explanation'] ?? '';
+        }
         $requiredFields = [];
         $fields = new FieldList(
             [
                 HeaderField::create(
                     'AmountPaidHeader',
-                    'Amount Paid (check bank balance)'
+                    'Amount Paid'
+                ),
+                LiteralField::create(
+                    'AmountPaidExplanation',
+                    '<div class="important-explanation">'.$explanation.'</div>'
                 ),
                 CurrencyField::create(
                     'AmountPaid',
@@ -68,6 +83,7 @@ class CustomerOrderStepForm extends Form
     public function confirmamount($data, $form)
     {
         $SQLData = Convert::raw2sql($data);
+        $order = null;
         if (isset($SQLData['OrderID'])) {
             $orderID = intval($SQLData['OrderID']);
             if ($orderID) {
@@ -75,22 +91,24 @@ class CustomerOrderStepForm extends Form
                 if ($order) {
                     if (OrderStepAmountConfirmedLog::is_locked_out($order)) {
                         $form->sessionMessage('Sorry, you can only try three times per day', 'bad');
+                    } else {
+                        $answer = OrderStepAmountConfirmed::currency_to_float($data['AmountPaid']);
 
-                        return $this->controller->redirectBack();
-                    }
-                    $answer = OrderStepAmountConfirmed::currency_to_float($data['AmountPaid']);
-
-                    if ($answer) {
-                        $isValid = OrderStepAmountConfirmedLog::test_answer($order, $answer);
-                        if ($isValid) {
-                            $order->tryToFinaliseOrder();
+                        if ($answer) {
+                            $isValid = OrderStepAmountConfirmedLog::test_answer($order, $answer);
+                            if ($isValid) {
+                                $order->tryToFinaliseOrder();
+                            } else {
+                                $form->sessionMessage(_t('OrderForm.WRONGANSWER', 'Sorry, the amount does not match.'), 'bad');
+                            }
                         } else {
-                            $form->sessionMessage(_t('OrderForm.WRONGANSWER', 'Sorry, the amount does not match.'), 'bad');
+                            $form->sessionMessage(_t('OrderForm.PLEASE_ENTER_ANSWER', 'Please enter an amount'), 'bad');
                         }
                     }
                 }
             }
-        } else {
+        }
+        if(! $order) {
             $form->sessionMessage(_t('OrderForm.COULDNOTPROCESSPAYMENT', 'Sorry, we could not find the Order for payment.'), 'bad');
         }
 

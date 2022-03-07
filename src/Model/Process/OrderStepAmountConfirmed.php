@@ -9,6 +9,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\CheckboxField;
 use Sunnysideup\Ecommerce\Api\ArrayMethods;
 use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
@@ -35,6 +36,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         'MinimumAmountUnknownCustomers' => 'Currency',
         'MinimumAmountKnownCustomers' => 'Currency',
         'SendMessageToCustomer' => 'Boolean',
+        'Explanation' => 'HTMLText',
     ];
 
     private static $casting = [
@@ -74,19 +76,20 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         'Name' => 'Confirm Amount',
         'Code' => 'AMOUNTCONFIRMED',
         'ShowAsInProcessOrder' => 1,
+        'Explanation' => '
+            Due to the amount paid, you will need to pass a fraud check to proceed with this order.
+            Please check your credit card / bank statement to confirm the amount that was charged.
+        ',
     ];
 
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
-        $fields->addFieldToTab(
-            'Root.Main',
-            HeaderField::create(
-                'SendMessageToCustomerHeader',
-                _t('OrderStep.SENDMESSAGETOCUSTOMER', 'Send message to customer about amount confirmation'),
-                3
-            ),
-            'SendMessageToCustomer'
+        $fields->addFieldsToTab(
+            'Root.CustomerMessage',
+            [
+                CheckboxField::create('SendMessageToCustomer', 'Send message to customer'),
+            ]
         );
 
         return $fields;
