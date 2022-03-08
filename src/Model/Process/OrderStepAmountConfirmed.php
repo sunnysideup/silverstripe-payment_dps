@@ -10,6 +10,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\CurrencyField;
 use Sunnysideup\Ecommerce\Api\ArrayMethods;
 use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
@@ -36,6 +37,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         'MinimumAmountUnknownCustomers' => 'Currency',
         'MinimumAmountKnownCustomers' => 'Currency',
         'SendMessageToCustomer' => 'Boolean',
+        'Heading' => 'HTMLText',
         'Explanation' => 'HTMLText',
     ];
 
@@ -86,10 +88,20 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     {
         $fields = parent::getCMSFields();
         $fields->addFieldsToTab(
+            'Root.Settings',
+            [
+                $fields->dataFieldByName('MinimumAmountUnknownCustomers'),
+                $fields->dataFieldByName('MinimumAmountKnownCustomers'),
+                $fields->dataFieldByName('Heading'),
+                $fields->dataFieldByName('Explanation'),
+            ]
+        );
+        $fields->addFieldsToTab(
             'Root.CustomerMessage',
             [
                 CheckboxField::create('SendMessageToCustomer', 'Send message to customer'),
-            ]
+            ],
+            'EmailSubject'
         );
 
         return $fields;
@@ -121,6 +133,10 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         return true;
     }
 
+    protected function canBeDefered()
+    {
+        return false;
+    }
     /**
      *doStep:
      * should only be able to run this function once
@@ -136,9 +152,8 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     public function doStep(Order $order): bool
     {
         $adminOnlyOrToEmail = ! (bool) $this->SendMessageToCustomer;
-
         if($this->stillToDo($order) === true) {
-            return $this->sendEmailForStep(
+            $this->sendEmailForStep(
                 $order,
                 $subject = $this->EmailSubject ?: 'Confirm Paid Amount',
                 $this->CalculatedCustomerMessage(),

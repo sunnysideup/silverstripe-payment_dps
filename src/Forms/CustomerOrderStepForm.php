@@ -14,6 +14,8 @@ use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\RequiredFields;
+
+use SilverStripe\ORM\ValidationResult;
 use Sunnysideup\Ecommerce\Api\Sanitizer;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmed;
@@ -26,20 +28,22 @@ class CustomerOrderStepForm extends Form
      */
     public function __construct(Controller $controller, $name, Order $order)
     {
-        $step = OrderStepAmountConfirmed::get();
+        $step = OrderStepAmountConfirmed::get()->first();
         $explanation = 'Please check your credit card / bank statement to confirm the amount that was charged.';
         if ($step) {
+            $heading = $step->Heading;
             $explanation = $step->Explanation;
         } else {
             $defaults = Config::inst()->get(OrderStepAmountConfirmed::class, 'defaults');
             $explanation = $defaults['Explanation'] ?? '';
+            $heading = $defaults['Heading'] ?? 'Action Required: Confirm Amount Paid';
         }
         $requiredFields = [];
         $fields = new FieldList(
             [
                 HeaderField::create(
                     'AmountPaidHeader',
-                    'Amount Paid'
+                    $heading
                 ),
                 LiteralField::create(
                     'AmountPaidExplanation',
@@ -84,6 +88,7 @@ class CustomerOrderStepForm extends Form
     {
         $SQLData = Convert::raw2sql($data);
         $order = null;
+        $validationResult = new ValidationResult();
         if (isset($SQLData['OrderID'])) {
             $orderID = intval($SQLData['OrderID']);
             if ($orderID) {
@@ -97,20 +102,22 @@ class CustomerOrderStepForm extends Form
                         if ($answer) {
                             $isValid = OrderStepAmountConfirmedLog::test_answer($order, $answer);
                             if ($isValid) {
+                                $validationResult->addFieldError('AmountPaid', _t('OrderForm.RIGHTANSWER', 'Thank you for your confirmation.'), 'good');
                                 $order->tryToFinaliseOrder();
                             } else {
-                                $form->sessionMessage(_t('OrderForm.WRONGANSWER', 'Sorry, the amount does not match.'), 'bad');
+                                $validationResult->addFieldError('AmountPaid',_t('OrderForm.WRONGANSWER', 'Sorry, the amount does not match.'), 'bad');
                             }
                         } else {
-                            $form->sessionMessage(_t('OrderForm.PLEASE_ENTER_ANSWER', 'Please enter an amount'), 'bad');
+                            $validationResult->addFieldError('AmountPaid',_t('OrderForm.PLEASE_ENTER_ANSWER', 'Please enter an amount.'), 'bad');
                         }
                     }
                 }
             }
         }
         if(! $order) {
-            $form->sessionMessage(_t('OrderForm.COULDNOTPROCESSPAYMENT', 'Sorry, we could not find the Order for payment.'), 'bad');
+            $validationResult->addFieldError('AmountPaid',_t('OrderForm.COULDNOTPROCESSPAYMENT', 'Sorry, we could not find the Order for payment.'), 'bad');
         }
+        $form->setSessionValidationResult($validationResult);
 
         return $this->controller->redirectBack();
     }
