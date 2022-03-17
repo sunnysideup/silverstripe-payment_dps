@@ -33,6 +33,10 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     private static $table_name = 'OrderStepAmountConfirmed';
 
+    private static $step_logic_conditions = [
+        'hasBeenDone' => true,
+    ];
+
     private static $db = [
         'MinimumAmountUnknownCustomers' => 'Currency',
         'MinimumAmountKnownCustomers' => 'Currency',
@@ -165,20 +169,10 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         return true;
     }
 
-    /**
-     * can go to next step if order has been paid.
-     *
-     * @see Order::doNextStatus
-     *
-     * @return null|OrderStep (next step OrderStep object)
-     */
-    public function nextStep(Order $order)
-    {
-        if ($this->stillToDo($order) === false) {
-            return parent::nextStep($order);
-        }
 
-        return null;
+    public function hasBeenDone(Order $order) : bool
+    {
+        return $this->stillToDo($order) ? false : true;
     }
 
     protected function stillToDo(Order $order) : bool
