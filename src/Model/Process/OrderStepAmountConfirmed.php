@@ -43,6 +43,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         'SendMessageToCustomer' => 'Boolean',
         'Heading' => 'HTMLText',
         'Explanation' => 'HTMLText',
+        'ThankYou' => 'Varchar(255)',
     ];
 
     private static $casting = [
@@ -83,9 +84,12 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         'Code' => 'AMOUNTCONFIRMED',
         'ShowAsInProcessOrder' => 1,
         'Explanation' => '
+            <p>
             Due to the amount paid, you will need to pass a fraud check to proceed with this order.
             Please check your credit card / bank statement to confirm the amount that was charged.
+            </p>
         ',
+        'ThankYou' => 'Thank you for your confirmation.',
     ];
 
     public function getCMSFields()
@@ -194,6 +198,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
                 '
                     This order can not be completed, because it requires the customer to confirm the amount
                     deducted from their credit card.
+                    They can do from the <a href="'.$order->Link().'">Order Confirmation Page</a>.
                 '
             );
             $fields->addFieldToTab('Root.Next', new LiteralField('NotPaidMessage', '<p>' . $msg . '</p>'));
@@ -227,16 +232,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     public function hasAmountConfirmed(Order $order): bool
     {
-        $relevantLogs = $order->OrderStatusLogs()->filter(['ClassName' => OrderStepAmountConfirmedLog::class]);
-        if ($relevantLogs->exists()) {
-            return OrderStepAmountConfirmedLog::get()
-                ->filter([
-                    'ID' => ArrayMethods::filter_array($relevantLogs->columnUnique()),
-                    'IsValid' => true,
-                ])->exists();
-        }
-
-        return  false;
+        return OrderStepAmountConfirmedLog::has_been_confirmed($order);
     }
 
     /**

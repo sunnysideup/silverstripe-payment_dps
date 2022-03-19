@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\PaymentDps\Forms;
 
+use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Convert;
 
@@ -38,6 +39,18 @@ class CustomerOrderStepForm extends Form
             $explanation = $defaults['Explanation'] ?? '';
             $heading = $defaults['Heading'] ?? 'Action Required: Confirm Amount Paid';
         }
+        if(OrderStepAmountConfirmedLog::has_been_confirmed($order)) {
+            $amountField = ReadonlyField::create(
+                'AmountPaid',
+                'Amount Paid',
+                $step->ThankYou ?: 'Thank you for your confirmation'
+            );
+        } else {
+            $amountField = CurrencyField::create(
+                'AmountPaid',
+                'Amount Paid'
+            );
+        }
         $requiredFields = [];
         $fields = new FieldList(
             [
@@ -49,16 +62,14 @@ class CustomerOrderStepForm extends Form
                     'AmountPaidExplanation',
                     '<div class="important-explanation">'.$explanation.'</div>'
                 ),
-                CurrencyField::create(
-                    'AmountPaid',
-                    'Amount Paid'
-                ),
+                $amountField,
                 new HiddenField('OrderID', '', $order->ID),
             ]
         );
-        $actions = new FieldList(
-            new FormAction('confirmamount', 'Confirm Amount')
-        );
+        $actions = new FieldList();
+        if(! OrderStepAmountConfirmedLog::has_been_confirmed($order)) {
+            $actions->push(new FormAction('confirmamount', 'Confirm Amount'));
+        }
         $validator = RequiredFields::create($requiredFields);
         parent::__construct($controller, $name, $fields, $actions, $validator);
 
@@ -97,7 +108,7 @@ class CustomerOrderStepForm extends Form
                     if (OrderStepAmountConfirmedLog::is_locked_out($order)) {
                         $form->sessionMessage('Sorry, you can only try three times per day', 'bad');
                     } else {
-                        $answer = OrderStepAmountConfirmed::currency_to_float($data['AmountPaid']);
+                        $answer = OrderStepAmountConfirmed::currency_to_float($data['AmountPaid'] ?? '');
 
                         if ($answer) {
                             $isValid = OrderStepAmountConfirmedLog::test_answer($order, $answer);

@@ -33,6 +33,17 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
         return 'Amount Validated Logs';
     }
 
+
+    public static function has_been_confirmed(Order $order) : bool
+    {
+        return  OrderStepAmountConfirmedLog::get()->filter(
+            [
+                'OrderID' => $order->ID,
+                'IsValid' => true,
+            ]
+        )->exists();
+    }
+
     public static function is_locked_out(Order $order): bool
     {
         $count = OrderStepAmountConfirmedLog::get()->filter(
