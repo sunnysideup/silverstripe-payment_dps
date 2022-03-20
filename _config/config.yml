@@ -1,3 +1,8 @@
+---
+Name: payment_dps_main
+Before: 'app/*'
+After: ['#coreconfig', '#cmsextensions', '#ecommerce']
+---
 Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler:
   url_segment: dpspxpaypayment
 Sunnysideup\PaymentDps\Control\DpsPxPayStoredPaymentHandler:

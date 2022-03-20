@@ -33,6 +33,8 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     private static $table_name = 'OrderStepAmountConfirmed';
 
+    private static $custom_exceptions_class = '';
+
     private static $step_logic_conditions = [
         'hasBeenDone' => true,
     ];
@@ -102,6 +104,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
                 $fields->dataFieldByName('MinimumAmountKnownCustomers'),
                 $fields->dataFieldByName('Heading'),
                 $fields->dataFieldByName('Explanation'),
+                $fields->dataFieldByName('ThankYou'),
             ]
         );
         $fields->addFieldsToTab(
@@ -209,6 +212,12 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     public function hasAmountValidation($order): bool
     {
+        $customExceptionsClass = $this->Config()->get('custom_exceptions_class');
+        if (class_exists($customExceptionsClass)) {
+            if ($customExceptionsClass->notRequired($order) === true) {
+                return false;
+            }
+        }
         foreach ($order->Payments() as $payment) {
             if ($payment) {
                 if ($payment instanceof DpsPxPayPaymentRandomAmount) {
