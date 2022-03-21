@@ -43,7 +43,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         'MinimumAmountUnknownCustomers' => 'Currency',
         'MinimumAmountKnownCustomers' => 'Currency',
         'SendMessageToCustomer' => 'Boolean',
-        'Heading' => 'HTMLText',
+        'Heading' => 'Varchar',
         'Explanation' => 'HTMLText',
         'ThankYou' => 'Varchar(255)',
     ];
@@ -201,7 +201,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
                 '
                     This order can not be completed, because it requires the customer to confirm the amount
                     deducted from their credit card.
-                    They can do from the <a href="'.$order->Link().'">Order Confirmation Page</a>.
+                    They can confirm the amount paid from the <a href="'.$order->Link().'">Order Confirmation Page</a>.
                 '
             );
             $fields->addFieldToTab('Root.Next', new LiteralField('NotPaidMessage', '<p>' . $msg . '</p>'));
