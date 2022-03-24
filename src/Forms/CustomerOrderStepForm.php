@@ -42,13 +42,13 @@ class CustomerOrderStepForm extends Form
         if(OrderStepAmountConfirmedLog::has_been_confirmed($order)) {
             $amountField = ReadonlyField::create(
                 'AmountPaid',
-                'Amount Paid',
+                'Discounted amount charged to your credit card',
                 $step->ThankYou ?: 'Thank you for your confirmation'
             );
         } else {
             $amountField = CurrencyField::create(
                 'AmountPaid',
-                'Amount Paid'
+                'Discounted amount charged to your credit card'
             );
         }
         $requiredFields = [];

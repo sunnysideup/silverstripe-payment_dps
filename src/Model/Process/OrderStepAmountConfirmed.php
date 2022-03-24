@@ -11,6 +11,7 @@ use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\CurrencyField;
+use SilverStripe\Forms\ReadonlyField;
 use Sunnysideup\Ecommerce\Api\ArrayMethods;
 use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
@@ -204,10 +205,30 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
                     They can confirm the amount paid from the <a href="'.$order->Link().'">Order Confirmation Page</a>.
                 '
             );
-            $fields->addFieldToTab('Root.Next', new LiteralField('NotPaidMessage', '<p>' . $msg . '</p>'));
+            $fields->addFieldsToTab(
+                'Root.Next',
+                [
+                    new LiteralField('NotPaidMessage', '<p>' . $msg . '</p>'),
+                    ReadonlyField::create(
+                        'AmountToBeConfirmd',
+                        'Amount to be confirmed',
+                        $this->AmountToBeConfirmed($order)
+                    ),
+                ]
+            );
+
         }
 
         return $fields;
+    }
+
+    protected function AmountToBeConfirmed($order)
+    {
+        $firstPayment = $this->relevantPayments($order)->first();
+        if($firstPayment) {
+            return $firstPayment->SettlementAmount;
+        }
+        return 'please check payments tab for more details.';
     }
 
     public function hasAmountValidation($order): bool
