@@ -170,7 +170,7 @@ class DpsPxPayPayment extends EcommercePayment
             $page->Form = $this->DPSForm($url);
             $controller = new ContentController($page);
             Requirements::clear();
-            Requirements::javascript('silverstripe/admin: thirdparty/jquery/jquery.js');
+            Requirements::javascript('https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js');
 
             return EcommercePaymentProcessing::create($controller->RenderWith('Sunnysideup\Ecommerce\PaymentProcessingPage'));
         }
@@ -180,7 +180,7 @@ class DpsPxPayPayment extends EcommercePayment
         $page->Form = $this->DPSForm($url);
         $controller = new ContentController($page);
         Requirements::clear();
-        Requirements::javascript('silverstripe/admin: thirdparty/jquery/jquery.js');
+        Requirements::javascript('https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js');
 
         return EcommercePaymentFailure::create($controller->RenderWith('Sunnysideup\Ecommerce\PaymentProcessingPage'));
     }
