@@ -2,7 +2,7 @@
 
 namespace Sunnysideup\PaymentDps;
 
-use debug;
+
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
@@ -287,7 +287,7 @@ class DpsPxPayComs
 
     public function debug()
     {
-        debug::show('debugging DpsPxPayComs');
+        echo 'debugging DpsPxPayComs:'."\n";
         echo $this->getDebugMessage();
     }
 }

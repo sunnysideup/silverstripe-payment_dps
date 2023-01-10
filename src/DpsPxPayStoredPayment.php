@@ -16,6 +16,7 @@ use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
 use Sunnysideup\PaymentDps\Control\DpsPxPayStoredPaymentHandler;
 use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
+use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 
 class DpsPxPayStoredPayment extends DpsPxPayPayment
 {
