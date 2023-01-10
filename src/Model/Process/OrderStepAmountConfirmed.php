@@ -12,6 +12,8 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\CurrencyField;
 use SilverStripe\Forms\ReadonlyField;
+
+use SilverStripe\Core\Injector\Injector;
 use Sunnysideup\Ecommerce\Api\ArrayMethods;
 use Sunnysideup\Ecommerce\Interfaces\OrderStepInterface;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
@@ -235,7 +237,8 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     {
         $customExceptionsClass = $this->Config()->get('custom_exceptions_class');
         if (class_exists($customExceptionsClass)) {
-            if ($customExceptionsClass->notRequired($order) === true) {
+            $class = Injector::inst()->get($customExceptionsClass);
+            if ($class->notRequired($order) === true) {
                 return false;
             }
         }
