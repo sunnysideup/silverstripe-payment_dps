@@ -134,7 +134,7 @@ class DpsPxPost extends EcommercePayment
     {
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
 
-        return $formHelper->getCreditCardPaymentFormFields($this);
+        return $formHelper->getCreditCardPaymentFormFieldsRequired($this);
     }
 
     /**
