@@ -50,7 +50,7 @@ class DpsPxPost extends EcommercePayment
      * we use yes / no as this is more reliable than a boolean value
      * for configs.
      *
-     * @var bool
+     * @var string
      */
     private static $is_live = 'no';
 
