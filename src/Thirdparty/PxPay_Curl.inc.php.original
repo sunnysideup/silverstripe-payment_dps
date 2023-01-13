@@ -73,8 +73,8 @@ class MifMessage
         $pos = strpos($element, '/');
         if ($pos !== false) {
             # element contains '/': find first part
-            $start_path = substr($element, 0, $pos);
-            $remain_path = substr($element, $pos + 1);
+            $start_path = substr((string) $element, 0, $pos);
+            $remain_path = substr((string) $element, $pos + 1);
             $index = $this->get_element_index($start_path, $rootindex);
             if ($index === 0) {
                 # couldn't find first part give up.
