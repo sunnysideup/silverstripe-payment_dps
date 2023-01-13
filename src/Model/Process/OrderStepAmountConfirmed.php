@@ -76,7 +76,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     public static function currency_to_float($value) : float
     {
-        return (float) preg_replace('/[^0-9.\-]/', '', $value);
+        return (float) preg_replace('/[^0-9.\-]/', '', (string) $value);
     }
 
     private static $defaults = [

@@ -277,7 +277,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         $commsObject->setTxnType(DpsPxPayComs::get_txn_type());
         $commsObject->setMerchantReference($this->ID);
         //replace any character that is NOT [0-9] or dot (.)
-        $commsObject->setAmountInput(floatval(preg_replace('/[^0-9\\.]/', '', $amount)));
+        $commsObject->setAmountInput(floatval(preg_replace('/[^0-9\\.]/', '', (string) $amount)));
 
         if (! empty($cardToUse)) {
             $commsObject->setBillingId($cardToUse);
