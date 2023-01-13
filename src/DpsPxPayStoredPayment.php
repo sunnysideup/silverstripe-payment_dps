@@ -11,12 +11,12 @@ use SilverStripe\ORM\DB;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 use Sunnysideup\Ecommerce\Forms\OrderForm;
+use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
 use Sunnysideup\PaymentDps\Control\DpsPxPayStoredPaymentHandler;
 use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
-use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 
 class DpsPxPayStoredPayment extends DpsPxPayPayment
 {

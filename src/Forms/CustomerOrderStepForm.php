@@ -2,11 +2,9 @@
 
 namespace Sunnysideup\PaymentDps\Forms;
 
-use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Control\Controller;
-use SilverStripe\Core\Convert;
-
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Convert;
 use SilverStripe\Forms\CurrencyField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -14,8 +12,8 @@ use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\RequiredFields;
-
 use SilverStripe\ORM\ValidationResult;
 use Sunnysideup\Ecommerce\Api\Sanitizer;
 use Sunnysideup\Ecommerce\Model\Order;
@@ -39,7 +37,7 @@ class CustomerOrderStepForm extends Form
             $explanation = $defaults['Explanation'] ?? '';
             $heading = $defaults['Heading'] ?? 'Action Required: Confirm Amount Paid';
         }
-        if(OrderStepAmountConfirmedLog::has_been_confirmed($order)) {
+        if (OrderStepAmountConfirmedLog::has_been_confirmed($order)) {
             $amountField = ReadonlyField::create(
                 'AmountPaid',
                 'Discounted amount charged to your credit card',
@@ -60,14 +58,14 @@ class CustomerOrderStepForm extends Form
                 ),
                 LiteralField::create(
                     'AmountPaidExplanation',
-                    '<div class="important-explanation">'.$explanation.'</div>'
+                    '<div class="important-explanation">' . $explanation . '</div>'
                 ),
                 $amountField,
                 new HiddenField('OrderID', '', (string) $order->ID),
             ]
         );
         $actions = new FieldList();
-        if(! OrderStepAmountConfirmedLog::has_been_confirmed($order)) {
+        if (! OrderStepAmountConfirmedLog::has_been_confirmed($order)) {
             $actions->push(new FormAction('confirmamount', 'Confirm Amount'));
         }
         $validator = RequiredFields::create($requiredFields);
@@ -116,17 +114,17 @@ class CustomerOrderStepForm extends Form
                                 $validationResult->addFieldError('AmountPaid', _t('OrderForm.RIGHTANSWER', 'Thank you for your confirmation.'), 'good');
                                 $order->tryToFinaliseOrder();
                             } else {
-                                $validationResult->addFieldError('AmountPaid',_t('OrderForm.WRONGANSWER', 'Sorry, the amount does not match.'), 'bad');
+                                $validationResult->addFieldError('AmountPaid', _t('OrderForm.WRONGANSWER', 'Sorry, the amount does not match.'), 'bad');
                             }
                         } else {
-                            $validationResult->addFieldError('AmountPaid',_t('OrderForm.PLEASE_ENTER_ANSWER', 'Please enter an amount.'), 'bad');
+                            $validationResult->addFieldError('AmountPaid', _t('OrderForm.PLEASE_ENTER_ANSWER', 'Please enter an amount.'), 'bad');
                         }
                     }
                 }
             }
         }
-        if(! $order) {
-            $validationResult->addFieldError('AmountPaid',_t('OrderForm.COULDNOTPROCESSPAYMENT', 'Sorry, we could not find the Order for payment.'), 'bad');
+        if (! $order) {
+            $validationResult->addFieldError('AmountPaid', _t('OrderForm.COULDNOTPROCESSPAYMENT', 'Sorry, we could not find the Order for payment.'), 'bad');
         }
         $form->setSessionValidationResult($validationResult);
 

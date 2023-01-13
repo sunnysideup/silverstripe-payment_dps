@@ -2,10 +2,7 @@
 
 namespace Sunnysideup\PaymentDps\Model\Process;
 
-use Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmed;
-
 use SilverStripe\Core\Config\Config;
-
 use SilverStripe\ORM\DB;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Model\Process\OrderStatusLog;
@@ -33,8 +30,7 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
         return 'Amount Validated Logs';
     }
 
-
-    public static function has_been_confirmed(Order $order) : bool
+    public static function has_been_confirmed(Order $order): bool
     {
         return  OrderStepAmountConfirmedLog::get()->filter(
             [
@@ -87,20 +83,18 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
         return true;
     }
 
-    protected static function is_right_step($orderStep): bool
-    {
-        return $orderStep instanceof OrderStepAmountConfirmed;
-    }
-
-
     public function requireDefaultRecords()
     {
         parent::requireDefaultRecords();
         DB::query('
             UPDATE "OrderStatusLog"
-            SET "ClassName" = \''.addslashes('Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmedLog').'\'
-            WHERE "ClassName" = \''.addslashes('Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmedLog').'\'
+            SET "ClassName" = \'' . addslashes('Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmedLog') . '\'
+            WHERE "ClassName" = \'' . addslashes('Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmedLog') . '\'
         ');
     }
 
+    protected static function is_right_step($orderStep): bool
+    {
+        return $orderStep instanceof OrderStepAmountConfirmed;
+    }
 }
