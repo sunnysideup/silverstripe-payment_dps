@@ -61,7 +61,7 @@ class CustomerOrderStepForm extends Form
                     '<div class="important-explanation">' . $explanation . '</div>'
                 ),
                 $amountField,
-                new HiddenField('OrderID', '', (string) $order->ID),
+                new HiddenField('OrderID', '', $order->ID),
             ]
         );
         $actions = new FieldList();
