@@ -18,6 +18,10 @@ use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
 use Sunnysideup\PaymentDps\Control\DpsPxPayStoredPaymentHandler;
 use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
 
+/**
+ * Class \Sunnysideup\PaymentDps\DpsPxPayStoredPayment
+ *
+ */
 class DpsPxPayStoredPayment extends DpsPxPayPayment
 {
     private static $pxaccess_url = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';

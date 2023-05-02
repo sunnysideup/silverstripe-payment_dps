@@ -9,6 +9,10 @@ use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\PaymentDps\DpsPxPayComs;
 use Sunnysideup\PaymentDps\DpsPxPayPayment;
 
+/**
+ * Class \Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler
+ *
+ */
 class DpsPxPayPaymentHandler extends Controller
 {
     private static $allowed_actions = [

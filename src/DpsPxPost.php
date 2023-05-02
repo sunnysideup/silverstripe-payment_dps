@@ -14,7 +14,14 @@ use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentSuccess;
 
 /**
- * @see: https://www.paymentexpress.com/Technical_Resources/Ecommerce_NonHosted/PxPost
+ * Class \Sunnysideup\PaymentDps\DpsPxPost
+ *
+ * @property string $CardNumber
+ * @property string $NameOnCard
+ * @property string $ExpiryDate
+ * @property string $CVVNumber
+ * @property string $Request
+ * @property string $Response
  */
 class DpsPxPost extends EcommercePayment
 {

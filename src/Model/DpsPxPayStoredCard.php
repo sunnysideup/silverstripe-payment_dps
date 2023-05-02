@@ -6,6 +6,16 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
+/**
+ * Class \Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard
+ *
+ * @property string $CardName
+ * @property string $CardHolder
+ * @property string $CardNumber
+ * @property string $BillingID
+ * @property int $MemberID
+ * @method \SilverStripe\Security\Member Member()
+ */
 class DpsPxPayStoredCard extends DataObject
 {
     private static $table_name = 'DpsPxPayStoredCard';

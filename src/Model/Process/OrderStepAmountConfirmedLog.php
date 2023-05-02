@@ -7,6 +7,11 @@ use SilverStripe\ORM\DB;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Model\Process\OrderStatusLog;
 
+/**
+ * Class \Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmedLog
+ *
+ * @property bool $IsValid
+ */
 class OrderStepAmountConfirmedLog extends OrderStatusLog
 {
     private static $table_name = 'OrderStepAmountConfirmedLog';

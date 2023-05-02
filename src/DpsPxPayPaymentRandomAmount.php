@@ -3,8 +3,9 @@
 namespace Sunnysideup\PaymentDps;
 
 /**
- *@author nicolaas[at]sunnysideup.co.nz
- *@description: OrderNumber and PaymentID
+ * Class \Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount
+ *
+ * @property float $RandomDeduction
  */
 class DpsPxPayPaymentRandomAmount extends DpsPxPayPayment
 {

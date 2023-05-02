@@ -20,8 +20,11 @@ use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentProcessin
 use Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler;
 
 /**
- *@author nicolaas[at]sunnysideup.co.nz
- *@description: OrderNumber and PaymentID
+ * Class \Sunnysideup\PaymentDps\DpsPxPayPayment
+ *
+ * @property string $TxnRef
+ * @property string $DebugMessage
+ * @property float $RandomDeduction
  */
 class DpsPxPayPayment extends EcommercePayment
 {

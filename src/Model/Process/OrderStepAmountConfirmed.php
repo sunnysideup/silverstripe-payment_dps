@@ -18,9 +18,14 @@ use Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount;
 use Sunnysideup\PaymentDps\Forms\CustomerOrderStepForm;
 
 /**
- * @authors: Nicolaas [at] Sunny Side Up .co.nz
- * @package: ecommerce
- * @sub-package: model
+ * Class \Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmed
+ *
+ * @property float $MinimumAmountUnknownCustomers
+ * @property float $MinimumAmountKnownCustomers
+ * @property bool $SendMessageToCustomer
+ * @property string $Heading
+ * @property string $Explanation
+ * @property string $ThankYou
  */
 class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 {

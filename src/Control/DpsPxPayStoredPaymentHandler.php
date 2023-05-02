@@ -9,6 +9,10 @@ use Sunnysideup\PaymentDps\DpsPxPayComs;
 use Sunnysideup\PaymentDps\DpsPxPayStoredPayment;
 use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
 
+/**
+ * Class \Sunnysideup\PaymentDps\Control\DpsPxPayStoredPaymentHandler
+ *
+ */
 class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
 {
     private static $url_segment = 'dpspxpaystoredpayment';
