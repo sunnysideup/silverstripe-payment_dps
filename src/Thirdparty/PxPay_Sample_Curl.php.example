@@ -18,9 +18,9 @@ namespace Sunnysideup\PaymentDps\Thirdparty;
 #Inlcude PxPay objects
 include "PxPayCurl.inc.php";
 
-   $PxPay_Url    = "https://sec.paymentexpress.com/pxaccess/pxpay.aspx";
-  $PxPay_Userid = "PratikG_Dev";//"PratikPxPay_Dev"; #Important! Update with your UserId
-  $PxPay_Key    =  "e99e0f8b19e27ea73094875cf931c4539146924c7bc054caeda486b67feb6078";//"e99e0f8b19e27ea73094875cf931c4539146924c7bc054caeda486b67feb6078"; #Important! Update with your Key
+   $PxPay_Url    = "https://sec.windcave.com/pxaccess/pxpay.aspx";
+  $PxPay_Userid = "PratikG_Dev";
+  $PxPay_Key    =  "eyyyyyyyyyyyyyyyyyyyyyyyyyyc4539146924c7bc054caeda486b67feb6078"; #Important! Update with your Key
   #
   # MAIN
   #
@@ -79,9 +79,9 @@ function print_result()
 
     if ($rsp->getSuccess() == "1") {
         $result = "The transaction was approved.";
-    
+
         # Sending invoices/updating order status within database etc.
-    
+
         if (!isProcessed($TxnId)) {
             # Send emails, generate invoices, update order status etc.
         }
@@ -167,7 +167,7 @@ shipping details.
   <tr>
     <td>Reference:</td>
     <td><input name="Reference" type="text"/></td>
-  </tr>  
+  </tr>
   <tr>
     <td>Ship to</td>
     <td></td>
@@ -217,13 +217,13 @@ function redirect_form()
     $Address1 = $_REQUEST["Address1"];
     $Address2 = $_REQUEST["Address2"];
     $Address3 = $_REQUEST["Address3"];
-  
+
     #Calculate AmountInput
     $AmountInput = 19.95 * $Quantity;
-  
+
     #Generate a unique identifier for the transaction
     $TxnId = uniqid("ID");
-  
+
     #Set PxPay properties
     $request->setMerchantReference($MerchantReference);
     $request->setAmountInput($AmountInput);
@@ -236,24 +236,24 @@ function redirect_form()
     $request->setUrlFail($script_url);			# can be a dedicated failure page
   $request->setUrlSuccess($script_url);			# can be a dedicated success page
   $request->setTxnId($TxnId);
-  
+
     #The following properties are not used in this case
     # $request->setEnableAddBillCard($EnableAddBillCard);
     # $request->setBillingId($BillingId);
     # $request->setOpt($Opt);
-  
 
-  
+
+
     #Call makeRequest function to obtain input XML
     $request_string = $pxpay->makeRequest($request);
-   
+
     #Obtain output XML
     $response = new MifMessage($request_string);
-  
+
     #Parse output XML
     $url = $response->get_element_text("URI");
     $valid = $response->get_attribute("valid");
-   
+
     #Redirect to payment page
     header("Location: ".$url);
 }

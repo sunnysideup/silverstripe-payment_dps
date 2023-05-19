@@ -66,7 +66,7 @@ class DpsPxPayComs
 
     protected $response;
 
-    private static $pxpay_url = 'https://sec.paymentexpress.com/pxaccess/pxpay.aspx';
+    private static $pxpay_url = 'https://sec.windcave.com/pxaccess/pxpay.aspx';
 
     private static $pxpay_userid = '';
 

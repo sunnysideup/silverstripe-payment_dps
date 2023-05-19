@@ -24,9 +24,9 @@ use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
  */
 class DpsPxPayStoredPayment extends DpsPxPayPayment
 {
-    private static $pxaccess_url = 'https://sec.paymentexpress.com/pxpay/pxaccess.aspx';
+    private static $pxaccess_url = 'https://sec.windcave.com/pxpay/pxaccess.aspx';
 
-    private static $pxpost_url = 'https://sec.paymentexpress.com/pxpost.aspx';
+    private static $pxpost_url = 'https://sec.windcave.com/pxpost.aspx';
 
     private static $privacy_link = '';
 
