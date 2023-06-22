@@ -55,7 +55,7 @@ class DpsPxPayStoredCard extends DataObject
 
     private static $plural_name = 'DPS PX Pay Stored Cards';
 
-    private static $default_sort = 'Created DESC';
+    private static $default_sort = 'ID DESC';
 
     private static $defaults = []; //use fieldName => Default Value
 
