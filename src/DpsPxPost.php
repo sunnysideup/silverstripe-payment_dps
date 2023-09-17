@@ -123,8 +123,8 @@ class DpsPxPost extends EcommercePayment
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
         $fieldList = $formHelper->getCreditCardPaymentFormFields($this);
         $fieldList->insertBefore(
+            'DpsPxPost_CreditCard',
             new LiteralField('DpsPxPost_Logo', $this->Config()->get('dps_logo_and_link')),
-            'DpsPxPost_CreditCard'
         );
 
         return $fieldList;
