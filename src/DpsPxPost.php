@@ -180,7 +180,7 @@ class DpsPxPost extends EcommercePayment
         $this->write();
 
         //if currency has been pre-set use this
-        $currency = strtoupper($this->Amount->Currency);
+        $currency = strtoupper((string) $this->Amount->Currency);
         //if amout has been pre-set, use this
         $amount = $this->Amount->Amount;
         $username = $this->Config()->get('username');
@@ -198,7 +198,7 @@ class DpsPxPost extends EcommercePayment
         $xml .= '<DateExpiry>' . $this->ExpiryDate . '</DateExpiry>';
         $xml .= '<Cvc2>' . $this->CVVNumber . '</Cvc2>';
         $xml .= '<Cvc2Presence>1</Cvc2Presence>';
-        $xml .= '<InputCurrency>' . Convert::raw2xml(strtoupper($currency)) . '</InputCurrency>';
+        $xml .= '<InputCurrency>' . Convert::raw2xml(strtoupper((string) $currency)) . '</InputCurrency>';
         $xml .= '<TxnType>' . Convert::raw2xml($this->Config()->get('type')) . '</TxnType>';
         $xml .= '<TxnId>' . $this->ID . '</TxnId>';
         $xml .= '<MerchantReference>' . $this->OrderID . '</MerchantReference>';

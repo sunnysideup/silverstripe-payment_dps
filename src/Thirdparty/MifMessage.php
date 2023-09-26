@@ -71,7 +71,7 @@ class MifMessage
     // relative to some given root element index.
     public function get_element_index($element, $rootindex = 0)
     {
-        //$element = strtoupper($element);
+        //$element = strtoupper((string) $element);
         $pos = strpos($element, '/');
         if (false !== $pos) {
             // element contains '/': find first part
