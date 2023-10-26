@@ -19,7 +19,7 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
 
     public static function complete_link()
     {
-        return Config::inst()->get(DpsPxPayStoredPaymentHandler::class, 'url_segment') . '/paid/';
+        return '/' . Config::inst()->get(DpsPxPayStoredPaymentHandler::class, 'url_segment') . '/paid/';
     }
 
     public static function absolute_complete_link()

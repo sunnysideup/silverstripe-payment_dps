@@ -11,6 +11,7 @@ use SilverStripe\Forms\Form;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBMoney;
 use SilverStripe\View\Requirements;
 use Sunnysideup\Ecommerce\Forms\OrderForm;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
@@ -25,6 +26,7 @@ use Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler;
  * @property string $TxnRef
  * @property string $DebugMessage
  * @property float $RandomDeduction
+ * @property DBMoney $SettlementAmount
  */
 class DpsPxPayPayment extends EcommercePayment
 {
@@ -34,6 +36,7 @@ class DpsPxPayPayment extends EcommercePayment
         'TxnRef' => 'Text',
         'DebugMessage' => 'HTMLText',
         'RandomDeduction' => 'Currency',
+        'SettlementAmount' => 'Money',
     ];
 
     // DPS Information

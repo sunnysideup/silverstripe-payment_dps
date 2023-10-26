@@ -25,7 +25,7 @@ class DpsPxPayPaymentHandler extends Controller
 
     public static function complete_link()
     {
-        return Config::inst()->get(DpsPxPayPaymentHandler::class, 'url_segment') . '/paid/';
+        return '/' . Config::inst()->get(DpsPxPayPaymentHandler::class, 'url_segment') . '/paid/';
     }
 
     public static function absolute_complete_link()
@@ -41,6 +41,7 @@ class DpsPxPayPaymentHandler extends Controller
         $response = $commsObject->processRequestAndReturnResultsAsObject();
         $ResponseText = $response->getResponseText();
         $DpsTxnRef = $response->getDpsTxnRef();
+        /** @var DpsPxPayPayment $payment */
         $payment = DpsPxPayPayment::get_by_id($response->getMerchantReference());
         if ($payment) {
             if (1 === intval($response->getSuccess())) {
