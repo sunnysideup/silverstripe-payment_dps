@@ -41,7 +41,7 @@ class DpsPxPayPayment extends EcommercePayment
 
     // DPS Information
 
-    private static $privacy_link = 'http://www.paymentexpress.com/privacypolicy.htm';
+    private static $privacy_link = 'https://www.paymentexpress.com/privacypolicy.htm';
 
     private static $logo = 'sunnysideup/payment_dps: client/images/dps_paymentexpress_small.png';
 
