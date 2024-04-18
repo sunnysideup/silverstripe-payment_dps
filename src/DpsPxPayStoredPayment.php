@@ -166,7 +166,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         $inputs['InputCurrency'] = $this->Amount->Currency;
         $inputs['TxnId'] = $this->ID;
         $inputs['TxnType'] = DpsPxPayComs::get_txn_type();
-        $inputs['MerchantReference'] = $this->ID;
+        $inputs['MerchantReference'] = $this->OrderID .'_'.$this->ID;
 
         // 3) Credit Card Informations
         $inputs['DpsBillingId'] = $cardToUse;
@@ -279,7 +279,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         // order details
         $commsObject->setTxnType(DpsPxPayComs::get_txn_type());
-        $commsObject->setMerchantReference($this->ID);
+        $commsObject->setMerchantReference($this->OrderID . '_' . $this->ID);
         //replace any character that is NOT [0-9] or dot (.)
         $commsObject->setAmountInput(floatval(preg_replace('/[^0-9\\.]/', '', (string) $amount)));
 

@@ -201,7 +201,7 @@ class DpsPxPost extends EcommercePayment
         $xml .= '<InputCurrency>' . Convert::raw2xml(strtoupper((string) $currency)) . '</InputCurrency>';
         $xml .= '<TxnType>' . Convert::raw2xml($this->Config()->get('type')) . '</TxnType>';
         $xml .= '<TxnId>' . $this->ID . '</TxnId>';
-        $xml .= '<MerchantReference>' . $this->OrderID . '</MerchantReference>';
+        $xml .= '<MerchantReference>' . $this->OrderID . '_' . $this->ID .'</MerchantReference>';
         $xml .= '</Txn>';
         $URL = 'sec.paymentexpress.com/pxpost.aspx';
         //echo "\n\n\n\nSENT:\n$cmdDoTxnTransaction\n\n\n\n\n$";
@@ -228,7 +228,7 @@ class DpsPxPost extends EcommercePayment
             1 === $params->Success &&
             $amount === $txn->Amount &&
             $currency === $txn->CurrencyName &&
-            trim((string) $this->OrderID) === trim((string) $txn->MerchantReference)
+            trim($this->OrderID . '_' . $this->ID) === trim((string) $txn->MerchantReference)
         ) {
             $this->Status = EcommercePayment::SUCCESS_STATUS;
             $returnObject = EcommercePaymentSuccess::create();

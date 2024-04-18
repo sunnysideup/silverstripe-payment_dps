@@ -33,8 +33,13 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
         $response = $commsObject->processRequestAndReturnResultsAsObject();
         $ResponseText = $response->getResponseText();
         $DpsTxnRef = $response->getDpsTxnRef();
-        $payment = DpsPxPayStoredPayment::get_by_id($response->getMerchantReference());
-        if ($payment) {
+        $merchantReference = $response->getMerchantReference();
+        $merchantReferenceArray = explode('_', $merchantReference);
+        $orderID = (int) $merchantReferenceArray[0];
+        $paymentID = (int) $merchantReferenceArray[1];
+        /** @var DpsPxPayStoredPayment $payment */
+        $payment = DpsPxPayStoredPayment::get_by_id($paymentID);
+        if ($payment && $payment->OrderID === $orderID) {
             if (EcommercePayment::SUCCESS_STATUS !== $payment->Status) {
                 if (1 === $response->getSuccess()) {
                     $payment->Status = EcommercePayment::SUCCESS_STATUS;
@@ -42,7 +47,7 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
                     if ($response->DpsBillingId) {
                         $existingCard = DpsPxPayStoredCard::get()->filter(['BillingID' => $response->DpsBillingId])->First();
 
-                        if (false === $existingCard) {
+                        if ($existingCard === false) {
                             $storedCard = new DpsPxPayStoredCard();
                             $storedCard->BillingID = $response->DpsBillingId;
                             $storedCard->CardName = $response->CardName;

@@ -228,7 +228,7 @@ class DpsPxPayPayment extends EcommercePayment
 
         // order details
         $commsObject->setTxnType(DpsPxPayComs::get_txn_type());
-        $commsObject->setMerchantReference($this->ID);
+        $commsObject->setMerchantReference($this->OrderID .'_'.$this->ID);
         //replace any character that is NOT [0-9] or dot (.)
 
         $commsObject->setAmountInput(floatval(preg_replace('/[^0-9\\.]/', '', (string) $amount)));
@@ -242,7 +242,9 @@ class DpsPxPayPayment extends EcommercePayment
          * process payment data (check if it is OK and go forward if it is...
          */
         $url = $commsObject->startPaymentProcess();
-        $debugMessage = $commsObject->getDebugMessage();
+        if($this->config()->get('debug')) {
+            $debugMessage = $commsObject->getDebugMessage();
+        }
         $this->DebugMessage = $debugMessage;
         $this->write();
         if ($this->config()->get('email_debug')) {
