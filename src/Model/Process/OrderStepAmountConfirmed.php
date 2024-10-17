@@ -152,7 +152,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     {
         $adminOnlyOrToEmail = ! (bool) $this->SendMessageToCustomer;
         if (true === $this->stillToDo($order)) {
-            $this->sendEmailForStep(
+            return $this->sendEmailForStep(
                 $order,
                 $subject = $this->EmailSubject ?: 'Confirm Paid Amount',
                 $this->CalculatedCustomerMessage(),
@@ -268,6 +268,9 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     protected function AmountToBeConfirmed($order)
     {
+        /**
+         * @var  DpsPxPayPaymentRandomAmount $firstPayment
+         */
         $firstPayment = $this->relevantPayments($order)->first();
         if ($firstPayment) {
             return $firstPayment->SettlementAmount;
