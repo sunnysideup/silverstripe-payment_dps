@@ -4,6 +4,7 @@ namespace Sunnysideup\PaymentDps\Model;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 
 /**
@@ -76,7 +77,11 @@ class DpsPxPayStoredCard extends DataObject
             return false;
         }
         if ($member) {
-            return $member->IsAdmin();
+            return Permission::checkMember(
+                $member->ID,
+                'ADMIN',
+                'any'
+            );
         }
 
         return false;
