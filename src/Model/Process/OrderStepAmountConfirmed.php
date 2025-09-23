@@ -256,7 +256,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         return $this->SendMessageToCustomer;
     }
 
-    protected function canBeDefered()
+    protected function canBeDefered(): bool
     {
         return false;
     }
