@@ -167,7 +167,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     public function hasBeenDone(Order $order): bool
     {
-        return !$this->stillToDo($order);
+        return ! $this->stillToDo($order);
     }
 
     /**

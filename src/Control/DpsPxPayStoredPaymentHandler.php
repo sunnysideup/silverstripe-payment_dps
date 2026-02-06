@@ -11,7 +11,6 @@ use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
 
 /**
  * Class \Sunnysideup\PaymentDps\Control\DpsPxPayStoredPaymentHandler
- *
  */
 class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
 {

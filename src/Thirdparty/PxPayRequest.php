@@ -77,34 +77,34 @@ class PxPayRequest extends PxPayMessage
             $msg = "Invalid TxnType[{$this->TxnType}]<br>";
         }
 
-        if (strlen( (string) $this->MerchantReference) > 64) {
+        if (strlen((string) $this->MerchantReference) > 64) {
             $msg = "Invalid MerchantReference [{$this->MerchantReference}]<br>";
         }
 
-        if (strlen( (string) $this->TxnId) > 16) {
+        if (strlen((string) $this->TxnId) > 16) {
             $msg = "Invalid TxnId [{$this->TxnId}]<br>";
         }
-        if (strlen( (string) $this->TxnData1) > 255) {
+        if (strlen((string) $this->TxnData1) > 255) {
             $msg = "Invalid TxnData1 [{$this->TxnData1}]<br>";
         }
-        if (strlen( (string) $this->TxnData2) > 255) {
+        if (strlen((string) $this->TxnData2) > 255) {
             $msg = "Invalid TxnData2 [{$this->TxnData2}]<br>";
         }
-        if (strlen( (string) $this->TxnData3) > 255) {
+        if (strlen((string) $this->TxnData3) > 255) {
             $msg = "Invalid TxnData3 [{$this->TxnData3}]<br>";
         }
 
-        if (strlen( (string) $this->EmailAddress) > 255) {
+        if (strlen((string) $this->EmailAddress) > 255) {
             $msg = "Invalid EmailAddress [{$this->EmailAddress}]<br>";
         }
 
-        if (strlen( (string) $this->UrlFail) > 255) {
+        if (strlen((string) $this->UrlFail) > 255) {
             $msg = "Invalid UrlFail [{$this->UrlFail}]<br>";
         }
-        if (strlen( (string) $this->UrlSuccess) > 255) {
+        if (strlen((string) $this->UrlSuccess) > 255) {
             $msg = "Invalid UrlSuccess [{$this->UrlSuccess}]<br>";
         }
-        if (strlen( (string) $this->BillingId) > 32) {
+        if (strlen((string) $this->BillingId) > 32) {
             $msg = "Invalid BillingId [{$this->BillingId}]<br>";
         }
 

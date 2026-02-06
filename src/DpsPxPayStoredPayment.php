@@ -20,7 +20,6 @@ use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
 
 /**
  * Class \Sunnysideup\PaymentDps\DpsPxPayStoredPayment
- *
  */
 class DpsPxPayStoredPayment extends DpsPxPayPayment
 {
@@ -166,7 +165,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         $inputs['InputCurrency'] = $this->Amount->Currency;
         $inputs['TxnId'] = $this->ID;
         $inputs['TxnType'] = DpsPxPayComs::get_txn_type();
-        $inputs['MerchantReference'] = $this->OrderID .'_'.$this->ID;
+        $inputs['MerchantReference'] = $this->OrderID . '_' . $this->ID;
 
         // 3) Credit Card Informations
         $inputs['DpsBillingId'] = $cardToUse;

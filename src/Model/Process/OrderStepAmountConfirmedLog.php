@@ -37,7 +37,7 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
 
     public static function has_been_confirmed(Order $order): bool
     {
-        return  OrderStepAmountConfirmedLog::get()->filter(
+        return OrderStepAmountConfirmedLog::get()->filter(
             [
                 'OrderID' => $order->ID,
                 'IsValid' => true,

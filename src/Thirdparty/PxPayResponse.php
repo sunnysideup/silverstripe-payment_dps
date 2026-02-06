@@ -47,7 +47,6 @@ class PxPayResponse extends PxPayMessage
     public function __construct($xml)
     {
         $msg = new MifMessage($xml);
-        parent::__construct();
 
         $this->Success = $msg->get_element_text('Success');
         $this->setTxnType($msg->get_element_text('TxnType'));

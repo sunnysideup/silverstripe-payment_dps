@@ -123,7 +123,7 @@ class CustomerOrderStepForm extends Form
                 }
             }
         }
-        if (!$order instanceof \Sunnysideup\Ecommerce\Model\Order) {
+        if (! $order instanceof \Sunnysideup\Ecommerce\Model\Order) {
             $validationResult->addFieldError('AmountPaid', _t('OrderForm.COULDNOTPROCESSPAYMENT', 'Sorry, we could not find the Order for payment.'), 'bad');
         }
         $form->setSessionValidationResult($validationResult);

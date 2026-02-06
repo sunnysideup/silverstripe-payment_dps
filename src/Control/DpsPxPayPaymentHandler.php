@@ -11,7 +11,6 @@ use Sunnysideup\PaymentDps\DpsPxPayPayment;
 
 /**
  * Class \Sunnysideup\PaymentDps\Control\DpsPxPayPaymentHandler
- *
  */
 class DpsPxPayPaymentHandler extends Controller
 {
