@@ -279,9 +279,8 @@ class DpsPxPayComs
         $string = '<pre>';
         $string .= print_r($this->PxPayObject, true);
         $string .= print_r($this->response, true);
-        $string .= '</pre>';
 
-        return $string;
+        return $string . '</pre>';
     }
 
     public function debug()

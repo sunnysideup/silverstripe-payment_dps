@@ -100,15 +100,15 @@ class CustomerOrderStepForm extends Form
         $validationResult = new ValidationResult();
         if (isset($SQLData['OrderID'])) {
             $orderID = intval($SQLData['OrderID']);
-            if ($orderID) {
+            if ($orderID !== 0) {
                 $order = Order::get_order_cached((int) $orderID);
-                if ($order) {
+                if ($order instanceof \Sunnysideup\Ecommerce\Model\Order) {
                     if (OrderStepAmountConfirmedLog::is_locked_out($order)) {
                         $form->sessionMessage('Sorry, you can only try three times per day', 'bad');
                     } else {
                         $answer = OrderStepAmountConfirmed::currency_to_float($data['AmountPaid'] ?? '');
 
-                        if ($answer) {
+                        if ($answer !== 0.0) {
                             $isValid = OrderStepAmountConfirmedLog::test_answer($order, $answer);
                             if ($isValid) {
                                 $validationResult->addFieldError('AmountPaid', _t('OrderForm.RIGHTANSWER', 'Thank you for your confirmation.'), 'good');
@@ -123,7 +123,7 @@ class CustomerOrderStepForm extends Form
                 }
             }
         }
-        if (! $order) {
+        if (!$order instanceof \Sunnysideup\Ecommerce\Model\Order) {
             $validationResult->addFieldError('AmountPaid', _t('OrderForm.COULDNOTPROCESSPAYMENT', 'Sorry, we could not find the Order for payment.'), 'bad');
         }
         $form->setSessionValidationResult($validationResult);

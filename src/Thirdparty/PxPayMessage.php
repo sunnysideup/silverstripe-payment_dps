@@ -38,10 +38,6 @@ class PxPayMessage
 
     public $TxnId;
 
-    public function __construct()
-    {
-    }
-
     public function setBillingId($BillingId)
     {
         $this->BillingId = $BillingId;
@@ -141,9 +137,7 @@ class PxPayMessage
             $xml .= "<{$key}>{$value}</{$key}>";
         }
 
-        $xml .= '</GenerateRequest>';
-
-        return $xml;
+        return $xml . '</GenerateRequest>';
     }
 
     //

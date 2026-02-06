@@ -125,7 +125,6 @@ class PxPayResponse extends PxPayMessage
 
     public function getCurrencySettlement()
     {
-        $this->CurrencySettlement;
     }
 
     public function getTxnMac()

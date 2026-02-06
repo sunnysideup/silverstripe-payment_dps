@@ -152,7 +152,7 @@ class DpsPxPayPayment extends EcommercePayment
         //$this->write();
         if ($this->hasRandomDeduction()) {
             $randomDeduction = $this->setAndReturnRandomDeduction();
-            if ($randomDeduction) {
+            if ($randomDeduction !== 0.0) {
                 $amount -= $randomDeduction;
             }
         }

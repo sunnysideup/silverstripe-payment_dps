@@ -74,8 +74,8 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
             if ($payment) {
                 $amount = (float) $payment->Amount->Amount;
                 $deduction = (float) $payment->RandomDeduction;
-                $expectedAnswer = (float) $amount - $deduction;
-                if ($expectedAnswer === (float) $answer) {
+                $expectedAnswer = $amount - $deduction;
+                if ($expectedAnswer === $answer) {
                     $isValid = true;
                 }
             }

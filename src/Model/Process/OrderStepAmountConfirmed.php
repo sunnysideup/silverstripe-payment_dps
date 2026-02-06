@@ -151,11 +151,11 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     public function doStep(Order $order): bool
     {
         $adminOnlyOrToEmail = ! (bool) $this->SendMessageToCustomer;
-        if (true === $this->stillToDo($order)) {
+        if ($this->stillToDo($order)) {
             return $this->sendEmailForStep(
                 $order,
                 (string) $subject = $this->EmailSubject ?: 'Confirm Paid Amount',
-                (string) $this->CalculatedCustomerMessage(),
+                $this->CalculatedCustomerMessage(),
                 $resend = false,
                 $adminOnlyOrToEmail,
                 $this->getEmailClassName()
@@ -167,7 +167,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
 
     public function hasBeenDone(Order $order): bool
     {
-        return $this->stillToDo($order) ? false : true;
+        return !$this->stillToDo($order);
     }
 
     /**
@@ -213,10 +213,8 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
             }
         }
         foreach ($order->Payments() as $payment) {
-            if ($payment) {
-                if ($payment instanceof DpsPxPayPaymentRandomAmount) {
-                    return $payment->RandomDeduction > 0;
-                }
+            if ($payment && $payment instanceof DpsPxPayPaymentRandomAmount) {
+                return $payment->RandomDeduction > 0;
             }
         }
 

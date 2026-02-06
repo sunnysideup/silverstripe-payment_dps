@@ -32,12 +32,6 @@ class PxPayRequest extends PxPayMessage
 
     public $Opt;
 
-    //Constructor
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function setEnableAddBillCard($EnableBillAddCard)
     {
         $this->EnableAddBillCard = $EnableBillAddCard;
@@ -79,10 +73,8 @@ class PxPayRequest extends PxPayMessage
     public function validData()
     {
         $msg = '';
-        if ('Purchase' !== $this->TxnType) {
-            if ('Auth' !== $this->TxnType) {
-                $msg = "Invalid TxnType[{$this->TxnType}]<br>";
-            }
+        if ('Purchase' !== $this->TxnType && 'Auth' !== $this->TxnType) {
+            $msg = "Invalid TxnType[{$this->TxnType}]<br>";
         }
 
         if (strlen( (string) $this->MerchantReference) > 64) {
