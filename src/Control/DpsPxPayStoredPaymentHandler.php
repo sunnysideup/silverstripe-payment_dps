@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\PaymentDps\Control;
 
+use Override;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
@@ -16,24 +17,27 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
 {
     private static $url_segment = 'dpspxpaystoredpayment';
 
+    #[Override]
     public static function complete_link()
     {
         return '/' . Config::inst()->get(DpsPxPayStoredPaymentHandler::class, 'url_segment') . '/paid/';
     }
 
+    #[Override]
     public static function absolute_complete_link()
     {
         return Director::AbsoluteURL(self::complete_link());
     }
 
+    #[Override]
     public function paid()
     {
-        $commsObject = new DpsPxPayComs();
+        $commsObject = DpsPxPayComs::create();
         $response = $commsObject->processRequestAndReturnResultsAsObject();
         $ResponseText = $response->getResponseText();
         $DpsTxnRef = $response->getDpsTxnRef();
         $merchantReference = $response->getMerchantReference();
-        $merchantReferenceArray = explode('_', $merchantReference);
+        $merchantReferenceArray = explode('_', (string) $merchantReference);
         $orderID = (int) $merchantReferenceArray[0];
         $paymentID = (int) $merchantReferenceArray[1];
         /** @var DpsPxPayStoredPayment $payment */
@@ -47,7 +51,7 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
                         $existingCard = DpsPxPayStoredCard::get()->filter(['BillingID' => $response->DpsBillingId])->First();
 
                         if ($existingCard === false) {
-                            $storedCard = new DpsPxPayStoredCard();
+                            $storedCard = DpsPxPayStoredCard::create();
                             $storedCard->BillingID = $response->DpsBillingId;
                             $storedCard->CardName = $response->CardName;
                             $storedCard->CardHolder = $response->CardHolderName;
@@ -59,14 +63,18 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
                 } else {
                     $payment->Status = EcommercePayment::FAILURE_STATUS;
                 }
+
                 if ($DpsTxnRef) {
                     $payment->TxnRef = $DpsTxnRef;
                 }
+
                 if ($ResponseText) {
                     $payment->Message = $ResponseText;
                 }
+
                 $payment->write();
             }
+
             $payment->redirectToOrder();
         } else {
             user_error('could not find payment with matching ID', E_USER_WARNING);

@@ -2,6 +2,8 @@
 
 namespace Sunnysideup\PaymentDps;
 
+use Override;
+use Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -10,7 +12,6 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\DB;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
-use Sunnysideup\Ecommerce\Forms\OrderForm;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
@@ -23,6 +24,8 @@ use Sunnysideup\PaymentDps\Model\DpsPxPayStoredCard;
  */
 class DpsPxPayStoredPayment extends DpsPxPayPayment
 {
+    private static $table_name = 'DpsPxPayStoredPayment';
+
     private static $pxaccess_url = 'https://sec.windcave.com/pxpay/pxaccess.aspx';
 
     private static $pxpost_url = 'https://sec.windcave.com/pxpost.aspx';
@@ -39,6 +42,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
     private static $add_card_explanation = 'Storing a Card means your Credit Card will be kept on file for your next purchase. ';
 
+    #[Override]
     public function getPaymentFormFields($amount = 0, ?Order $order = null): FieldList
     {
         $logo = '<img src="' . self::$logo . '" alt="Credit Card Payments Powered by DPS"/>';
@@ -48,7 +52,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             $paymentsList .= '<img src="' . $image . '" alt="' . $name . '"/>';
         }
 
-        $fields = new FieldList();
+        $fields = FieldList::create();
         $storedCards = null;
         $m = Security::getCurrentUser();
         if ($m) {
@@ -62,11 +66,13 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             foreach ($storedCards as $card) {
                 $cardsDropdown[$card->BillingID] = $card->CardHolder . ' - ' . $card->CardNumber . ' (' . $card->CardName . ')';
             }
+
             $s = '';
             if ($storedCards->count() > 1) {
                 $s = 's';
             }
-            $cardsDropdown['deletecards'] = " --- Delete Stored Card{$s} --- ";
+
+            $cardsDropdown['deletecards'] = sprintf(' --- Delete Stored Card%s --- ', $s);
             $fields->push(
                 DropdownField::create(
                     'DPSUseStoredCard',
@@ -76,11 +82,12 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
                 )->setEmptyString('--- use new Credit Card ---')
             );
         } else {
-            $fields->push(new DropdownField('DPSStoreCard', '', [1 => 'Store Credit Card', 0 => 'Do NOT Store Credit Card']));
-            $fields->push(new LiteralField('AddCardExplanation', '<p>' . Config::inst()->get(DpsPxPayStoredPayment::class, 'add_card_explanation') . '</p>'));
+            $fields->push(DropdownField::create('DPSStoreCard', '', [1 => 'Store Credit Card', 0 => 'Do NOT Store Credit Card']));
+            $fields->push(LiteralField::create('AddCardExplanation', '<p>' . Config::inst()->get(DpsPxPayStoredPayment::class, 'add_card_explanation') . '</p>'));
         }
-        $fields->push(new LiteralField('DPSInfo', $privacyLink));
-        $fields->push(new LiteralField('DPSPaymentsList', $paymentsList));
+
+        $fields->push(LiteralField::create('DPSInfo', $privacyLink));
+        $fields->push(LiteralField::create('DPSPaymentsList', $paymentsList));
         Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
         //Requirements::block(THIRDPARTY_DIR."/jquery/jquery.js");
         //Requirements::javascript(Director::protocol()."ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js");
@@ -116,19 +123,23 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
      * @param array $data The form request data - see OrderForm
      * @param Form  $form The form object submitted on
      *
-     * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
+     * @return EcommercePaymentResult
      */
+    #[Override]
     public function processPayment($data, Form $form)
     {
         if (! isset($data['DPSUseStoredCard'])) {
             $data['DPSUseStoredCard'] = null;
         }
+
         if (! isset($data['DPSStoreCard'])) {
             $data['DPSStoreCard'] = null;
         }
+
         if (! isset($data['Amount'])) {
             user_error('There was no amount information for processing the payment.', E_USER_WARNING);
         }
+
         if ('deletecards' === $data['DPSUseStoredCard']) {
             //important!!!
             $data['DPSUseStoredCard'] = null;
@@ -139,6 +150,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
                     foreach ($storedCards as $card) {
                         $card->delete();
                     }
+
                     if (DpsPxPayStoredCard::get()->filter(['MemberID' => $m->ID])) {
                         DB::query('DELETE FROM DpsPxPayStoredCard WHERE MemberID = ' . $m->ID);
                     }
@@ -147,6 +159,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         } elseif ($data['DPSUseStoredCard']) {
             return $this->processViaPostRatherThanPxPay($data, $form, $data['DPSUseStoredCard']);
         }
+
         $url = $this->buildURL($data['Amount'], $data['DPSUseStoredCard'], $data['DPSStoreCard']);
 
         return $this->executeURL($url);
@@ -182,6 +195,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             $this->Status = EcommercePayment::FAILURE_STATUS;
             $result = EcommercePaymentFailure::create();
         }
+
         if (isset($responseFields['DPSTXNREF'])) {
             $transactionRef = $responseFields['DPSTXNREF'];
             if ($transactionRef) {
@@ -195,6 +209,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
                 $this->Message = $helpText;
             }
         }
+
         if (isset($responseFields['RESPONSETEXT'])) {
             $responseText = $responseFields['RESPONSETEXT'];
             if ($responseText) {
@@ -215,8 +230,10 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             if ('Amount' === $name) {
                 $value = number_format($value, 2, '.', '');
             }
-            $transaction .= "<{$name}>{$value}</{$name}>";
+
+            $transaction .= sprintf('<%s>%s</%s>', $name, $value, $name);
         }
+
         $transaction .= '</Txn>';
 
         // 2) CURL Creation
@@ -251,7 +268,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
             if ('open' === $xmlElement['type']) {
                 if (array_key_exists('attributes', $xmlElement)) {
                     $arrayValues = array_values($xmlElement['attributes']);
-                    list($level[$xmlElement['level']]) = $arrayValues;
+                    [$level[$xmlElement['level']]] = $arrayValues;
                 } else {
                     $level[$xmlElement['level']] = $xmlElement['tag'];
                 }
@@ -261,10 +278,12 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
                 while ($startLevel < $xmlElement['level']) {
                     $phpArray .= '[$level[' . $startLevel++ . ']]';
                 }
+
                 $phpArray .= '[$xmlElement[\'tag\']] = array_key_exists(\'value\', $xmlElement)? $xmlElement[\'value\'] : null;';
                 eval($phpArray);
             }
         }
+
         if (! isset($resultPhp['TXN'])) {
             return false;
         }
@@ -272,9 +291,10 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         return $resultPhp['TXN'];
     }
 
+    #[Override]
     protected function buildURL($amount, $cardToUse = '', ?bool $storeCard = false)
     {
-        $commsObject = new DpsPxPayComs();
+        $commsObject = DpsPxPayComs::create();
 
         // order details
         $commsObject->setTxnType(DpsPxPayComs::get_txn_type());

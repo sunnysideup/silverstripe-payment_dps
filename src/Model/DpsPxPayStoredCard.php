@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\PaymentDps\Model;
 
+use Override;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
@@ -15,7 +16,7 @@ use SilverStripe\Security\Security;
  * @property string $CardNumber
  * @property string $BillingID
  * @property int $MemberID
- * @method \SilverStripe\Security\Member Member()
+ * @method Member Member()
  */
 class DpsPxPayStoredCard extends DataObject
 {
@@ -62,20 +63,24 @@ class DpsPxPayStoredCard extends DataObject
 
     private static $can_create = false;
 
+    #[Override]
     public function canCreate($member = null, $context = [])
     {
         return false;
     }
 
+    #[Override]
     public function canView($member = null, $context = [])
     {
         if (! $member) {
             $member = Security::getCurrentUser();
         }
+
         $extended = $this->extendedCan(__FUNCTION__, $member);
         if (false === $extended) {
             return false;
         }
+
         if ($member) {
             return Permission::checkMember(
                 $member->ID,
@@ -87,11 +92,13 @@ class DpsPxPayStoredCard extends DataObject
         return false;
     }
 
+    #[Override]
     public function canEdit($member = null, $context = [])
     {
         return false;
     }
 
+    #[Override]
     public function canDelete($member = null)
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);

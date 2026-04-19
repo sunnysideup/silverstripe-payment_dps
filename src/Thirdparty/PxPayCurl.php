@@ -14,18 +14,9 @@ namespace Sunnysideup\PaymentDps\Thirdparty;
 
 class PxPayCurl
 {
-    public $PxPay_Key;
-
-    public $PxPay_Url;
-
-    public $PxPay_Userid;
-
-    public function __construct($Url, $UserId, $Key)
+    public function __construct(public $PxPay_Url, public $PxPay_Userid, public $PxPay_Key)
     {
         error_reporting(E_ERROR);
-        $this->PxPay_Key = $Key;
-        $this->PxPay_Url = $Url;
-        $this->PxPay_Userid = $UserId;
     }
 
     //******************************************************************************

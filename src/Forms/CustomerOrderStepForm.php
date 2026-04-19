@@ -2,6 +2,8 @@
 
 namespace Sunnysideup\PaymentDps\Forms;
 
+use SilverStripe\Core\Validation\ValidationResult;
+use SilverStripe\Forms\Validation\RequiredFieldsValidator;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
@@ -13,8 +15,6 @@ use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\ReadonlyField;
-use SilverStripe\Forms\RequiredFields;
-use SilverStripe\ORM\ValidationResult;
 use Sunnysideup\Ecommerce\Api\Sanitizer;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmed;
@@ -37,6 +37,7 @@ class CustomerOrderStepForm extends Form
             $explanation = $defaults['Explanation'] ?? '';
             $heading = $defaults['Heading'] ?? 'Action Required: Confirm Amount Paid';
         }
+
         if (OrderStepAmountConfirmedLog::has_been_confirmed($order)) {
             $amountField = ReadonlyField::create(
                 'AmountPaid',
@@ -49,26 +50,26 @@ class CustomerOrderStepForm extends Form
                 'Discounted amount charged to your credit card'
             );
         }
+
         $requiredFields = [];
-        $fields = new FieldList(
-            [
-                HeaderField::create(
-                    'AmountPaidHeader',
-                    $heading
-                ),
-                LiteralField::create(
-                    'AmountPaidExplanation',
-                    '<div class="important-explanation">' . $explanation . '</div>'
-                ),
-                $amountField,
-                new HiddenField('OrderID', '', $order->ID),
-            ]
-        );
-        $actions = new FieldList();
+        $fields = FieldList::create([
+            HeaderField::create(
+                'AmountPaidHeader',
+                $heading
+            ),
+            LiteralField::create(
+                'AmountPaidExplanation',
+                '<div class="important-explanation">' . $explanation . '</div>'
+            ),
+            $amountField,
+            HiddenField::create('OrderID', '', $order->ID),
+        ]);
+        $actions = FieldList::create();
         if (! OrderStepAmountConfirmedLog::has_been_confirmed($order)) {
-            $actions->push(new FormAction('confirmamount', 'Confirm Amount'));
+            $actions->push(FormAction::create('confirmamount', 'Confirm Amount'));
         }
-        $validator = RequiredFields::create($requiredFields);
+
+        $validator = RequiredFieldsValidator::create($requiredFields);
         parent::__construct($controller, $name, $fields, $actions, $validator);
 
         //extension point
@@ -80,10 +81,11 @@ class CustomerOrderStepForm extends Form
         $this->setValidator($validator);
 
         $this->setFormAction($controller->Link($name));
-        $oldData = Controller::curr()->getRequest()->getSession()->get("FormInfo.{$this->FormName()}.data");
+        $oldData = Controller::curr()->getRequest()->getSession()->get(sprintf('FormInfo.%s.data', $this->FormName()));
         if ($oldData && (is_array($oldData) || is_object($oldData))) {
             $this->loadDataFrom($oldData);
         }
+
         $this->extend('updateCustomerOrderStepForm', $this);
     }
 
@@ -97,12 +99,12 @@ class CustomerOrderStepForm extends Form
     {
         $SQLData = Convert::raw2sql($data);
         $order = null;
-        $validationResult = new ValidationResult();
+        $validationResult = ValidationResult::create();
         if (isset($SQLData['OrderID'])) {
             $orderID = intval($SQLData['OrderID']);
             if ($orderID !== 0) {
                 $order = Order::get_order_cached((int) $orderID);
-                if ($order instanceof \Sunnysideup\Ecommerce\Model\Order) {
+                if ($order instanceof Order) {
                     if (OrderStepAmountConfirmedLog::is_locked_out($order)) {
                         $form->sessionMessage('Sorry, you can only try three times per day', 'bad');
                     } else {
@@ -123,9 +125,11 @@ class CustomerOrderStepForm extends Form
                 }
             }
         }
-        if (! $order instanceof \Sunnysideup\Ecommerce\Model\Order) {
+
+        if (! $order instanceof Order) {
             $validationResult->addFieldError('AmountPaid', _t('OrderForm.COULDNOTPROCESSPAYMENT', 'Sorry, we could not find the Order for payment.'), 'bad');
         }
+
         $form->setSessionValidationResult($validationResult);
 
         return $this->controller->redirectBack();

@@ -2,12 +2,13 @@
 
 namespace Sunnysideup\PaymentDps;
 
+use Override;
+use Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\LiteralField;
 use SimpleXMLElement;
-use Sunnysideup\Ecommerce\Forms\OrderForm;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
@@ -100,11 +101,12 @@ class DpsPxPost extends EcommercePayment
         'ResponseDetails' => 'HTMLText',
     ];
 
+    #[Override]
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
-        $fields->addFieldToTab('Root.Details', new LiteralField('Request', $this->getRequestDetails()));
-        $fields->addFieldToTab('Root.Details', new LiteralField('Response', $this->getResponseDetails()));
+        $fields->addFieldToTab('Root.Details', LiteralField::create('Request', $this->getRequestDetails()));
+        $fields->addFieldToTab('Root.Details', LiteralField::create('Response', $this->getResponseDetails()));
 
         return $fields;
     }
@@ -118,13 +120,14 @@ class DpsPxPost extends EcommercePayment
      *
      * @param mixed $amount
      */
+    #[Override]
     public function getPaymentFormFields($amount = 0, ?Order $order = null): FieldList
     {
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
         $fieldList = $formHelper->getCreditCardPaymentFormFields($this);
         $fieldList->insertBefore(
             'DpsPxPost_CreditCard',
-            new LiteralField('DpsPxPost_Logo', $this->Config()->get('dps_logo_and_link')),
+            LiteralField::create('DpsPxPost_Logo', $this->Config()->get('dps_logo_and_link')),
         );
 
         return $fieldList;
@@ -137,6 +140,7 @@ class DpsPxPost extends EcommercePayment
      * @see DPSPayment->getPaymentFormRequirements() for an example on how
      * this is implemented.
      */
+    #[Override]
     public function getPaymentFormRequirements(): array
     {
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
@@ -152,6 +156,7 @@ class DpsPxPost extends EcommercePayment
      *
      * @return bool
      */
+    #[Override]
     public function validatePayment($data, Form $form)
     {
         $formHelper = $this->ecommercePaymentFormSetupAndValidationObject();
@@ -172,8 +177,9 @@ class DpsPxPost extends EcommercePayment
      * @param array $data The form request data - see OrderForm
      * @param Form  $form The form object submitted on
      *
-     * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
+     * @return EcommercePaymentResult
      */
+    #[Override]
     public function processPayment($data, Form $form)
     {
         //save data
@@ -236,6 +242,7 @@ class DpsPxPost extends EcommercePayment
             $this->Status = EcommercePayment::FAILURE_STATUS;
             $returnObject = EcommercePaymentFailure::create();
         }
+
         $this->write();
 
         return $returnObject;
@@ -261,9 +268,11 @@ class DpsPxPost extends EcommercePayment
         if ('yes' === $this->Config()->get('is_test') && 'no' === $this->Config()->get('is_live')) {
             return true;
         }
+
         if ('no' === $this->Config()->get('is_test') && 'yes' === $this->Config()->get('is_live')) {
             return false;
         }
+
         user_error('Class not set to live or test correctly.');
 
         return false;

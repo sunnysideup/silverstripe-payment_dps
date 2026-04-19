@@ -74,38 +74,43 @@ class PxPayRequest extends PxPayMessage
     {
         $msg = '';
         if ('Purchase' !== $this->TxnType && 'Auth' !== $this->TxnType) {
-            $msg = "Invalid TxnType[{$this->TxnType}]<br>";
+            $msg = sprintf('Invalid TxnType[%s]<br>', $this->TxnType);
         }
 
         if (strlen((string) $this->MerchantReference) > 64) {
-            $msg = "Invalid MerchantReference [{$this->MerchantReference}]<br>";
+            $msg = sprintf('Invalid MerchantReference [%s]<br>', $this->MerchantReference);
         }
 
         if (strlen((string) $this->TxnId) > 16) {
-            $msg = "Invalid TxnId [{$this->TxnId}]<br>";
+            $msg = sprintf('Invalid TxnId [%s]<br>', $this->TxnId);
         }
+
         if (strlen((string) $this->TxnData1) > 255) {
-            $msg = "Invalid TxnData1 [{$this->TxnData1}]<br>";
+            $msg = sprintf('Invalid TxnData1 [%s]<br>', $this->TxnData1);
         }
+
         if (strlen((string) $this->TxnData2) > 255) {
-            $msg = "Invalid TxnData2 [{$this->TxnData2}]<br>";
+            $msg = sprintf('Invalid TxnData2 [%s]<br>', $this->TxnData2);
         }
+
         if (strlen((string) $this->TxnData3) > 255) {
-            $msg = "Invalid TxnData3 [{$this->TxnData3}]<br>";
+            $msg = sprintf('Invalid TxnData3 [%s]<br>', $this->TxnData3);
         }
 
         if (strlen((string) $this->EmailAddress) > 255) {
-            $msg = "Invalid EmailAddress [{$this->EmailAddress}]<br>";
+            $msg = sprintf('Invalid EmailAddress [%s]<br>', $this->EmailAddress);
         }
 
         if (strlen((string) $this->UrlFail) > 255) {
-            $msg = "Invalid UrlFail [{$this->UrlFail}]<br>";
+            $msg = sprintf('Invalid UrlFail [%s]<br>', $this->UrlFail);
         }
+
         if (strlen((string) $this->UrlSuccess) > 255) {
-            $msg = "Invalid UrlSuccess [{$this->UrlSuccess}]<br>";
+            $msg = sprintf('Invalid UrlSuccess [%s]<br>', $this->UrlSuccess);
         }
+
         if (strlen((string) $this->BillingId) > 32) {
-            $msg = "Invalid BillingId [{$this->BillingId}]<br>";
+            $msg = sprintf('Invalid BillingId [%s]<br>', $this->BillingId);
         }
 
         if ('' !== $msg) {
