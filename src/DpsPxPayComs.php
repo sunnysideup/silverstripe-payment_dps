@@ -81,12 +81,15 @@ class DpsPxPayComs
         if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_url')) {
             user_error('error in DpsPxPayComs::__construct, ' . self::$pxpay_url . ' not set. ', E_USER_WARNING);
         }
+
         if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_userid')) {
             user_error('error in DpsPxPayComs::__construct, ' . self::$pxpay_userid . ' not set. ', E_USER_WARNING);
         }
+
         if (! Config::inst()->get(DpsPxPayComs::class, 'pxpay_encryption_key')) {
             user_error('error in DpsPxPayComs::__construct, ' . self::$pxpay_encryption_key . ' not set. ', E_USER_WARNING);
         }
+
         $this->PxPayObject = new PxPayCurl(Config::inst()->get(DpsPxPayComs::class, 'pxpay_url'), Config::inst()->get(DpsPxPayComs::class, 'pxpay_userid'), Config::inst()->get(DpsPxPayComs::class, 'pxpay_encryption_key'));
     }
 
@@ -173,6 +176,7 @@ class DpsPxPayComs
         if (! $this->TxnId) {
             $this->TxnId = uniqid('ID');
         }
+
         $request = new PxPayRequest();
         //Set PxPay properties
         if ($this->MerchantReference) {
@@ -180,52 +184,65 @@ class DpsPxPayComs
         } else {
             user_error('error in DpsPxPayComs::startPaymentProcess, MerchantReference not set. ', E_USER_WARNING);
         }
+
         if ($this->AmountInput) {
             $request->setAmountInput($this->AmountInput);
         } else {
             user_error('error in DpsPxPayComs::startPaymentProcess, AmountInput not set. ', E_USER_WARNING);
         }
+
         if ($this->TxnData1) {
             $request->setTxnData1($this->TxnData1);
         }
+
         if ($this->TxnData2) {
             $request->setTxnData2($this->TxnData2);
         }
+
         if ($this->TxnData3) {
             $request->setTxnData3($this->TxnData3);
         }
+
         if ($this->TxnType) {
             $request->setTxnType($this->TxnType);
         } else {
             user_error('error in DpsPxPayComs::startPaymentProcess, TxnType not set. ', E_USER_WARNING);
         }
+
         if ($this->CurrencyInput) {
             $request->setCurrencyInput($this->CurrencyInput);
         } else {
             user_error('error in DpsPxPayComs::startPaymentProcess, CurrencyInput not set. ', E_USER_WARNING);
         }
+
         if ($this->EmailAddress) {
             $request->setEmailAddress($this->EmailAddress);
         }
+
         if ($this->UrlFail) {
             $request->setUrlFail($this->UrlFail);
         } else {
             user_error('error in DpsPxPayComs::startPaymentProcess, UrlFail not set. ', E_USER_WARNING);
         }
+
         if ($this->UrlSuccess) {
             $request->setUrlSuccess($this->UrlSuccess);
         } else {
             user_error('error in DpsPxPayComs::startPaymentProcess, UrlSuccess not set. ', E_USER_WARNING);
         }
+
         if ($this->TxnId) {
             $request->setTxnId($this->TxnId);
         }
+
         if ($this->EnableAddBillCard) {
             $request->setEnableAddBillCard($this->EnableAddBillCard);
         }
+
         if ($this->BillingId) {
             $request->setBillingId($this->BillingId);
         }
+
         /* TODO:
            $request->setEnableAddBillCard($EnableAddBillCard);
            $request->setBillingId($BillingId);

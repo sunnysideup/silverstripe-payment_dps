@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\PaymentDps\Model\Process;
 
+use Override;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DB;
 use Sunnysideup\Ecommerce\Model\Order;
@@ -25,12 +26,14 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
      */
     private static $maximum_payment_attempts_per_day = 3;
 
+    #[Override]
     public function i18n_singular_name()
     {
         return 'Amount Validated Log';
     }
 
-    public function i18n_plural_name()
+    #[Override]
+    public function plural_name()
     {
         return 'Amount Validated Logs';
     }
@@ -65,6 +68,7 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
             if ($orderStep->hasAmountConfirmed($order)) {
                 return true;
             }
+
             $isValid = false;
 
             $log = OrderStepAmountConfirmedLog::create(
@@ -79,6 +83,7 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
                     $isValid = true;
                 }
             }
+
             $log->IsValid = $isValid;
             $log->write();
 
@@ -88,12 +93,13 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
         return true;
     }
 
+    #[Override]
     public function requireDefaultRecords()
     {
         parent::requireDefaultRecords();
         DB::query('
             UPDATE "OrderStatusLog"
-            SET "ClassName" = \'' . addslashes('Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmedLog') . '\'
+            SET "ClassName" = \'' . addslashes(OrderStepAmountConfirmedLog::class) . '\'
             WHERE "ClassName" = \'' . addslashes('Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmedLog') . '\'
         ');
     }

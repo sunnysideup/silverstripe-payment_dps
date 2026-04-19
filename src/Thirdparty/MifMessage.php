@@ -27,7 +27,7 @@ class MifMessage
     {
         $p = xml_parser_create();
         xml_parser_set_option($p, XML_OPTION_CASE_FOLDING, 0);
-        $ok = xml_parse_into_struct($p, $xml, $value, $index);
+        $ok = xml_parse_into_struct($p, (string) $xml, $value, $index);
         xml_parser_free($p);
         if ($ok) {
             $this->xml_ = $xml;
@@ -57,6 +57,7 @@ class MifMessage
         if (0 === $index) {
             return '';
         }
+
         //When element existent but empty
         $elementObj = $this->xml_value_[$index];
         if (! array_key_exists('value', $elementObj)) {
@@ -72,7 +73,7 @@ class MifMessage
     public function get_element_index($element, $rootindex = 0)
     {
         //$element = strtoupper((string) $element);
-        $pos = strpos($element, '/');
+        $pos = strpos((string) $element, '/');
         if (false !== $pos) {
             // element contains '/': find first part
             $start_path = substr((string) $element, 0, $pos);
@@ -82,15 +83,18 @@ class MifMessage
                 // couldn't find first part give up.
                 return 0;
             }
+
             // recursively find rest
             return $this->get_element_index($remain_path, $index);
         }
+
         // search from the parent across all its children
         // i.e. until we get the parent's close tag.
         $level = $this->xml_value_[$rootindex]['level'];
         if ('complete' === $this->xml_value_[$rootindex]['type']) {
             return 0;   // no children
         }
+
         $index = $rootindex + 1;
         while ($index < count($this->xml_value_) &&
             ! ($this->xml_value_[$index]['level'] === $level &&
@@ -102,6 +106,7 @@ class MifMessage
             ) {
                 return $index;
             }
+
             ++$index;
         }
 
