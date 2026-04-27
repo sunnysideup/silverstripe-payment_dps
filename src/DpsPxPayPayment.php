@@ -2,6 +2,8 @@
 
 namespace Sunnysideup\PaymentDps;
 
+use Override;
+use Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Email\Email;
@@ -13,7 +15,6 @@ use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBMoney;
 use SilverStripe\View\Requirements;
-use Sunnysideup\Ecommerce\Forms\OrderForm;
 use Sunnysideup\Ecommerce\Model\Money\EcommercePayment;
 use Sunnysideup\Ecommerce\Model\Order;
 use Sunnysideup\Ecommerce\Money\Payment\PaymentResults\EcommercePaymentFailure;
@@ -69,14 +70,16 @@ class DpsPxPayPayment extends EcommercePayment
         unset(self::$credit_cards[$creditCard]);
     }
 
+    #[Override]
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
-        $fields->replaceField('DebugMessage', new ReadonlyField('DebugMessage', 'Debug info'));
+        $fields->replaceField('DebugMessage', ReadonlyField::create('DebugMessage', 'Debug info'));
 
         return $fields;
     }
 
+    #[Override]
     public function getPaymentFormFields($amount = 0, ?Order $order = null): FieldList
     {
         $logo = $this->getLogoResource();
@@ -89,10 +92,7 @@ class DpsPxPayPayment extends EcommercePayment
             }
         }
 
-        return new FieldList(
-            new LiteralField('DPSInfo', $privacyLink),
-            new LiteralField('DPSPaymentsList', $paymentsList)
-        );
+        return FieldList::create(LiteralField::create('DPSInfo', $privacyLink), LiteralField::create('DPSPaymentsList', $paymentsList));
     }
 
     public function getLogoResource()
@@ -106,6 +106,7 @@ class DpsPxPayPayment extends EcommercePayment
         );
     }
 
+    #[Override]
     public function getPaymentFormRequirements(): array
     {
         return [];
@@ -115,8 +116,9 @@ class DpsPxPayPayment extends EcommercePayment
      * @param array $data The form request data - see OrderForm
      * @param Form  $form The form object submitted on
      *
-     * @return \Sunnysideup\Ecommerce\Money\Payment\EcommercePaymentResult
+     * @return EcommercePaymentResult
      */
+    #[Override]
     public function processPayment($data, Form $form)
     {
         $order = $this->getOrderCached();
@@ -136,16 +138,20 @@ class DpsPxPayPayment extends EcommercePayment
                 $currency = $currencyObject->Code;
             }
         }
+
         if (! $amount && ! empty($data['Amount'])) {
             $amount = (float) $data['Amount'];
         }
+
         if (! $currency && ! empty($data['Currency'])) {
             $currency = (string) $data['Currency'];
         }
+
         //final backup for currency
         if (! $currency) {
             $currency = EcommercePayment::site_currency();
         }
+
         $this->Amount->Currency = $currency;
         $this->Amount->Amount = $amount;
         //no need to write here, as it will be done by BuildURL
@@ -156,6 +162,7 @@ class DpsPxPayPayment extends EcommercePayment
                 $amount -= $randomDeduction;
             }
         }
+
         $url = $this->buildURL($amount, $currency);
 
         return $this->executeURL($url);
@@ -170,21 +177,23 @@ class DpsPxPayPayment extends EcommercePayment
             /**
              * build redirection page.
              */
-            $page = new SiteTree();
+            $page = SiteTree::create();
             $page->Title = 'Redirection to DPS...';
             $page->Logo = $this->getLogoResource();
             $page->Form = $this->DPSForm($url);
-            $controller = new ContentController($page);
+            $controller = ContentController::create($page);
             Requirements::clear();
             Requirements::javascript('https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js');
 
             return EcommercePaymentProcessing::create($controller->RenderWith('Sunnysideup\Ecommerce\PaymentProcessingPage'));
         }
-        $page = new SiteTree();
+
+        $page = SiteTree::create();
         $page->Title = 'Sorry, DPS can not be contacted at the moment ...';
         $page->Logo = 'Sorry, an error has occured in contacting the Payment Processing Provider, please try again in a few minutes...';
         $page->Form = $this->DPSForm($url);
-        $controller = new ContentController($page);
+
+        $controller = ContentController::create($page);
         Requirements::clear();
         Requirements::javascript('https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js');
 
@@ -224,7 +233,7 @@ class DpsPxPayPayment extends EcommercePayment
      */
     protected function buildURL($amount, $currency)
     {
-        $commsObject = new DpsPxPayComs();
+        $commsObject = DpsPxPayComs::create();
 
         // order details
         $commsObject->setTxnType(DpsPxPayComs::get_txn_type());
@@ -245,6 +254,7 @@ class DpsPxPayPayment extends EcommercePayment
         if ($this->config()->get('debug')) {
             $debugMessage = $commsObject->getDebugMessage();
         }
+
         $this->DebugMessage = $debugMessage;
         $this->write();
         if ($this->config()->get('email_debug')) {
@@ -252,7 +262,7 @@ class DpsPxPayPayment extends EcommercePayment
             $to = Email::config()->admin_email;
             $subject = 'DPS Debug Information';
             $body = $debugMessage;
-            $email = new Email($from, $to, $subject, $body);
+            $email = Email::create($from, $to, $subject, $body);
             $email->send();
         }
 

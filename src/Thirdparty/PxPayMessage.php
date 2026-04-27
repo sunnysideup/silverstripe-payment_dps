@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sunnysideup\PaymentDps\Thirdparty;
 
 //******************************************************************************
@@ -134,7 +136,7 @@ class PxPayMessage
 
         $xml = '<GenerateRequest>';
         foreach ($arr as $key => $value) {
-            $xml .= "<{$key}>{$value}</{$key}>";
+            $xml .= sprintf('<%s>%s</%s>', $key, $value, $key);
         }
 
         return $xml . '</GenerateRequest>';

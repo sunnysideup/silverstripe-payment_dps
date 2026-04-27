@@ -2,6 +2,8 @@
 
 namespace Sunnysideup\PaymentDps\Model\Process;
 
+use Override;
+use SilverStripe\Forms\Form;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\CheckboxField;
@@ -86,6 +88,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         return (float) preg_replace('/[^0-9.\-]/', '', (string) $value);
     }
 
+    #[Override]
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
@@ -113,7 +116,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     /**
      * A form that can be used by the Customer to progress step!
      *
-     * @return null|\SilverStripe\Forms\Form (CustomerOrderStepForm)
+     * @return null|Form (CustomerOrderStepForm)
      */
     public function CustomerOrderStepForm(Controller $controller, string $name, Order $order)
     {
@@ -131,6 +134,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      *
      * @return bool - true if the current step is ready to be run...
      */
+    #[Override]
     public function initStep(Order $order): bool
     {
         return true;
@@ -148,6 +152,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      *
      * @return bool - true if run correctly
      */
+    #[Override]
     public function doStep(Order $order): bool
     {
         $adminOnlyOrToEmail = ! (bool) $this->SendMessageToCustomer;
@@ -173,8 +178,9 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     /**
      * Allows the opportunity for the Order Step to add any fields to Order::getCMSFields.
      *
-     * @return \SilverStripe\Forms\FieldList
+     * @return FieldList
      */
+    #[Override]
     public function addOrderStepFields(FieldList $fields, Order $order, ?bool $nothingToDo = false)
     {
         $fields = parent::addOrderStepFields($fields, $order);
@@ -190,7 +196,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
             $fields->addFieldsToTab(
                 'Root.Next',
                 [
-                    new LiteralField('NotPaidMessage', '<p>' . $msg . '</p>'),
+                    LiteralField::create('NotPaidMessage', '<p>' . $msg . '</p>'),
                     ReadonlyField::create(
                         'AmountToBeConfirmd',
                         'Amount to be confirmed',
@@ -212,6 +218,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
                 return false;
             }
         }
+
         foreach ($order->Payments() as $payment) {
             if ($payment && $payment instanceof DpsPxPayPaymentRandomAmount) {
                 return $payment->RandomDeduction > 0;
@@ -236,12 +243,13 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
         return OrderStepAmountConfirmedLog::has_been_confirmed($order);
     }
 
+    #[Override]
     public function requireDefaultRecords()
     {
         parent::requireDefaultRecords();
         DB::query('
             UPDATE "OrderStep"
-            SET "ClassName" = \'' . addslashes('Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmed') . '\'
+            SET "ClassName" = \'' . addslashes(OrderStepAmountConfirmed::class) . '\'
             WHERE "ClassName" = \'' . addslashes('Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmed') . '\'
         ');
     }
@@ -249,11 +257,13 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     /**
      * @return bool
      */
+    #[Override]
     public function hasCustomerMessage()
     {
         return $this->SendMessageToCustomer;
     }
 
+    #[Override]
     protected function canBeDeferred(): bool
     {
         return false;
@@ -282,6 +292,7 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
      *
      * @return string
      */
+    #[Override]
     protected function myDescription()
     {
         return _t('OrderStep.PAID_DESCRIPTION', 'The order amount charged is confirmed by customer.');

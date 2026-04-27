@@ -2,6 +2,8 @@
 
 namespace Sunnysideup\PaymentDps;
 
+use Override;
+
 /**
  * Class \Sunnysideup\PaymentDps\DpsPxPayPaymentRandomAmount
  *
@@ -17,11 +19,13 @@ class DpsPxPayPaymentRandomAmount extends DpsPxPayPayment
 
     private static $table_name = 'DpsPxPayPaymentRandomAmount';
 
+    #[Override]
     protected function hasRandomDeduction(): bool
     {
         return true;
     }
 
+    #[Override]
     protected function setAndReturnRandomDeduction(): float
     {
         $max = $this->Config()->get('max_random_deduction');

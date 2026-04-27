@@ -36,12 +36,12 @@ class DpsPxPayPaymentHandler extends Controller
     {
         EcommercePayment::get_supported_methods();
         $this->extend('DpsPxPayPaymentHandler_completion_start');
-        $commsObject = new DpsPxPayComs();
+        $commsObject = DpsPxPayComs::create();
         $response = $commsObject->processRequestAndReturnResultsAsObject();
         $ResponseText = $response->getResponseText();
         $DpsTxnRef = $response->getDpsTxnRef();
         $merchantReference = $response->getMerchantReference();
-        $merchantReferenceArray = explode('_', $merchantReference);
+        $merchantReferenceArray = explode('_', (string) $merchantReference);
         $orderID = (int) $merchantReferenceArray[0];
         $paymentID = (int) $merchantReferenceArray[1];
         /** @var DpsPxPayPayment $payment */
@@ -52,12 +52,15 @@ class DpsPxPayPaymentHandler extends Controller
             } else {
                 $payment->Status = EcommercePayment::FAILURE_STATUS;
             }
+
             if ($DpsTxnRef) {
                 $payment->TxnRef = $DpsTxnRef;
             }
+
             if ($ResponseText) {
                 $payment->Message = $ResponseText;
             }
+
             // check amount and currency...
             $payment->SettlementAmount->Amount = $response->getAmountSettlement();
             $payment->SettlementAmount->Currency = $response->getCurrencySettlement();
