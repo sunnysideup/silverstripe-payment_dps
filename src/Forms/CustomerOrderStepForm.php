@@ -22,6 +22,8 @@ use Sunnysideup\PaymentDps\Model\Process\OrderStepAmountConfirmedLog;
 
 class CustomerOrderStepForm extends Form
 {
+    private const SESSION_KEY_ORDER_IDS = 'CustomerOrderStepFormOrderIDs';
+
     /**
      * @param string $name
      */
@@ -80,6 +82,12 @@ class CustomerOrderStepForm extends Form
         $this->setValidator($validator);
 
         $this->setFormAction($controller->Link($name));
+        // remember which order this form was shown for, so that only that order can be confirmed with it.
+        $session = Controller::curr()->getRequest()->getSession();
+        $allowedOrderIds = $session->get(self::SESSION_KEY_ORDER_IDS);
+        $allowedOrderIds = is_array($allowedOrderIds) ? $allowedOrderIds : [];
+        $allowedOrderIds[(int) $order->ID] = (int) $order->ID;
+        $session->set(self::SESSION_KEY_ORDER_IDS, array_slice($allowedOrderIds, -10, null, true));
         $oldData = Controller::curr()->getRequest()->getSession()->get("FormInfo.{$this->FormName()}.data");
         if ($oldData && (is_array($oldData) || is_object($oldData))) {
             $this->loadDataFrom($oldData);
@@ -102,6 +110,9 @@ class CustomerOrderStepForm extends Form
             $orderID = intval($SQLData['OrderID']);
             if ($orderID !== 0) {
                 $order = Order::get_order_cached((int) $orderID);
+                if ($order && ! $this->mayConfirmOrder($order)) {
+                    $order = null;
+                }
                 if ($order instanceof \Sunnysideup\Ecommerce\Model\Order) {
                     if (OrderStepAmountConfirmedLog::is_locked_out($order)) {
                         $form->sessionMessage('Sorry, you can only try three times per day', 'bad');
@@ -129,6 +140,19 @@ class CustomerOrderStepForm extends Form
         $form->setSessionValidationResult($validationResult);
 
         return $this->controller->redirectBack();
+    }
+
+    /**
+     * Only the order that this form was shown for (in this session), or an order that the current user is allowed to view.
+     */
+    protected function mayConfirmOrder(Order $order): bool
+    {
+        $allowedOrderIds = Controller::curr()->getRequest()->getSession()->get(self::SESSION_KEY_ORDER_IDS);
+        if (is_array($allowedOrderIds) && isset($allowedOrderIds[(int) $order->ID])) {
+            return true;
+        }
+
+        return (bool) $order->canView();
     }
 
     /**

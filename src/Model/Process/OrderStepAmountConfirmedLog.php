@@ -50,12 +50,12 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
         $count = OrderStepAmountConfirmedLog::get()->filter(
             [
                 'OrderID' => $order->ID,
-                'Created:GreaterThan' => date('Y-m-d h:i', strtotime('1 day')),
+                'Created:GreaterThan' => date('Y-m-d H:i:s', strtotime('-1 day')),
             ]
         )->count();
         $max = Config::inst()->get(OrderStepAmountConfirmedLog::class, 'maximum_payment_attempts_per_day');
 
-        return $count > $max;
+        return $count >= $max;
     }
 
     public static function test_answer(Order $order, float $answer): bool

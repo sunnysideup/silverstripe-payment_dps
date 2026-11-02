@@ -25,7 +25,8 @@ class DpsPxPayPaymentRandomAmount extends DpsPxPayPayment
     protected function setAndReturnRandomDeduction(): float
     {
         $max = $this->Config()->get('max_random_deduction');
-        $amount = round($max * (mt_rand() / mt_getrandmax()), 2);
+        // random_int: the amount must not be predictable, the customer has to see it on their statement.
+        $amount = round(((float) $max) * (random_int(0, 100) / 100), 2);
         $this->RandomDeduction = $amount;
         $this->write();
 
