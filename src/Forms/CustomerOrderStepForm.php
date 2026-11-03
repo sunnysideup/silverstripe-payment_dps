@@ -4,7 +4,6 @@ namespace Sunnysideup\PaymentDps\Forms;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Convert;
 use SilverStripe\Forms\CurrencyField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -103,11 +102,10 @@ class CustomerOrderStepForm extends Form
      */
     public function confirmamount($data, $form)
     {
-        $SQLData = Convert::raw2sql($data);
         $order = null;
         $validationResult = new ValidationResult();
-        if (isset($SQLData['OrderID'])) {
-            $orderID = intval($SQLData['OrderID']);
+        if (isset($data['OrderID'])) {
+            $orderID = intval($data['OrderID']);
             if ($orderID !== 0) {
                 $order = Order::get_order_cached((int) $orderID);
                 if ($order && ! $this->mayConfirmOrder($order)) {

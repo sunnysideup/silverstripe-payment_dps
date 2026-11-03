@@ -239,11 +239,13 @@ class OrderStepAmountConfirmed extends OrderStep implements OrderStepInterface
     public function requireDefaultRecords()
     {
         parent::requireDefaultRecords();
-        DB::query('
-            UPDATE "OrderStep"
-            SET "ClassName" = \'' . addslashes('Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmed') . '\'
-            WHERE "ClassName" = \'' . addslashes('Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmed') . '\'
-        ');
+        DB::prepared_query(
+            'UPDATE "OrderStep" SET "ClassName" = ? WHERE "ClassName" = ?',
+            [
+                'Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmed',
+                'Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmed',
+            ]
+        );
     }
 
     /**

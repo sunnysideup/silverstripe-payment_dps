@@ -91,11 +91,13 @@ class OrderStepAmountConfirmedLog extends OrderStatusLog
     public function requireDefaultRecords()
     {
         parent::requireDefaultRecords();
-        DB::query('
-            UPDATE "OrderStatusLog"
-            SET "ClassName" = \'' . addslashes('Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmedLog') . '\'
-            WHERE "ClassName" = \'' . addslashes('Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmedLog') . '\'
-        ');
+        DB::prepared_query(
+            'UPDATE "OrderStatusLog" SET "ClassName" = ? WHERE "ClassName" = ?',
+            [
+                'Sunnysideup\\PaymentDps\\Model\\Process\\OrderStepAmountConfirmedLog',
+                'Sunnysideup\\PaymentDps\\Forms\\Process\\OrderStepAmountConfirmedLog',
+            ]
+        );
     }
 
     protected static function is_right_step($orderStep): bool
