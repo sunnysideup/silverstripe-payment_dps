@@ -51,8 +51,9 @@ class PxPayCurl
     //******************************************************************************
     public function getResponse($result)
     {
-        $inputXml = '<ProcessResponse><PxPayUserId>' . $this->PxPay_Userid . '</PxPayUserId><PxPayKey>' . $this->PxPay_Key .
-            '</PxPayKey><Response>' . $result . '</Response></ProcessResponse>';
+        $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+        $inputXml = '<ProcessResponse><PxPayUserId>' . $escape($this->PxPay_Userid) . '</PxPayUserId><PxPayKey>' . $escape($this->PxPay_Key) .
+            '</PxPayKey><Response>' . $escape($result) . '</Response></ProcessResponse>';
 
         $outputXml = $this->submitXml($inputXml);
 
@@ -70,7 +71,10 @@ class PxPayCurl
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $inputXml);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
         //set up proxy, this may change depending on ISP, please contact your ISP to get the correct cURL settings
         //curl_setopt($ch,CURLOPT_PROXY , "proxy:8080");

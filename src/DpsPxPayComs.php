@@ -271,14 +271,19 @@ class DpsPxPayComs
     {
         //getResponse method in PxPay object returns PxPayResponse object
         //which encapsulates all the response data
-        return $this->PxPayObject->getResponse($_REQUEST['result']);
+        return $this->PxPayObject->getResponse((string) ($_REQUEST['result'] ?? ''));
     }
 
     public function getDebugMessage()
     {
         $string = '<pre>';
-        $string .= print_r($this->PxPayObject, true);
-        $string .= print_r($this->response, true);
+        $pxPayObject = $this->PxPayObject ? clone $this->PxPayObject : null;
+        if ($pxPayObject) {
+            // never expose the encryption key in debug output
+            $pxPayObject->PxPay_Key = '*****';
+        }
+        $string .= htmlspecialchars(print_r($pxPayObject, true));
+        $string .= htmlspecialchars(print_r($this->response, true));
 
         return $string . '</pre>';
     }

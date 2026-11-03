@@ -242,6 +242,7 @@ class DpsPxPayPayment extends EcommercePayment
          * process payment data (check if it is OK and go forward if it is...
          */
         $url = $commsObject->startPaymentProcess();
+        $debugMessage = '';
         if ($this->config()->get('debug')) {
             $debugMessage = $commsObject->getDebugMessage();
         }

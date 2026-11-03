@@ -28,25 +28,32 @@ class DpsPxPayStoredPaymentHandler extends DpsPxPayPaymentHandler
 
     public function paid()
     {
+        $this->abortIfNotConfigured();
         $commsObject = new DpsPxPayComs();
         $response = $commsObject->processRequestAndReturnResultsAsObject();
         $ResponseText = $response->getResponseText();
         $DpsTxnRef = $response->getDpsTxnRef();
-        $merchantReference = $response->getMerchantReference();
+        $merchantReference = (string) $response->getMerchantReference();
         $merchantReferenceArray = explode('_', $merchantReference);
-        $orderID = (int) $merchantReferenceArray[0];
-        $paymentID = (int) $merchantReferenceArray[1];
+        $orderID = (int) ($merchantReferenceArray[0] ?? 0);
+        $paymentID = (int) ($merchantReferenceArray[1] ?? 0);
         /** @var DpsPxPayStoredPayment $payment */
         $payment = DpsPxPayStoredPayment::get_by_id($paymentID);
-        if ($payment && $payment->OrderID === $orderID) {
+        if ($payment && (int) $payment->OrderID === $orderID) {
             if (EcommercePayment::SUCCESS_STATUS !== $payment->Status) {
-                if (1 === $response->getSuccess()) {
+                if (1 === intval($response->getSuccess())) {
+                    if (! $this->responseMatchesPayment($response, $payment)) {
+                        $this->refuseMismatchedResponse($response, $payment);
+                        $payment->redirectToOrder();
+
+                        return;
+                    }
                     $payment->Status = EcommercePayment::SUCCESS_STATUS;
 
                     if ($response->DpsBillingId) {
                         $existingCard = DpsPxPayStoredCard::get()->filter(['BillingID' => $response->DpsBillingId])->First();
 
-                        if ($existingCard === false) {
+                        if (! $existingCard) {
                             $storedCard = new DpsPxPayStoredCard();
                             $storedCard->BillingID = $response->DpsBillingId;
                             $storedCard->CardName = $response->CardName;

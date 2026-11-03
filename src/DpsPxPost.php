@@ -95,6 +95,14 @@ class DpsPxPost extends EcommercePayment
         'Response' => 'Text',
     ];
 
+    /**
+     * Card data (PAN, CVV, expiry) must never be stored in the database.
+     * It is held in memory only, for the duration of the request.
+     *
+     * @var array
+     */
+    protected $sensitiveCardData = [];
+
     private static $casting = [
         'RequestDetails' => 'HTMLText',
         'ResponseDetails' => 'HTMLText',
@@ -176,58 +184,92 @@ class DpsPxPost extends EcommercePayment
      */
     public function processPayment($data, Form $form)
     {
-        //save data
+        // idempotent: never charge a payment that has already been completed
+        if (EcommercePayment::SUCCESS_STATUS === $this->Status) {
+            return EcommercePaymentSuccess::create();
+        }
+        //save data (card data is masked before it reaches the database, see onBeforeWrite)
+        $this->stashAndMaskCardData();
         $this->write();
+        $cardData = $this->sensitiveCardData;
+        $this->sensitiveCardData = [];
 
         //if currency has been pre-set use this
         $currency = strtoupper((string) $this->Amount->Currency);
         //if amout has been pre-set, use this
-        $amount = $this->Amount->Amount;
+        $amount = round((float) $this->Amount->Amount, 2);
         $username = $this->Config()->get('username');
         $password = $this->Config()->get('password');
         if (! $username || ! $password) {
             user_error('Make sure to set a username and password.');
         }
+        if (empty($cardData['CardNumber']) || $amount <= 0) {
+            $this->Status = EcommercePayment::FAILURE_STATUS;
+            $this->Message = 'Credit card details were not available for processing.';
+            $this->write();
+
+            return EcommercePaymentFailure::create();
+        }
+        $xmlEscape = static fn ($value) => htmlspecialchars((string) $value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
 
         $xml = '<Txn>';
-        $xml .= '<PostUsername>' . $username . '</PostUsername>';
-        $xml .= '<PostPassword>' . $password . '</PostPassword>';
-        $xml .= '<CardHolderName>' . Convert::raw2xml($this->NameOnCard) . '</CardHolderName>';
-        $xml .= '<CardNumber>' . $this->CardNumber . '</CardNumber>';
-        $xml .= '<Amount>' . round($amount, 2) . '</Amount>';
-        $xml .= '<DateExpiry>' . $this->ExpiryDate . '</DateExpiry>';
-        $xml .= '<Cvc2>' . $this->CVVNumber . '</Cvc2>';
+        $xml .= '<PostUsername>' . $xmlEscape($username) . '</PostUsername>';
+        $xml .= '<PostPassword>' . $xmlEscape($password) . '</PostPassword>';
+        $xml .= '<CardHolderName>' . $xmlEscape($this->NameOnCard) . '</CardHolderName>';
+        $xml .= '<CardNumber>' . $xmlEscape($cardData['CardNumber']) . '</CardNumber>';
+        $xml .= '<Amount>' . number_format($amount, 2, '.', '') . '</Amount>';
+        $xml .= '<DateExpiry>' . $xmlEscape($cardData['ExpiryDate'] ?? '') . '</DateExpiry>';
+        $xml .= '<Cvc2>' . $xmlEscape($cardData['CVVNumber'] ?? '') . '</Cvc2>';
         $xml .= '<Cvc2Presence>1</Cvc2Presence>';
-        $xml .= '<InputCurrency>' . Convert::raw2xml(strtoupper((string) $currency)) . '</InputCurrency>';
-        $xml .= '<TxnType>' . Convert::raw2xml($this->Config()->get('type')) . '</TxnType>';
-        $xml .= '<TxnId>' . $this->ID . '</TxnId>';
-        $xml .= '<MerchantReference>' . $this->OrderID . '_' . $this->ID . '</MerchantReference>';
+        $xml .= '<InputCurrency>' . $xmlEscape($currency) . '</InputCurrency>';
+        $xml .= '<TxnType>' . $xmlEscape($this->Config()->get('type')) . '</TxnType>';
+        $xml .= '<TxnId>' . (int) $this->ID . '</TxnId>';
+        $xml .= '<MerchantReference>' . (int) $this->OrderID . '_' . (int) $this->ID . '</MerchantReference>';
         $xml .= '</Txn>';
+        unset($cardData);
         $URL = 'sec.paymentexpress.com/pxpost.aspx';
-        //echo "\n\n\n\nSENT:\n$cmdDoTxnTransaction\n\n\n\n\n$";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://' . $URL);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); //Needs to be included if no *.crt is available to verify SSL certificates
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
         $result = curl_exec($ch);
         curl_close($ch);
+        unset($xml);
 
-        $params = new SimpleXMLElement($result);
+        if (! is_string($result) || '' === $result) {
+            $this->Status = EcommercePayment::FAILURE_STATUS;
+            $this->Message = 'The payment gateway could not be contacted.';
+            $this->write();
+
+            return EcommercePaymentFailure::create();
+        }
+
+        try {
+            $params = new SimpleXMLElement($result);
+        } catch (\Exception $exception) {
+            $this->Status = EcommercePayment::FAILURE_STATUS;
+            $this->Message = 'The payment gateway returned an invalid response.';
+            $this->write();
+
+            return EcommercePaymentFailure::create();
+        }
         $txn = $params->Transaction;
 
-        //save basic info
-        //$this->Request = Convert::raw2sql($xml);
-        $this->Response = str_replace('\n', "\n", Convert::raw2sql(print_r($params, 1)));
-        $this->Message = Convert::raw2sql($txn->CardHolderResponseText . ' ' . $txn->CardHolderResponseDescription);
-        $this->CardNumber = Convert::raw2sql($txn->CardNumber);
+        //save basic info (the ORM takes care of escaping for the database)
+        $this->Response = print_r($params, 1);
+        $this->Message = Convert::raw2xml(trim($txn->CardHolderResponseText . ' ' . $txn->CardHolderResponseDescription));
+        $this->CardNumber = substr((string) $txn->CardNumber, -19);
         if (
-            1 === $params->Success &&
-            $amount === $txn->Amount &&
-            $currency === $txn->CurrencyName &&
+            (1 === (int) $params->Success || 1 === (int) $txn['success']) &&
+            round((float) $txn->Amount, 2) === $amount &&
+            $currency === strtoupper(trim((string) $txn->CurrencyName)) &&
             trim($this->OrderID . '_' . $this->ID) === trim((string) $txn->MerchantReference)
         ) {
             $this->Status = EcommercePayment::SUCCESS_STATUS;
@@ -243,12 +285,39 @@ class DpsPxPost extends EcommercePayment
 
     public function getRequestDetails()
     {
-        return '<pre>' . $this->Request . '</pre>';
+        return '<pre>' . htmlspecialchars((string) $this->Request) . '</pre>';
     }
 
     public function getResponseDetails()
     {
-        return '<pre>' . $this->Response . '</pre>';
+        return '<pre>' . htmlspecialchars((string) $this->Response) . '</pre>';
+    }
+
+    /**
+     * Never write the full card number, the CVV or the expiry date to the database.
+     * The values are kept in memory (for processPayment) and the database fields are masked / emptied.
+     */
+    protected function onBeforeWrite()
+    {
+        parent::onBeforeWrite();
+        $this->stashAndMaskCardData();
+    }
+
+    protected function stashAndMaskCardData()
+    {
+        $cardNumber = preg_replace('/\s+/', '', (string) $this->CardNumber);
+        if (ctype_digit($cardNumber) && strlen($cardNumber) >= 12) {
+            $this->sensitiveCardData['CardNumber'] = $cardNumber;
+            $this->CardNumber = str_repeat('*', strlen($cardNumber) - 4) . substr($cardNumber, -4);
+        }
+        if ('' !== (string) $this->CVVNumber) {
+            $this->sensitiveCardData['CVVNumber'] = (string) $this->CVVNumber;
+            $this->CVVNumber = '';
+        }
+        if ('' !== (string) $this->ExpiryDate) {
+            $this->sensitiveCardData['ExpiryDate'] = (string) $this->ExpiryDate;
+            $this->ExpiryDate = '';
+        }
     }
 
     /**

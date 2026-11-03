@@ -134,7 +134,7 @@ class PxPayMessage
 
         $xml = '<GenerateRequest>';
         foreach ($arr as $key => $value) {
-            $xml .= "<{$key}>{$value}</{$key}>";
+            $xml .= "<{$key}>" . htmlspecialchars((string) $value, ENT_XML1 | ENT_QUOTES, 'UTF-8') . "</{$key}>";
         }
 
         return $xml . '</GenerateRequest>';

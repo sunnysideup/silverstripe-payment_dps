@@ -57,7 +57,7 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
 
         $cardsDropdown = ['' => ' --- Select Stored Card ---'];
 
-        if ($storedCards->exists()) {
+        if ($storedCards && $storedCards->exists()) {
             $card = null;
             foreach ($storedCards as $card) {
                 $cardsDropdown[$card->BillingID] = $card->CardHolder . ' - ' . $card->CardNumber . ' (' . $card->CardName . ')';
@@ -120,14 +120,22 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
      */
     public function processPayment($data, Form $form)
     {
+        // idempotent: never charge a payment that has already been completed
+        if (EcommercePayment::SUCCESS_STATUS === $this->Status) {
+            return EcommercePaymentSuccess::create();
+        }
         if (! isset($data['DPSUseStoredCard'])) {
             $data['DPSUseStoredCard'] = null;
         }
         if (! isset($data['DPSStoreCard'])) {
             $data['DPSStoreCard'] = null;
         }
-        if (! isset($data['Amount'])) {
+        // the amount always comes from the stored payment, never from the (client controlled) form data.
+        $amount = (float) $this->Amount->Amount;
+        if ($amount <= 0) {
             user_error('There was no amount information for processing the payment.', E_USER_WARNING);
+
+            return EcommercePaymentFailure::create();
         }
         if ('deletecards' === $data['DPSUseStoredCard']) {
             //important!!!
@@ -140,14 +148,31 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
                         $card->delete();
                     }
                     if (DpsPxPayStoredCard::get()->filter(['MemberID' => $m->ID])) {
-                        DB::query('DELETE FROM DpsPxPayStoredCard WHERE MemberID = ' . $m->ID);
+                        DB::query('DELETE FROM DpsPxPayStoredCard WHERE MemberID = ' . (int) $m->ID);
                     }
                 }
             }
         } elseif ($data['DPSUseStoredCard']) {
-            return $this->processViaPostRatherThanPxPay($data, $form, $data['DPSUseStoredCard']);
+            // the stored card must belong to the logged in member
+            $member = Security::getCurrentUser();
+            $storedCard = null;
+            if ($member && $member->exists()) {
+                $storedCard = DpsPxPayStoredCard::get()->filter([
+                    'BillingID' => (string) $data['DPSUseStoredCard'],
+                    'MemberID' => $member->ID,
+                ])->first();
+            }
+            if (! $storedCard) {
+                $this->Status = EcommercePayment::FAILURE_STATUS;
+                $this->Message = 'The selected stored card could not be used.';
+                $this->write();
+
+                return EcommercePaymentFailure::create();
+            }
+
+            return $this->processViaPostRatherThanPxPay($data, $form, $storedCard->BillingID);
         }
-        $url = $this->buildURL($data['Amount'], $data['DPSUseStoredCard'], $data['DPSStoreCard']);
+        $url = $this->buildURL($amount, $data['DPSUseStoredCard'], (bool) $data['DPSStoreCard']);
 
         return $this->executeURL($url);
     }
@@ -156,8 +181,8 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
     {
         // 1) Main Settings
 
-        $inputs['PostUsername'] = $this->config->get('username');
-        $inputs['PostPassword'] = $this->config->get('password');
+        $inputs['PostUsername'] = $this->config()->get('username');
+        $inputs['PostPassword'] = $this->config()->get('password');
 
         // 2) Payment Informations
 
@@ -213,8 +238,10 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         $transaction = '<Txn>';
         foreach ($inputs as $name => $value) {
             if ('Amount' === $name) {
-                $value = number_format($value, 2, '.', '');
+                $value = number_format((float) $value, 2, '.', '');
             }
+            $name = preg_replace('/[^A-Za-z0-9]/', '', (string) $name);
+            $value = htmlspecialchars((string) $value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
             $transaction .= "<{$name}>{$value}</{$name}>";
         }
         $transaction .= '</Txn>';
@@ -225,7 +252,10 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         curl_setopt($clientURL, CURLOPT_POST, 1);
         curl_setopt($clientURL, CURLOPT_POSTFIELDS, $transaction);
         curl_setopt($clientURL, CURLOPT_RETURNTRANSFER, 1);
-        //curl_setopt($clientURL, CURLOPT_SSLVERSION, 3);
+        curl_setopt($clientURL, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($clientURL, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($clientURL, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($clientURL, CURLOPT_TIMEOUT, 30);
 
         // 3) CURL Execution
 
@@ -234,6 +264,10 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         // 4) CURL Closing
 
         curl_close($clientURL);
+
+        if (! is_string($resultXml) || '' === $resultXml) {
+            return false;
+        }
 
         // 5) XML Parser Creation
 
@@ -256,13 +290,17 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
                     $level[$xmlElement['level']] = $xmlElement['tag'];
                 }
             } elseif ('complete' === $xmlElement['type']) {
-                $startLevel = 1;
-                $phpArray = '$resultPhp';
-                while ($startLevel < $xmlElement['level']) {
-                    $phpArray .= '[$level[' . $startLevel++ . ']]';
+                // walk down the levels (no eval of data coming from the gateway)
+                $target = &$resultPhp;
+                for ($startLevel = 1; $startLevel < $xmlElement['level']; ++$startLevel) {
+                    $key = $level[$startLevel] ?? '';
+                    if (! isset($target[$key]) || ! is_array($target[$key])) {
+                        $target[$key] = [];
+                    }
+                    $target = &$target[$key];
                 }
-                $phpArray .= '[$xmlElement[\'tag\']] = array_key_exists(\'value\', $xmlElement)? $xmlElement[\'value\'] : null;';
-                eval($phpArray);
+                $target[$xmlElement['tag']] = array_key_exists('value', $xmlElement) ? $xmlElement['value'] : null;
+                unset($target);
             }
         }
         if (! isset($resultPhp['TXN'])) {
@@ -281,6 +319,11 @@ class DpsPxPayStoredPayment extends DpsPxPayPayment
         $commsObject->setMerchantReference($this->OrderID . '_' . $this->ID);
         //replace any character that is NOT [0-9] or dot (.)
         $commsObject->setAmountInput(floatval(preg_replace('/[^0-9\\.]/', '', (string) $amount)));
+
+        $currency = trim((string) $this->Amount->Currency);
+        if ('' !== $currency) {
+            $commsObject->setCurrencyInput($currency);
+        }
 
         if (! empty($cardToUse)) {
             $commsObject->setBillingId($cardToUse);
